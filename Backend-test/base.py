@@ -1,0 +1,181 @@
+"""Common utilities for Agents (logging, helpers, LLM calls)."""
+
+from __future__ import annotations
+import logging
+import os
+import json
+import inspect
+from datetime import datetime, timezone, timedelta
+from typing import Optional, Iterable, Any
+import re
+import base64
+
+try:  # Optional dependency available at runtime in agents
+    import openai  # type: ignore
+except Exception:  # pragma: no cover - keep base utils import-safe
+    openai = None  # type: ignore
+
+# Beijing timezone (UTC+8)
+BEIJING_TZ = timezone(timedelta(hours=8))
+CONTEXT_CACHE_TIME = 900
+
+def upload_image(image_address):
+    '''
+    将本地的图片上传到云端，并返回图片url
+    '''
+    pass
+
+def image_to_base64(img_path):
+    '''
+    将本地的图片转换为base64编码
+    '''
+    # 1. 检查文件是否存在
+    if not os.path.isfile(img_path):
+        raise FileNotFoundError(f"图片文件不存在：{img_path}")
+    
+    # 2. 提取后缀，匹配模型要求的MIME类型（关键！必须和文档的MIME_type一致）
+    suffix = os.path.splitext(img_path)[-1].lower()
+    mime_type_map = {
+        ".jpg": "image/jpeg",
+        ".jpeg": "image/jpeg",  # JPG的标准MIME类型是image/jpeg，模型通用
+        ".png": "image/png",
+        ".webp": "image/webp"
+    }
+    if suffix not in mime_type_map:
+        raise ValueError(f"模型仅支持JPG/PNG/WebP，当前文件格式：{suffix}")
+    mime_type = mime_type_map[suffix]  # 拿到对应MIME_type（如image/png）
+    
+    # 3. 二进制读取图片并编码为base64原始数据
+    with open(img_path, "rb") as f:
+        base64_data = base64.b64encode(f.read()).decode("utf-8")  # 转成字符串格式的base64_data
+    
+    # 4. 严格按模型文档格式拼接（核心步骤，完全匹配data:{MIME_type};base64,{base64_data}）
+    model_base64_str = f"data:{mime_type};base64,{base64_data}"
+    
+    return model_base64_str
+
+class BeijingTimeFormatter(logging.Formatter):
+    def formatTime(self, record, datefmt=None):  # type: ignore[override]
+        dt = datetime.fromtimestamp(record.created, BEIJING_TZ)
+        if datefmt:
+            return dt.strftime(datefmt)
+        # Default ISO-like with offset
+        return dt.strftime("%Y-%m-%d %H:%M:%S%z")
+
+
+
+
+def get_agent_logger(
+    name: str, level_env_var: str, default_level: str = "INFO"
+) -> logging.Logger:
+    """Return a configured logger.
+
+    Parameters
+    ----------
+    name: logger name (e.g. "agent.beijing_urban")
+    level_env_var: environment variable name to read logging level from
+    default_level: fallback level string
+    """
+    logger = logging.getLogger(name)
+    if not logger.handlers:
+        # Console handler
+        console_handler = logging.StreamHandler()
+        formatter = BeijingTimeFormatter(
+            fmt="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S%z",
+        )
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+        
+        # File handler - save logs to file
+        log_dir = os.path.join(os.getcwd(), "logs")
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, f"{name.replace('.', '_')}.log")
+        file_handler = logging.FileHandler(log_file, encoding="utf-8")
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+    # Resolve log level
+    level_name = os.getenv(level_env_var, default_level).upper()
+    level = getattr(logging, level_name, logging.INFO)
+    logger.setLevel(level)
+    logger.propagate = False
+    return logger
+
+
+def truncate(text: Optional[str], limit: int = 300) -> str:
+    if not text:
+        return ""
+    return text if len(text) <= limit else text[:limit] + "…(truncated)"
+
+
+def extract_text_from_message(message: Any) -> str:
+    """Extract all text segments from a Message.dataItems list.
+
+    - Collects items that have a ``text`` attribute (e.g., TextDataItem).
+    - Joins multiple segments with newlines.
+    - Returns empty string if nothing found.
+    """
+    txt_parts: list[str] = []
+    try:
+        items: Iterable[Any] = getattr(message, "dataItems", []) or []
+        for item in items:
+            # Be tolerant: check attribute instead of exact class to avoid tight coupling
+            if hasattr(item, "text") and isinstance(getattr(item, "text"), str):
+                t = getattr(item, "text")
+                if t:
+                    txt_parts.append(t)
+    except Exception:
+        # Be defensive; don't raise from helper
+        return ""
+    return "\n".join(txt_parts).strip()
+
+
+def load_capabilities_snippet_from_json(json_path: str, fallback: str) -> str:
+    """Load a short capabilities snippet from a JSON file.
+
+    Expected JSON shape (optional keys):
+      { "description": "...", "skills": [{"name": "..."}, ...] }
+    """
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        desc = (meta or {}).get("description", "")
+        skills = (meta or {}).get("skills", []) or []
+        skill_names = [
+            s.get("name") for s in skills if isinstance(s, dict) and s.get("name")
+        ]
+        skills_line = ("技能：" + "、".join(skill_names)) if skill_names else ""
+        return (desc + ("\n" + skills_line if skills_line else "")).strip()
+    except Exception:
+        return fallback
+
+
+async def call_openai_chat(
+    messages: list[dict],
+    *,
+    model: str,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+) -> str:
+    """Call OpenAI-compatible chat completion API.
+
+    - Works with sync or async clients (awaitable detection).
+    - Gracefully degrades when some parameters aren't supported (for test stubs).
+    """
+    if openai is None:  # pragma: no cover
+        return ""
+    kwargs: dict = {"messages": messages, "model": model}
+    if temperature is not None:
+        kwargs["temperature"] = temperature
+    if max_tokens is not None:
+        kwargs["max_tokens"] = max_tokens
+    try:
+        chat_completion = openai.chat.completions.create(**kwargs)
+    except TypeError:
+        chat_completion = openai.chat.completions.create(
+            messages=messages,
+            model=model,
+        )
+    if inspect.isawaitable(chat_completion):
+        chat_completion = await chat_completion  # type: ignore
+    return getattr(chat_completion.choices[0].message, "content", "") or ""

@@ -1,0 +1,112 @@
+.export-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
+}
+
+.export-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.export-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.export-subtitle {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.export-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 18px 48px -34px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 720px;
+}
+
+.export-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-row label {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-secondary);
+}
+
+.export-row input {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  padding: 0 12px;
+  outline: none;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text-primary);
+}
+
+.export-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  background: rgba(239, 246, 255, 0.9);
+  color: rgb(37, 99, 235);
+  font-size: 12px;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.export-btn.secondary {
+  background: rgba(241, 245, 249, 0.9);
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+:root.dark .export-card {
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.45) 0%, rgba(15, 23, 42, 0.55) 100%);
+  border-color: rgba(59, 130, 246, 0.14);
+  box-shadow: 0 22px 60px -44px rgba(59, 130, 246, 0.38);
+}
+
+:root.dark .export-row input {
+  background: rgba(2, 6, 23, 0.35);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .export-btn {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.22);
+  color: rgb(147, 197, 253);
+}
+
+:root.dark .export-btn.secondary {
+  background: rgba(51, 65, 85, 0.4);
+  border-color: rgba(51, 65, 85, 0.75);
+  color: rgb(203, 213, 225);
+}
+

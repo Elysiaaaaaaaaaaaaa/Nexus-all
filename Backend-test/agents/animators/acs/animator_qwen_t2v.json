@@ -1,0 +1,65 @@
+{
+  "aic": "",
+  "active": true,
+  "protocolVersion": "01.00",
+  "name": "AnimatorQwenT2V",
+  "description": "根据用户需求生成视频的 ACPs 兼容服务",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "北京邮电大学",
+    "department": "国际学院",
+    "url": "",
+    "license": "大模型智能体原理及应用-2024213429-陈子轩"
+  },
+  "securitySchemes": {
+    "mtls": {
+      "type": "mutualTLS",
+      "description": "智能体间 mTLS 双向认证",
+      "x-caChallengeBaseUrl": "https://13.236.177.52:8004/acps-atr-v1"
+    }
+  },
+  "endPoints": [
+    {
+      "url": "https://13.236.177.52:8034/animator_qwen_t2v",
+      "transport": "JSONRPC",
+      "security": [
+        {
+          "mtls": []
+        }
+      ]
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "notification": false,
+    "messageQueue": []
+  },
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "AnimatorQwenT2V.generate",
+      "name": "generate",
+      "description": "根据用户生成的视频大纲生成视频，用于AIGC视频创作",
+      "version": "1.0.0",
+      "tags": [
+        "视频创作"
+      ],
+      "examples": [
+        "我今天想做一个纪录片，主要讲荷兰的地理知识，摄影风格可以参考BBC的《国家地理》。帮我写一个分镜大纲",
+        "我想做一个戈登·拉姆齐吐槽菠萝披萨的短视频，场景是在戈登的厨房，他以自拍视角下的直接吐槽。大约20秒"
+      ],
+      "inputModes": [
+        "text/plain"
+      ],
+      "outputModes": [
+        "text/plain"
+      ]
+    }
+  ],
+  "lastModifiedTime": ""
+}
