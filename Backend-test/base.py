@@ -15,6 +15,11 @@ try:  # Optional dependency available at runtime in agents
 except Exception:  # pragma: no cover - keep base utils import-safe
     openai = None  # type: ignore
 
+try:  # Optional dependency for video processing
+    from moviepy import VideoFileClip  # type: ignore
+except Exception:  # pragma: no cover - keep base utils import-safe
+    VideoFileClip = None  # type: ignore
+
 # Beijing timezone (UTC+8)
 BEIJING_TZ = timezone(timedelta(hours=8))
 CONTEXT_CACHE_TIME = 900
@@ -179,3 +184,50 @@ async def call_openai_chat(
     if inspect.isawaitable(chat_completion):
         chat_completion = await chat_completion  # type: ignore
     return getattr(chat_completion.choices[0].message, "content", "") or ""
+
+
+def extract_last_frame(video_path: str, output_path: str) -> bool:
+    """Extract the last frame from a video file and save it as an image.
+
+    Parameters
+    ----------
+    video_path : str
+        Path to the input video file.
+    output_path : str
+        Path to save the extracted last frame image.
+
+    Returns
+    -------
+    bool
+        True if the frame was extracted successfully, False otherwise.
+    """
+    if VideoFileClip is None:
+        logging.error("moviepy library is not available. Please install it with 'pip install moviepy'")
+        return False
+    
+    if not os.path.isfile(video_path):
+        logging.error(f"Video file not found: {video_path}")
+        return False
+    
+    try:
+        # Load video file
+        clip = VideoFileClip(video_path)
+        
+        # Calculate time for last frame (slightly before the end to avoid errors)
+        last_frame_time = max(0, clip.duration - 0.1)
+        
+        # Save the last frame
+        clip.save_frame(output_path, t=last_frame_time)
+        
+        # Close the video file
+        clip.close()
+        
+        logging.info(f"Successfully extracted last frame from {video_path} to {output_path}")
+        return True
+    except Exception as e:
+        logging.error(f"Error extracting last frame: {str(e)}")
+        return False
+
+if __name__ == "__main__":
+    extract_last_frame("./test/feibi/feibi/video/feibi_0.mp4", "./test/feibi/feibi/feibi_0_last.png")
+   

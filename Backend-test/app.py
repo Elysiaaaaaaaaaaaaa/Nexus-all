@@ -354,7 +354,7 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         userfile = DatabaseUserFile(user_id)
         print(f"User ID: {user_id}, Project: {project_name}")
         # 创建Text2VideoWorkflow实例
-        orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
+        orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode='use')
         
         # 如果请求中包含video_duration，设置到session_data中
         if request.video_duration is not None:
@@ -705,7 +705,7 @@ async def create_project(request: NewProjectRequest, current_user: Dict[str, Any
                 }
             )
         
-        userfile = DatabaseUserFile(user_id)
+        userfile = UserFile(user_id)
         
         # 生成新的会话ID
         import uuid

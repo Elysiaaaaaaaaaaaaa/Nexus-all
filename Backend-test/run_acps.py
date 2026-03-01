@@ -33,7 +33,8 @@ from agents.writers.screenwriter import ScreenWriter
 from agents.assistant.director_assistant import Assistant
 from agents.writers.outline_writer import OutlineWriter
 from agents.animators.animator_qwen_t2v import Animator as T2VAnimator
-from agents.animators.animator_qwen_i2v import Animator as I2VAnimator
+from agents.animators.animator_qwen_i2v import Animator as Qwen_I2VAnimator
+from agents.animators.animator_doubao import I2VAnimator as Doubao_I2VAnimator
 from agents.painter.painter_qwen import Painter
 from agents.painter.painter_ark import I2IPainter
 from agents.writers.photo_describer import Describer
@@ -715,11 +716,11 @@ class Image2VideoWorkflow:
         self.assistant = Assistant(user_name=self.userfile.user,project_name=self.project_name)
         self.outline_writer = OutlineWriter()
         self.story_teller = StoryTeller()
-        self.script_writer = ScriptWriter()
+        self.script_writer = ScriptWriter(self.userfile.project_path+self.project_name+'/'+'storyboard')
         self.painter = Painter(name=self.project_name,download_link=self.userfile.project_path)
         self.storyboard_painter = I2IPainter(name=self.project_name,download_link=self.userfile.project_path)
         self.describer = Describer()
-        self.animator = I2VAnimator(name=self.project_name,download_link=self.userfile.project_path)
+        self.animator = Doubao_I2VAnimator(name=self.project_name,download_link=self.userfile.project_path)
         
     # 构建 LangGraph 状态图，节点集合与 a2a 版本保持一致（intent/confirm/workflow/chat/decline）。
         self._graph = self._build_graph()
@@ -885,11 +886,8 @@ class Image2VideoWorkflow:
         print('是否需要修改：',user_text)
         if user_text == '需要修改':
             state['session_data']['now_state'] = 'modify'
-            if now_task == 'story_board':
-                now_task = 'story_board_prompting'
-                session_data['now_task'] = now_task
             return Command(update = {'session_data':state['session_data']},goto = now_task)
-        if user_text == '不需要':
+        if user_text == '不需要' or user_text == '不需要修改':
             state['session_data']['now_state'] = 'create'
             ##路由至下一个任务
             if now_task == 'outline':
@@ -901,18 +899,20 @@ class Image2VideoWorkflow:
             if now_task == 'story_board':
                 state['session_data']['now_task'] = 'script'
             if now_task == 'script':
-                state['session_data']['story_board_generating']+=1
-                if state['session_data']['story_board_generating']>=len(session_data['material']['outline']):
-                    state['session_data']['now_task'] = 'animator'
-                else:
-                    state['session_data']['now_task'] = 'figure_design'
+                # state['session_data']['story_board_generating']+=1
+                # if state['session_data']['story_board_generating']>=len(session_data['material']['outline']):
+                #     state['session_data']['now_task'] = 'animator'
+                # else:
+                #     state['session_data']['now_task'] = 'figure_design'
+                #     # state['session_data']['now_task'] = 'script'
+                state['session_data']['now_task'] = 'animator'
             if now_task == 'animator':
                 state['session_data']['video_generating']+=1
                 if state['session_data']['video_generating']>=len(session_data['material']['outline']):
                     state['session_data']['chat_with_assistant'] = False
                     return Command(goto = END)
                 else:
-                    pass
+                    state['session_data']['now_task'] = 'figure_design'
             return Command(update = {'session_data':state['session_data']},goto = state['session_data']['now_task'])
         
     def imagination_node(self,state:ChatGraphState)->ChatGraphState:
@@ -984,11 +984,10 @@ class Image2VideoWorkflow:
                 ans = '这里是story_board_prompting'
                 last_id = None
             else:
-                story_board_prompt, last_id = self.story_teller.story_board_prompting(session_data)
-            state['session_data']['material']['story_board'][-1]['prompt'] = story_board_prompt
-            state['session_data']['material']['story_board'][-1]['image_address'] = None
-            state['session_data']['last_id']['story_board'] = last_id
-            state['reply'] = AssistantReply(story_board_prompt)
+                session_data = self.story_teller.story_board_prompting(session_data)
+                ans = '正向提示词：'+session_data['material']['story_board'][-1]['prompt']['positive']+'\n反向提示词：'+session_data['material']['story_board'][-1]['prompt']['negative']
+            state['session_data'] = session_data
+            state['reply'] = AssistantReply(ans)
             state['session_data']['now_state'] = 'modify_confirm'
             return state
         if now_state == 'modify':
@@ -1016,7 +1015,7 @@ class Image2VideoWorkflow:
             else:
                 ans = self.storyboard_painter.call(session_data)
             state['session_data']['material']['story_board'][-1]['image_address'] = ans
-            state['reply'] = AssistantReply(ans)
+            state['reply'] = AssistantReply('已生成分镜图片：'+ans)
             state['session_data']['now_state'] = 'modify_confirm'
             return state
         if now_state == 'modify':
@@ -1025,14 +1024,21 @@ class Image2VideoWorkflow:
                 ans = '这里是story_board'
                 last_id = None
             else:
-                result, last_id = self.assistant.call(user_text,session_data)
-                ans = result['idea']+'\n'+result['chat']
+                if user_text == '需要修改':
+                    ans = '请输入修改请求。'
+                else:
+                    session_data['modify_request']['story_board'] = user_text
+                    session_data = self.storyboard_painter.reprint(session_data)
+                    ans = '已重新分镜图片：'+state['session_data']['material']['story_board'][-1]['image_address']
+                    state['session_data']['now_state'] = 'modify_confirm'
             state['reply'] = AssistantReply(ans)
-            state['session_data']['modify_request']['story_board'] = result['idea']
-            state['session_data']['last_id']['assistant'] = last_id
             return state
     
     def figure_design_node(self,state:ChatGraphState)->ChatGraphState:
+        '''
+        分镜设计的第一个阶段，输入角色名并上传角色参考图片，生成角色描述。
+        该节点不会返回，而是直接路由至分镜首帧提示词生成节点
+        '''
         session_id = state["session_id"]
         user_text = state["user_input"]
         session_data = state["session_data"]
@@ -1043,8 +1049,8 @@ class Image2VideoWorkflow:
             if self.mode == 'test':
                 ans = '这里是figure_design'
             else:
-                if user_text == '不需要':
-                    ans = '请输入出镜的角色名字，若此前未上传过角色图片，请一并上传角色参考图片。若该画面中没有需要出现的主要人物，输入"defaultdefault"。'
+                if user_text == '不需要' or user_text == '不需要修改':
+                    ans = '请输入出镜的角色名字，若此前未上传过角色图片，请一并上传角色参考图片。若该画面中没有需要出现的主要人物，输入"default"。'
                     state['reply'] = AssistantReply(ans)
                     return state
                 else:
@@ -1061,65 +1067,6 @@ class Image2VideoWorkflow:
                     state['session_data']['now_task'] = 'story_board_prompting'
                     # state['session_data']['now_state'] = 'modify_confirm'
                     return Command(update = {'session_data':state['session_data']},goto = 'story_board_prompting')
-        
-
-    # def storyboard_prompting_node(self,state:ChatGraphState)->ChatGraphState:
-    #     session_id = state["session_id"]
-    #     user_text = state["user_input"]
-    #     session_data = state["session_data"]
-    #     now_task = session_data["now_task"]
-    #     material = session_data["material"]
-    #     now_state = session_data["now_state"]
-    #     if now_state == 'create':
-    #         if self.mode == 'test':
-    #             ans = '这里是storyboard_prompting'
-    #         else:
-    #             ans = self.story_teller.story_board_prompting(session_data)
-    #         state['session_data']['material']['story_board'].append({'prompt':ans,'image_address':None,'background_id':session_data['story_board_generating']})
-    #         state['reply'] = AssistantReply(ans)
-    #         state['session_data']['now_state'] = 'modify_confirm'
-    #         return state
-    #     if now_state == 'modify':
-    #         ##此处代码还未编写，请在测试时不要输入”需要修改“
-    #         if self.mode == 'test':
-    #             ans = '这里是storyboard_prompting'
-    #             last_id = None
-    #         else:
-    #             ans, last_id = self.assistant.call(user_text,session_data)
-    #         state['reply'] = AssistantReply(ans)
-    #         state['session_data']['modify_request']['storyboard'] = ans
-    #         state['session_data']['last_id']['assistant'] = last_id
-    #         return state
-
-    # def story_board_node(self,state:ChatGraphState)->ChatGraphState:
-    #     """
-    #     i2i绘制storyboard
-    #     """
-    #     session_id = state["session_id"]
-    #     user_text = state["user_input"]
-    #     session_data = state["session_data"]
-    #     now_task = session_data["now_task"]
-    #     material = session_data["material"]
-    #     now_state = session_data["now_state"]
-    #     if now_state == 'create':
-    #         if self.mode == 'test':
-    #             board_address = '这里是story_board'
-    #         else:
-    #             board_address = self.storyboard_painter.call(session_data)
-    #         state['session_data']['material']['story_board'].append(board_address)
-    #         state['reply'] = AssistantReply(board_address)
-    #         state['session_data']['now_state'] = 'modify_confirm'
-    #         return state
-    #     if now_state == 'modify':
-    #         if self.mode == 'test':
-    #             ans = '这里是story_board'
-    #             last_id = None
-    #         else:
-    #             ans, last_id = self.assistant.call(user_text,session_data)
-    #         state['reply'] = AssistantReply(ans)
-    #         state['session_data']['modify_request']['story_board'] = ans
-    #         state['session_data']['last_id']['assistant'] = last_id
-    #         return state
     
     def script_node(self,state:ChatGraphState)->ChatGraphState:
         '''
@@ -1136,18 +1083,21 @@ class Image2VideoWorkflow:
                 ans = '这里是script'
             else:
                 ans = self.script_writer.call(session_data)
-            state['session_data']['material']['script'].append(ans)
-            state['reply'] = AssistantReply(ans)
+            state['session_data'] = ans
             state['session_data']['now_state'] = 'modify_confirm'
+            positive = ans['material']['script'][-1]['positive']
+            negative = ans['material']['script'][-1]['negative']
+            state['reply'] = AssistantReply('已生成分镜提示词：\n'+'正向提示词：'+positive+'\n反向提示词：'+negative)
             return state
         if now_state == 'modify':
             if self.mode == 'test':
                 ans = '这里是script'
                 last_id = None
             else:
-                ans, last_id = self.assistant.call(user_text,session_data)
+                result, last_id = self.assistant.call(user_text,session_data)
+                ans = result['idea']+'\n'+result['chat']
             state['reply'] = AssistantReply(ans)
-            state['session_data']['modify_request']['script'] = ans
+            state['session_data']['modify_request']['script'] = result['idea']
             state['session_data']['last_id']['assistant'] = last_id
             return state
     
@@ -1160,14 +1110,15 @@ class Image2VideoWorkflow:
         session_data = state["session_data"]
         now_task = session_data["now_task"]
         material = session_data["material"]
-        now_state = session_data["now_state"]   
+        now_state = session_data["now_state"]
+        screen_id = session_data['video_generating']
         if now_state == 'create':
             if self.mode == 'test':
                 ans = '这里是animator'
             else:
                 ans = self.animator.call(session_data)
             state['session_data']['material']['video_address'].append(ans)
-            state['reply'] = AssistantReply(ans)
+            state['reply'] = AssistantReply('已生成生成视频：'+ans)
             state['session_data']['now_state'] = 'modify_confirm'
             return state
         
@@ -1222,9 +1173,9 @@ def run_test_text2video():
     userfile = UserFile(user)
     project_name = input("请输入项目名称: ")
     mode = input("test or use:")
-    orchestrator = Text2VideoWorkflow(clients=None,userfile=userfile,project_name=project_name,mode=mode)
-    session_id = orchestrator.main_session_id
     while 1:
+        orchestrator = Text2VideoWorkflow(clients=None,userfile=userfile,project_name=project_name,mode=mode)
+        session_id = orchestrator.main_session_id
         user_input = input("用户：").strip()
         modify_num = userfile.load_session().get(session_id, {}).get("modify_num", [])
         if user_input == '需要修改':

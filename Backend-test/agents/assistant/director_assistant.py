@@ -29,7 +29,7 @@ assistant_prompt = PromptTemplate.from_template('''
 【当前任务】
 {task}
 【搜索工具使用规则】
-必要的时候，请使用function call调用联网搜索工具，最多使用一次。
+向用户询问并征得用户同意后，可以使用function call调用联网搜索工具，最多使用一次。
 【用户特点】
 - 用户可能没有视频创作经验，不了解视频制作流程
 - 用户可能不会主动提供所有必要信息，需要你引导提问
@@ -204,7 +204,7 @@ class Assistant:
         try:
             completion = self._create_response(
                 # 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
-                model="doubao-seed-1-6-lite-251015",
+                model="doubao-seed-1-8-251228",
                 input=[
                     {
                         'role':'system',
@@ -213,10 +213,6 @@ class Assistant:
                     {
                         'role':'system',
                         'content':material_prompt.invoke({'material':json.dumps(material, ensure_ascii=False)}).to_string()
-                    },
-                    {
-                        'role':'system',
-                        'content':history
                     },
                     {
                         'role':'user',
@@ -271,7 +267,7 @@ class Assistant:
             
             completion = self._create_response(
                 # 指定您创建的方舟推理接入点 ID，此处已帮您修改为您的推理接入点 ID
-                model="doubao-seed-1-6-lite-251015",
+                model="doubao-seed-1-8-251228",
                 previous_response_id = session_data['last_id']['assistant'],
                 input=input_prompt,
                 caching={"type": "enabled"}, 
@@ -326,7 +322,7 @@ class Assistant:
                 cnt += 1
                 try:
                     completion = self._create_response(
-                        model="doubao-seed-1-6-lite-251015",
+                        model="doubao-seed-1-8-251228",
                         previous_response_id = last_id,
                         input=[
                             {

@@ -8,6 +8,11 @@ from pathlib import PurePosixPath
 import requests
 import os
 
+module_list = {
+    'seedream4.0':'doubao-seedream-4-0-250828',
+    'seedream5.0-lite':'doubao-seedream-5-0-260128'
+}
+
 client = Ark( 
     # 此为默认路径，您可根据业务所在地域进行配置 
     base_url="https://ark.cn-beijing.volces.com/api/v3", 
@@ -24,18 +29,38 @@ class I2IPainter:
         self.download_link = f'{download_link}/{self.name}/storyboard'
     
     def call(self, session_data):
-        screen_id = session_data['story_board_generating']
+        screen_id = session_data['video_generating']
         prompt = session_data['material']['story_board'][screen_id]['prompt']
         figure_url = image_to_base64(session_data['material']['story_board'][screen_id]['figure_image_address'])
         image_url = self.get_image_url(prompt,figure_url)
-        return self.download(image_url, idx=session_data['story_board_generating'])
+        return self.download(image_url, idx=screen_id)
+    
+    def reprint(self,session_data):
+        screen_id = session_data['video_generating']
+        prompt = session_data['modify_request']['story_board']
+        image_address = session_data['material']['story_board'][session_data['video_generating']]['image_address']
+        image_base64 = image_to_base64(image_address)
+        imagesResponse = client.images.generate(
+            model="doubao-seedream-4-0-250828",
+            prompt=prompt,
+            image=image_base64,
+            size="2560x1440",
+            sequential_image_generation="disabled",
+            response_format="url",
+            watermark=False
+        )
+        image_url = imagesResponse.data[0].url
+        self.download(image_url, idx=screen_id)
+        session_data['modify_request']['story_board'] = None
+        return session_data
+    
     
     def get_image_url(self,prompt,figure_url):
         print(prompt)
         response = client.images.generate( 
             # Replace with Model ID
-            model="doubao-seedream-4-0-250828",
-            prompt='为我生成图片，要求人物长相与参考图完全一致'+prompt['positive']+prompt['negative'],
+            model=module_list['seedream4.0'],
+            prompt='为我生成图片，要求人物长相、服饰与参考图完全一致'+prompt['positive']+prompt['negative'],
             image=[figure_url],
             size="2560x1440",
             sequential_image_generation="disabled",
