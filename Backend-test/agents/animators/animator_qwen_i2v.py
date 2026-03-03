@@ -7,6 +7,10 @@ from pathlib import PurePosixPath
 from dashscope import VideoSynthesis
 from base import image_to_base64
 # 设置 API Key（请确保已设置环境变量 DASHSCOPE_API_KEY）
+modules = {
+    'wan2.5': 'wan2.5-i2v-preview',
+    'wan2.6': 'wan2.6-i2v-flash',
+}
 api_key = "sk-8c9152365e554289834e30d12885ec03"
 
 class Animator:
@@ -25,10 +29,10 @@ class Animator:
     
     def send_request(self, prompt,storyboard_url):
         completion = VideoSynthesis.call(
-            model="wan2.5-i2v-preview",
+            model=modules['wan2.6'],
             prompt=prompt['positive'],
             img_url=storyboard_url,
-            resolution="480P",
+            resolution="720P",
             duration=5,
             prompt_extend=True,
             watermark=False,

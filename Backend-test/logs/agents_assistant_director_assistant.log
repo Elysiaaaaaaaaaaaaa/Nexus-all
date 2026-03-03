@@ -181,3 +181,109 @@
 2026-02-01 23:23:09+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
 2026-02-01 23:24:20+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
 2026-02-01 23:24:28+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-01 23:50:35+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-01 23:50:39+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 11:47:29+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 11:47:40+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:03:06+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:03:14+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:04:48+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"科比·布莱恩特是否代言过康师傅冰红茶"}
+2026-02-02 12:04:51+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"康师傅冰红茶 官方代言历史 科比布莱恩特"}
+2026-02-02 12:14:33+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:14:38+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:14:43+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:24:20+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:24:33+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:24:43+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:25:08+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"视频创作常见主题和风格有哪些"}
+2026-02-02 12:29:36+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:29:55+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:30:02+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 12:31:11+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"科比·布莱恩特是否代言过康师傅冰红茶"}
+2026-02-02 12:36:31+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"如何引导用户确定视频创作的核心要素"}
+2026-02-02 12:40:45+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"如何将5个分镜压缩为3个保持15秒视频节奏"}
+2026-02-02 12:40:51+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"15秒视频3个分镜的节奏分配方法"}
+2026-02-02 13:21:36+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 13:21:45+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-02 13:21:56+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-05 09:11:52+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-05 09:14:25+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 16:58:57+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:10:30+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"《光之魔法少女》森亚露露卡 人设 性格特点"}
+2026-02-26 17:20:58+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:21:18+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:23:32+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:26:50+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:51:42+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:53:49+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-02-26 17:53:50+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"日式咖啡厅 女仆装 甜点托盘 2D卡通 分镜提示词 修改需求"}
+2026-02-26 17:53:55+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"2D卡通分镜提示词优化技巧 日式咖啡厅女仆装甜点托盘"}
+2026-02-26 17:53:58+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:03+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:07+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:15+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:20+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:25+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"2D卡通分镜提示词 日式咖啡厅 女仆装 甜点托盘 细节优化"}
+2026-02-26 17:54:33+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"scene":"日式咖啡厅内，暖黄色木质吧台旁立着小型樱花盆栽，墙面挂日式浮世绘咖啡海报，地面铺浅棕色榻榻米地毯。露露卡穿着白色主调镶粉色蕾丝边的女仆装，戴同色系女仆发箍，黑色长发扎低马尾垂胸前，端着绘粉色樱花纹的白瓷托盘走向顾客，托盘上放淋樱花酱的抹茶慕斯，慕斯旁插迷你樱花造型塑料叉子。色彩暖黄色为主，搭配粉色、绿色、浅棕色，色调柔和温暖。光线为暖黄色室内灯光，光影柔和。氛围温馨雅致。画面风格为2D卡通，中景跟拍，甜点细节特写。","character":"露露卡：外冷内热，无口少言，端托盘时右手食指和中指微微蜷缩，步伐平稳稍慢，表情平静。","emotion":"平静中带微妙紧张","style":"2D卡通","camera":"中景跟拍，甜点细节特写","lighting":"暖黄色室内灯光，柔和光影","composition":"露露卡位于画面中央偏下，占比40%，从左侧吧台向右侧顾客座位行走；托盘在胸前，甜点特写；吧台、盆栽、海报在左侧背景；地毯延伸至远处","details":"樱花盆栽细节、浮世绘海报纹理、蕾丝女仆装细节、抹茶慕斯樱花酱光泽、迷你樱花叉子造型"}
+2026-02-26 17:54:33+0800 | ERROR | agents.assistant.director_assistant | API调用错误 (init_assistant): Function call missing required 'query' or 'prompt' parameter. Received: {"scene":"日式咖啡厅内，暖黄色木质吧台旁立着小型樱花盆栽，墙面挂日式浮世绘咖啡海报，地面铺浅棕色榻榻米地毯。露露卡穿着白色主调镶粉色蕾丝边的女仆装，戴同色系女仆发箍，黑色长发扎低马尾垂胸前，端着绘粉色樱花纹的白瓷托盘走向顾客，托盘上放淋樱花酱的抹茶慕斯，慕斯旁插迷你樱花造型塑料叉子。色彩暖黄色为主，搭配粉色、绿色、浅棕色，色调柔和温暖。光线为暖黄色室内灯光，光影柔和。氛围温馨雅致。画面风格为2D卡通，中景跟拍，甜点细节特写。","character":"露露卡：外冷内热，无口少言，端托盘时右手食指和中指微微蜷缩，步伐平稳稍慢，表情平静。","emotion":"平静中带微妙紧张","style":"2D卡通","camera":"中景跟拍，甜点细节特写","lighting":"暖黄色室内灯光，柔和光影","composition":"露露卡位于画面中央偏下，占比40%，从左侧吧台向右侧顾客座位行走；托盘在胸前，甜点特写；吧台、盆栽、海报在左侧背景；地毯延伸至远处","details":"樱花盆栽细节、浮世绘海报纹理、蕾丝女仆装细节、抹茶慕斯樱花酱光泽、迷你樱花叉子造型"}
+2026-02-26 17:57:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 17:58:47+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-02-26 17:58:49+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments: {"query":"二次元卡通风格 日式咖啡厅 女仆装角色 端甜点提示词 优化方向"}
+2026-02-26 17:58:52+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "二次元卡通风格 女仆装角色 端甜点 提示词优化 细节增强"}
+2026-02-26 18:02:16+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-26 18:02:53+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-02-26 18:03:48+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-02-26 18:05:21+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-02-27 15:26:34+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:29:45+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:39:44+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:41:20+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:44:54+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:46:19+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:53:42+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:55:47+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:56:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-02-27 15:59:22+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:33:54+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:36:19+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:38:51+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 11:43:04+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 11:43:05+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "光之魔法少女 森亚露露卡 角色形象"}
+2026-03-01 11:43:08+0800 | ERROR | agents.assistant.director_assistant | API调用错误 (init_assistant): Error code: 400 - {'error': {'code': 'InvalidParameter', 'message': "previous response's endpoint is not consistent with current one Request id: 0217723365904605cc3ad079d2d276b2e460ebe33283b9490be24", 'param': 'previous_response_id', 'type': 'BadRequest'}}, request_id: 20260301114308I3RbuUDQabwsEy5G31J7
+2026-03-01 11:45:34+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:45:51+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:48:29+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 11:48:29+0800 | ERROR | agents.assistant.director_assistant | API调用错误 (init_assistant): Error code: 400 - {'error': {'code': 'MissingParameter', 'message': 'The request failed because it is missing `input.content` parameter. Request id: 0217723369117852995bc22d90d000b5906a82fb2f729a66b495b', 'param': 'input.content', 'type': 'BadRequest'}}, request_id: 20260301114829ND68YNZnMbZOtoutzsAk
+2026-03-01 11:54:17+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 11:58:46+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "光之魔法少女 森娅露露卡 人设"}
+2026-03-01 12:06:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:14:53+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:19:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:22:04+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:24:46+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:27:16+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 12:40:11+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:47:47+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 12:54:52+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:03:41+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:05:50+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:07:50+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:13:00+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:15:46+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:28:07+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:32:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:34:12+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 14:37:25+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 16:54:37+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 17:43:27+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 17:45:02+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 17:51:19+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 17:59:58+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:16:36+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:17:26+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
+2026-03-01 18:21:19+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:22:29+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:27:16+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:29:07+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:40:27+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-01 18:41:44+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s

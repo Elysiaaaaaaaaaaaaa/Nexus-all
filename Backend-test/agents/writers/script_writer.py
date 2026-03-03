@@ -7,6 +7,7 @@ from langchain.prompts import PromptTemplate
 from base import upload_image,image_to_base64
 import re
 import json
+from base import extract_last_frame
 
 
 positive_script_example = '''
@@ -17,8 +18,16 @@ positive_script_example = '''
 
 script_generating_prompt = f'''
 你是一个图生视频提示词工程师，你需要根据用户传入的分镜首帧图片和分镜大纲，创作出符合要求的图生视频提示词。要求该分镜的结尾能和下一个分镜的开头平滑过渡。
-！注意！你必须严格按照以下规则输出内容。你只能输出图生视频提示词，不能输出任何其他无关的内容，不能附带类似“根据您提供的...以下是...提示词”
+分镜大纲只是分镜的设计概括和剧情的概括，你需要根据剧情概括发散出详细的内容。
+！注意！你必须严格按照以下规则输出内容。你只能输出图生视频提示词，不能输出任何其他无关的内容，不能附带类似“根据您提供的...以下是...提示词”的内容
 提示词模板：{positive_script_example}
+！注意！你不应该过多描述图片内容，而是应该根据传入的分镜大纲设计图片中主体的动态和给角色设计简单的台词。
+'''
+
+script_modifying_prompt = f'''
+你是一个图生视频提示词工程师，你需要根据用户传入的修改需求，修改你之前的图生视频提示词。
+提示词模板：{positive_script_example}
+！注意！你必须按照传入的提示词格式输出内容。你只能输出图生视频提示词，不能输出任何其他无关的内容，不能附带类似“根据您提供的...以下是...提示词”的内容
 '''
 
 json_schema = {
@@ -110,17 +119,46 @@ client = OpenAI(
 )
 
 class ScriptWriter:
-    def __init__(self):
+    def __init__(self,story_board_address):
         self.scripts = list()
+        self.story_board_address = story_board_address
     
     def call(self, session_data):
-        screen_id = session_data['story_board_generating']
-        prompt = session_data['material']['outline'][screen_id]
-        storyboard_url = image_to_base64(session_data['material']['story_board'][screen_id]['image_address'])
-        script = {"positive": self.send_request(prompt,storyboard_url),"negative":"人物变形、肢体残缺、多余手指、过于夸张的表情和动作"}
-        return script
+        screen_id = session_data['video_generating']
+        if screen_id >= len(session_data['material']['script']):
+            return self.generate(session_data)
+        else:
+            return self.modify(session_data)
     
-    def send_request(self, prompt,storyboard_url):
+    def generate(self,session_data):
+        screen_id = session_data['video_generating']
+        prompt = session_data['material']['outline'][screen_id]
+        try:
+            storyboard_url = image_to_base64(session_data['material']['story_board'][screen_id]['image_address'])
+        except:
+            extract_last_frame(session_data['material']['video_address'][-1],self.story_board_address+'/'+str(screen_id)+'.jpg')
+            storyboard_url = image_to_base64(self.story_board_address+'/'+str(screen_id)+'.jpg')
+            session_data['material']['story_board'].append({'image_address':self.story_board_address+'/'+str(screen_id)+'.jpg'})
+        script = {"positive": self.send_request(prompt,storyboard_url,script_generating_prompt),"negative":"人物变形、肢体残缺、多余手指、过于夸张的表情和动作"}
+        session_data['material']['script'].append(script)
+        return session_data
+
+    def modify(self,session_data):
+        screen_id = session_data['video_generating']
+        modify = session_data['material']['script'][screen_id]['positive']
+        request = session_data['modify_request']['script']
+        prompt = '请按照以下修改要求修改图生视频提示词：'+request+'；要求在这个提示词的基础上作修改：'+modify
+        try:
+            storyboard_url = image_to_base64(session_data['material']['story_board'][screen_id]['image_address'])
+        except:
+            extract_last_frame(session_data['material']['video_address'][-1],self.story_board_address+'/'+str(screen_id)+'.jpg')
+            storyboard_url = image_to_base64(self.story_board_address+'/'+str(screen_id)+'.jpg')
+            session_data['material']['story_board'].append({'image_address':self.story_board_address+'/'+str(screen_id)+'.jpg'})
+        script = {"positive": self.send_request(prompt,storyboard_url,script_modifying_prompt),"negative":"人物变形、肢体残缺、多余手指、过于夸张的表情和动作"}
+        session_data['material']['script'][screen_id] = script
+        return session_data
+    
+    def send_request(self, prompt,storyboard_url,sys_message):
         completion = client.chat.completions.create(
             model="qwen-vl-plus",  # 此处以qwen-vl-plus为例，可按需更换模型名称。模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
             messages=[
@@ -138,7 +176,7 @@ class ScriptWriter:
                 {
                     "role": "system",
                     "content": [
-                        {"type": "text", "text": script_generating_prompt}
+                        {"type": "text", "text": sys_message}
                     ]
                 }
             ],
