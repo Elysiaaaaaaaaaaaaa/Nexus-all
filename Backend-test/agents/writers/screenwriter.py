@@ -177,7 +177,7 @@ class ScreenWriter:
     def init_assistant(self,message,session_data,sys_prompt):
         # 创建初始对话，包含outline_writer的prompt和示例
         completion = client.responses.create(
-            model="doubao-seed-1-6-lite-251015",
+            model="doubao-seed-1-8-251228",
             tools = tools,
             input=[
                 {
@@ -241,7 +241,7 @@ class ScreenWriter:
                 self.screen = session_data['material']['screen'].copy()
             
             completion = client.responses.create(
-                model="doubao-seed-1-6-lite-251015",
+                model="doubao-seed-1-8-251228",
                 previous_response_id = session_data['last_id']['screen_writer'],
                 input=[
                     {
@@ -295,7 +295,7 @@ class ScreenWriter:
                 print('search query:',query)
                 cnt += 1
                 completion = client.responses.create(
-                    model="doubao-seed-1-6-lite-251015",
+                    model="doubao-seed-1-8-251228",
                     previous_response_id = current_last_id,
                     input=[
                         {

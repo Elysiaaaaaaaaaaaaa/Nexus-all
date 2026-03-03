@@ -171,7 +171,7 @@ class StoryTeller:
                 result, last_id = self.init_assistant(inputs)
                 return result, last_id
             completion = client.responses.create(
-                model="doubao-seed-1-6-lite-251015",
+                model="doubao-seed-1-8-251228",
                 previous_response_id = last_id,
                 input=inputs,
                 caching={"type": "enabled"}, 
