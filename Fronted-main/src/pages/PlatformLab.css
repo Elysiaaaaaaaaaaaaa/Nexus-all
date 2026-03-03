@@ -1,0 +1,109 @@
+.platform-lab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 16px;
+}
+
+.platform-lab-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.platform-lab-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.platform-lab-subtitle {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.platform-lab-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+@media (max-width: 720px) {
+  .platform-lab-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.platform-lab-card {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 18px 48px -34px rgba(0, 0, 0, 0.25);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 200ms, box-shadow 200ms;
+}
+
+.platform-lab-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 70px -44px rgba(37, 99, 235, 0.32);
+}
+
+.platform-lab-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239, 246, 255, 0.9);
+  border: 1px solid rgba(191, 219, 254, 0.9);
+  color: rgb(37, 99, 235);
+  flex-shrink: 0;
+}
+
+.platform-lab-card-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.platform-lab-card-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text-primary);
+}
+
+.platform-lab-card-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.platform-lab-card-arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* Dark mode: distinct neon glass */
+:root.dark .platform-lab-card {
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.45) 0%, rgba(15, 23, 42, 0.55) 100%);
+  border-color: rgba(59, 130, 246, 0.14);
+  box-shadow: 0 22px 60px -44px rgba(59, 130, 246, 0.38);
+}
+
+:root.dark .platform-lab-card-icon {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.22);
+  color: rgb(147, 197, 253);
+}
+
