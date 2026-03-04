@@ -1709,3 +1709,86 @@ During task with name 'assistant' and id '72f84e03-b27e-6fb4-f1ca-d5baaa225c3d'
 2026-01-30 15:12:45+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-01-30 15:12:45+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-01-30 15:12:45+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:25:39+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:25:39+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:25:39+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:25:39+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:25:39+0800 | ERROR | app.backend | Failed to initialize database. Please check database configuration.
+2026-03-04 16:28:18+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:28:18+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:28:18+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:28:18+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:28:18+0800 | ERROR | app.backend | Failed to initialize database. Please check database configuration.
+2026-03-04 16:29:15+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:29:15+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:29:15+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:29:15+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:29:15+0800 | ERROR | app.backend | Failed to initialize database. Please check database configuration.
+2026-03-04 16:31:46+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:31:46+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:31:46+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:31:46+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:31:46+0800 | ERROR | app.backend | Failed to initialize database. Please check database configuration.
+2026-03-04 16:32:28+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:32:28+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:32:28+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:32:28+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:32:28+0800 | ERROR | app.backend | Failed to initialize database. Please check database configuration.
+2026-03-04 16:33:26+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:33:26+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:33:26+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:33:26+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:33:26+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-04 16:33:42+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:33:42+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:33:42+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:33:42+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:33:42+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 16:33:42+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 16:33:42+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 16:33:42+0800 | INFO | app.backend | Initializing database...
+2026-03-04 16:47:03+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 16:48:38+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 16:53:43+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 16:56:02+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 16:59:34+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 17:00:39+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 17:00:39+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 17:00:39+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 17:00:39+0800 | INFO | app.backend | Initializing database...
+2026-03-04 17:00:40+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 17:00:40+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 17:00:40+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 17:00:40+0800 | INFO | app.backend | Initializing database...
+2026-03-04 17:00:40+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 17:01:50+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772613875792 mode=production workflow_type=image2video
+2026-03-04 17:16:09+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 17:16:09+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 17:16:09+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 17:16:09+0800 | INFO | app.backend | Initializing database...
+2026-03-04 17:16:09+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-04 17:16:20+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 17:16:20+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 17:16:20+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 17:16:20+0800 | INFO | app.backend | Initializing database...
+2026-03-04 17:16:21+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-04 17:16:21+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-04 17:16:21+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-04 17:16:21+0800 | INFO | app.backend | Initializing database...
+2026-03-04 17:33:50+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:38:48+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:40:20+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:41:18+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:45:17+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:45:41+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:47:01+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:47:36+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:48:23+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:49:15+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:49:44+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:50:37+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:50:58+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:51:57+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:52:38+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:52:48+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video
+2026-03-04 17:54:02+0800 | INFO | app.backend | event=work_start user_id=1 project=图生视频_1772616761697 mode=production workflow_type=image2video

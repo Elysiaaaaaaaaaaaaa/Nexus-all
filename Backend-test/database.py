@@ -18,9 +18,13 @@ def get_database_url():
     """获取数据库URL配置"""
     host = os.getenv("DB_HOST", "localhost")
     port = os.getenv("DB_PORT", "3306")
-    database = os.getenv("DB_NAME", "img_2_video")
-    username = os.getenv("DB_USER", "img_2_video")
-    password = os.getenv("DB_PASSWORD", "n2wwaxxYejDRhGWe")
+    # database = os.getenv("DB_NAME", "img_2_video")
+    # username = os.getenv("DB_USER", "img_2_video")
+    username = os.getenv("DB_USER", "root")
+    database = os.getenv("DB_NAME", "nexus_db")
+
+    # password = os.getenv("DB_PASSWORD", "n2wwaxxYejDRhGWe")
+    password = os.getenv("DB_PASSWORD", "20050923czx")
 
     # 对密码进行URL编码以处理特殊字符（如@符号）
     encoded_password = quote_plus(password)

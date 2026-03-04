@@ -122,10 +122,12 @@ const Interaction = () => {
 
   useEffect(() => {
     // 处理后端的修改确认状态
+    //做出修改：仅在outline环节弹出弹窗
     const isModifyState = sessionData?.now_state === 'modify_confirm' || sessionData?.now_state === 'modify_comfirm';
+    const isOutline = sessionData?.now_task === 'outline';
     const isText2Video = workflowType === 'text2video';
     const isModifyStage = !isText2Video || sessionData?.now_task === 'screen';
-    const shouldOpen = isModifyState && isModifyStage && !endSession && sessionData?.chat_with_assistant !== false;
+    const shouldOpen = isOutline&&isModifyState && isModifyStage && !endSession && sessionData?.chat_with_assistant !== false;
     setIsModifyDialogOpen(shouldOpen);
   }, [sessionData?.now_state, sessionData?.now_task, sessionData?.chat_with_assistant, endSession, workflowType]);
 

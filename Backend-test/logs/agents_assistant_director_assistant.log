@@ -117,3 +117,15 @@
 2026-03-04 15:46:35+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
 2026-03-04 15:50:11+0800 | INFO | agents.assistant.director_assistant | last_id失效，重新初始化会话
 2026-03-04 16:04:24+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:25:33+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:28:13+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:29:04+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:31:37+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:32:19+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:33:17+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:33:31+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 16:47:06+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "明日方舟 黍 角色特点 背景故事"}
+2026-03-04 17:00:23+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 17:15:59+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 17:16:14+0800 | INFO | agents.assistant.director_assistant | Ark客户端初始化成功，base_url: https://ark.cn-beijing.volces.com/api/v3, timeout: 60.0s
+2026-03-04 17:33:52+0800 | INFO | agents.assistant.director_assistant | Received function call with arguments:  {"query": "明日方舟 黍 角色设定 背景故事"}

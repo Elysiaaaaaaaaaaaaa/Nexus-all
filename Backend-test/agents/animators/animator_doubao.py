@@ -107,7 +107,7 @@ class I2VAnimator:
             }
         ],
         draft=True,
-        duration=5,
+        duration=10,
         generate_audio=True,
         watermark=False,
     )
