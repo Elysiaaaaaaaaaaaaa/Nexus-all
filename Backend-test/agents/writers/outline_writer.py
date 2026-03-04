@@ -2,6 +2,7 @@ from volcenginesdkarkruntime import Ark
 import time
 from langchain_core.prompts import PromptTemplate
 from base import CONTEXT_CACHE_TIME
+import re
 
 outline_example = f'''
 镜号 1

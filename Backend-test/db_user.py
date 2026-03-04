@@ -280,7 +280,7 @@ class DatabaseUserFile:
         user_dir = f"./user_files/{self.user_id}"
         project_dir = os.path.join(user_dir, "projects", project_name, figure_name)
 
-        supported_exts = ['.jpg', '.png', '.webp']
+        supported_exts = ['.jpg', '.png', '.webp', '.jpeg']
         for ext in supported_exts:
             photo_path = os.path.join(project_dir, f'photos{ext}')
             if os.path.exists(photo_path):

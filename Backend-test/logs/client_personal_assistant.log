@@ -98,3 +98,19 @@
 2026-01-30 15:28:46+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-dff4b3ab-58e5-4e0e-a06d-2db312958621 user=2023211904
 2026-01-30 15:29:29+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-dff4b3ab-58e5-4e0e-a06d-2db312958621 user=2023211904
 2026-01-30 15:31:59+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-dff4b3ab-58e5-4e0e-a06d-2db312958621 user=2023211904
+2026-03-04 13:25:25+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-25cc9ea0-b5bc-4beb-9b17-a4ee741bfd3f user=czx
+2026-03-04 15:01:05+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-4c62befd-b593-4611-bdc7-4eb30cfaf202 user=czx
+2026-03-04 15:02:33+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-4c62befd-b593-4611-bdc7-4eb30cfaf202 user=czx
+2026-03-04 15:11:17+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-4c62befd-b593-4611-bdc7-4eb30cfaf202 user=czx
+2026-03-04 15:12:16+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-4c62befd-b593-4611-bdc7-4eb30cfaf202 user=czx
+2026-03-04 15:16:30+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 15:23:32+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 15:25:26+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 project=妄想 screen_id=0
+2026-03-04 15:31:44+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 15:32:40+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 project=妄想 screen_id=0
+2026-03-04 15:35:22+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 project=妄想 screen_id=1
+2026-03-04 15:46:05+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 15:46:42+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 15:47:18+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 project=妄想 screen_id=1
+2026-03-04 16:04:31+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 user=czx
+2026-03-04 16:04:54+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-2e2db025-a93c-4c48-aaae-744bec638bc4 project=妄想 screen_id=2

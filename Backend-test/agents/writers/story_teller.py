@@ -67,7 +67,6 @@ story_board_modify_prompt = PromptTemplate.from_template(f'''
 2. JSON必须包含以下字段：
    - positive：正向提示词，包含分镜描述的正面部分
    - negative：负面提示词，包含不希望出现在画面中的要素，如人物割裂、多余肢体等。
-{story_board_example}
 ''')
 
 story_board_prompt = f'''

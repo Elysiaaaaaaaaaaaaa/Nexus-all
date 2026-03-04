@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Set, TypedDict
 from urllib.parse import urlsplit, urlunsplit
 from langgraph.types import Command
 from dotenv import load_dotenv
+import re
 
 _CURRENT_DIR = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.abspath(_CURRENT_DIR)
@@ -32,8 +33,7 @@ from file_manage import UserFile
 from agents.writers.screenwriter import ScreenWriter
 from agents.assistant.director_assistant import Assistant
 from agents.writers.outline_writer import OutlineWriter
-from agents.animators.animator_qwen_t2v import Animator as T2VAnimator
-from agents.animators.animator_qwen_i2v import Animator as I2VAnimator
+from agents.animators.animator_doubao import I2VAnimator, T2VAnimator
 from agents.painter.painter_qwen import Painter
 from agents.painter.painter_ark import I2IPainter
 from agents.writers.photo_describer import Describer
@@ -938,17 +938,14 @@ class Image2VideoWorkflow:
                 state['session_data']['now_task'] = 'script'
             if now_task == 'script':
                 state['session_data']['story_board_generating']+=1
-                if state['session_data']['story_board_generating']>=len(session_data['material']['outline']):
-                    state['session_data']['now_task'] = 'animator'
-                else:
-                    state['session_data']['now_task'] = 'figure_design'
+                state['session_data']['now_task'] = 'animator'
             if now_task == 'animator':
                 state['session_data']['video_generating']+=1
                 if state['session_data']['video_generating']>=len(session_data['material']['outline']):
                     state['session_data']['chat_with_assistant'] = False
                     return Command(goto = END)
                 else:
-                    pass
+                    state['session_data']['now_task'] = 'figure_design'
             return Command(update = {'session_data':state['session_data']},goto = state['session_data']['now_task'])
         
     def imagination_node(self,state:ChatGraphState)->ChatGraphState:
@@ -1022,6 +1019,7 @@ class Image2VideoWorkflow:
             else:
                 story_board_prompt, last_id = self.story_teller.story_board_prompting(session_data)
             state['session_data']['material']['story_board'][-1]['prompt'] = story_board_prompt
+            state['session_data']['modify_request']['story_board'] = None
             state['session_data']['material']['story_board'][-1]['image_address'] = None
             state['session_data']['last_id']['story_board'] = last_id
             state['reply'] = AssistantReply(story_board_prompt)
@@ -1402,4 +1400,4 @@ def acps():
 
 if __name__ == "__main__":
     #acps()
-    run_test_text2video()
+    run_test_image2video()
