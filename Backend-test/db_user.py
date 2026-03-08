@@ -278,7 +278,7 @@ class DatabaseUserFile:
 
         # 构建用户文件路径（保持向后兼容）
         user_dir = f"./user_files/{self.user_id}"
-        project_dir = os.path.join(user_dir, "projects", project_name, figure_name)
+        project_dir = os.path.join(user_dir, "projects", project_name, 'photos')
 
         supported_exts = ['.jpg', '.png', '.webp']
         for ext in supported_exts:

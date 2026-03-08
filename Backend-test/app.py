@@ -629,14 +629,14 @@ if avatars_dir.exists():
     app.mount("/api/user/avatars", StaticFiles(directory=str(avatars_dir), html=False), name="avatars")
 
 # 上传图片到指定路径
-@app.post("/api/v1/upload/image")
+@app.post("/api/v1/upload_image")
 async def upload_image(
     request:UploadImageRequest,
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
     上传图片到指定路径
-    保存路径: ./user_files/{user_id}/{project_name}/{figure_name}/photos.png
+    保存路径: ./user_files/{user_id}/{project_name}/photos/photos.png
     """
     try:
         # 获取当前用户ID
@@ -660,10 +660,10 @@ async def upload_image(
             )
         
         # 构建保存路径
-        save_dir = base_dir / "user_files" / user_id / request.figure_name
+        save_dir = base_dir / "user_files" / user_id / request.project_name / "photos"
         save_dir.mkdir(parents=True, exist_ok=True)
         
-        # 保存文件为photos.png
+        # 保存文件为photos/photos.png
         file_path = save_dir / "photos.png"
         with open(file_path, "wb") as f:
             f.write(file_content)

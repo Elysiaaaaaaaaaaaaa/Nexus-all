@@ -22,6 +22,7 @@
 | POST | `/api/v1/projects/list` | 获取用户项目列表 |
 | POST | `/api/v1/projects/history` | 获取指定项目的对话历史 |
 | POST | `/api/v1/projects/new` | 新建项目 |
+| POST | `/api/v1/upload_image` | 上传图片到指定路径 |
 
 ## 3. 详细API说明
 
@@ -313,6 +314,60 @@ now_state{
     "code": 400,
     "message": "无效的工作流类型: xxx，只允许: text2video, image2video"
   }
+}
+```
+
+### 3.7 上传图片接口
+
+#### 请求
+- **方法**: POST
+- **路径**: `/api/v1/upload_image`
+- **请求体**: `multipart/form-data` 格式
+
+##### 请求参数
+| 字段名 | 类型 | 必填 | 描述 |
+|--------|------|------|------|
+| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
+| figure_name | string | 是 | 图像名称，该字段处于测试阶段，暂时填写None即可 |
+| project_name | string | 是 | 项目名称，用于标识不同的项目会话 |
+| file | file | 是 | 图片文件，支持格式：image/jpeg, image/jpg, image/png, image/gif, image/webp |
+
+#### 响应
+```json
+{
+  "success": true,
+  "message": "图片上传成功",
+  "data": {
+    "filePath": "string",
+    "size": number
+  }
+}
+```
+
+| 字段名 | 类型 | 描述 |
+|--------|------|------|
+| success | boolean | 请求处理是否成功 |
+| message | string | 操作结果消息 |
+| data | object | 上传结果数据 |
+| data.filePath | string | 上传文件的相对路径 |
+| data.size | number | 上传文件的大小（字节） |
+
+#### 错误响应
+```json
+{
+  "error": "不支持的文件类型: application/pdf，仅支持: image/jpeg, image/jpg, image/png, image/gif, image/webp"
+}
+```
+
+```json
+{
+  "error": "文件大小超过限制（最大10MB），当前文件大小: 15.23MB"
+}
+```
+
+```json
+{
+  "error": "图片上传失败，请稍后重试"
 }
 ```
 
