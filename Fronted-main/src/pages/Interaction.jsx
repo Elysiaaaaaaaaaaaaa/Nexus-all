@@ -1,20 +1,17 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { 
   Brain, Check, Play, Plus, ArrowUp, 
   Share, Sidebar, Copy, Aperture, Lightning,
-  TerminalWindow, X, Paperclip, Microphone, FolderPlus
+  TerminalWindow, X, Paperclip, Microphone
 } from '@phosphor-icons/react';
-import { useNavigate } from 'react-router-dom';
 import logoCircle from '../assets/logo_circle.png';
 import './Interaction.css';
 import { useApp } from '../contexts/AppContext';
-import { workflowAPI, API_BASE_URL } from '../services/api';
+import { getUserAvatarUrl } from '../utils/avatar';
 
 const Interaction = () => {
   const location = useLocation();
-  const params = useParams();
-  const navigate = useNavigate();
   const scrollRef = useRef(null);
   const imageInputRef = useRef(null);
   const [showPreview, setShowPreview] = useState(true);
@@ -26,110 +23,28 @@ const Interaction = () => {
   const mediaRecorderRef = useRef(null);
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [modifyNums, setModifyNums] = useState([]);
-  const [endSession, setEndSession] = useState(false);
-  const { t, userId } = useApp();
+  const { t } = useApp();
   const [rightPanelTab, setRightPanelTab] = useState('execution');
-  // 跟踪每个视频的加载状态
-  const [videoStates, setVideoStates] = useState({});
-  
-  // 项目名称：从路由参数、location state或localStorage获取
-  const [projectName, setProjectName] = useState(() => {
-    return params.projectName || 
-           location.state?.projectName || 
-           localStorage.getItem('current-project-name') || 
-           '默认项目';
-  });
 
-  // 跟踪上一个项目名称，用于检测项目变化
-  const prevProjectNameRef = useRef(projectName);
-
+  const { userInfo } = useApp();
   const workflow = useMemo(() => location.state?.workflow || 'text_to_video_fast', [location.state]);
-  const workflowType = useMemo(() => location.state?.workflowType || 'text2video', [location.state]);
+  
+  // 生成用户头像 URL
+  const userAvatarUrl = useMemo(() => {
+    const username = userInfo?.username || 'User';
+    return getUserAvatarUrl(null, username);
+  }, [userInfo?.username]);
+
   const workflowLabel = useMemo(() => {
-    if (workflowType === 'image2video' || workflow === 'image_to_video') {
-      return '图片到视频';
-    }
     if (workflow === 'storyboard_precise') return t('dashboard.workflowStoryboardTitle');
     return t('dashboard.workflowFastTitle');
-  }, [workflow, workflowType, t]);
+  }, [workflow, t]);
 
-  // 保存项目名称到localStorage
   useEffect(() => {
-    if (projectName) {
-      localStorage.setItem('current-project-name', projectName);
+    if (sessionData?.now_state === 'modify_comfirm') {
+      setIsModifyDialogOpen(true);
     }
-  }, [projectName]);
-
-  // 检测项目名称变化，如果项目名称改变，清空会话数据
-  useEffect(() => {
-    const currentProjectName = params.projectName || 
-                               location.state?.projectName || 
-                               localStorage.getItem('current-project-name') || 
-                               '默认项目';
-    
-    // 如果项目名称发生变化，清空所有会话状态
-    if (prevProjectNameRef.current !== currentProjectName && prevProjectNameRef.current !== '默认项目') {
-      console.log(`项目名称变化：${prevProjectNameRef.current} -> ${currentProjectName}，清空会话数据`);
-      setMessages([]);
-      setSessionData(null);
-      setInputValue('');
-      setIsSending(false);
-      setIsModifyDialogOpen(false);
-      setModifyNums([]);
-      setVideoStates({});
-      setEndSession(false);
-    }
-    
-    setProjectName(currentProjectName);
-    prevProjectNameRef.current = currentProjectName;
-  }, [params.projectName, location.state?.projectName]);
-
-  // 页面加载时，如果是从Dashboard创建的新项目，清空旧的会话数据并确保使用新的项目名称
-  useEffect(() => {
-    // 检查是否是从Dashboard创建的新项目
-    if (location.state?.isNewProject || location.state?.clearPreviousProject) {
-      console.log('检测到新项目创建，清空旧的会话数据');
-      
-      // 如果传递了新的项目名称，使用新的项目名称
-      if (location.state?.projectName) {
-        console.log(`使用新项目名称: ${location.state.projectName}`);
-        setProjectName(location.state.projectName);
-        localStorage.setItem('current-project-name', location.state.projectName);
-        prevProjectNameRef.current = location.state.projectName;
-      } else {
-        // 如果没有传递项目名称，生成一个新的项目名称
-        const newProjectName = `新项目_${Date.now()}`;
-        console.log(`生成新项目名称: ${newProjectName}`);
-        setProjectName(newProjectName);
-        localStorage.setItem('current-project-name', newProjectName);
-        prevProjectNameRef.current = newProjectName;
-      }
-      
-      // 清空所有会话状态
-      setMessages([]);
-      setSessionData(null);
-      setInputValue('');
-      setIsSending(false);
-      setIsModifyDialogOpen(false);
-      setModifyNums([]);
-      setVideoStates({});
-      setEndSession(false);
-      
-      // 清除location state，避免刷新时重复清空
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
-
-  useEffect(() => {
-    // 处理后端的修改确认状态
-    //做出修改：仅在outline环节弹出弹窗
-    const isModifyState = sessionData?.now_state === 'modify_confirm' || sessionData?.now_state === 'modify_comfirm';
-    const isOutline = sessionData?.now_task === 'outline';
-    const isText2Video = workflowType === 'text2video';
-    const isModifyStage = !isText2Video || sessionData?.now_task === 'screen';
-    const shouldOpen = isOutline&&isModifyState && isModifyStage && !endSession && sessionData?.chat_with_assistant !== false;
-    setIsModifyDialogOpen(shouldOpen);
-  }, [sessionData?.now_state, sessionData?.now_task, sessionData?.chat_with_assistant, endSession, workflowType]);
+  }, [sessionData?.now_state]);
 
   useEffect(() => {
     // 如果有从Dashboard传递的初始消息，添加到消息列表
@@ -173,14 +88,7 @@ const Interaction = () => {
           return value;
         }
       }
-      // 移除无效的链接（example.com、ai-video-generator、yfdnza.com等）
-      let cleaned = value;
-      // 移除方括号中的无效链接，格式：[链接]（说明文字）或 [链接]
-      cleaned = cleaned.replace(/\[https?:\/\/[^\s]*(?:example\.com|ai-video-generator[^\s]*\.com|yfdnza\.com)[^\s]*\]\([^)]*\)/gi, '');
-      cleaned = cleaned.replace(/\[https?:\/\/[^\s]*(?:example\.com|ai-video-generator[^\s]*\.com|yfdnza\.com)[^\s]*\]/gi, '');
-      // 移除单独的无效链接
-      cleaned = cleaned.replace(/https?:\/\/[^\s]*(?:example\.com|ai-video-generator[^\s]*\.com|yfdnza\.com)[^\s]*/gi, '');
-      return cleaned;
+      return value;
     }
     try {
       return JSON.stringify(value, null, 2);
@@ -189,77 +97,25 @@ const Interaction = () => {
     }
   };
 
-  // 处理创建新项目
-  const handleCreateNewProject = () => {
-    if (window.confirm('确定要开启新项目吗？当前项目的进度将被保存，但会跳转到新项目创建页面。')) {
-      // 清除当前项目信息
-      const oldProjectName = projectName;
-      localStorage.removeItem('current-project-name');
-      // 清空当前会话状态
-      setMessages([]);
-      setSessionData(null);
-      setInputValue('');
-      setIsSending(false);
-      setIsModifyDialogOpen(false);
-      setModifyNums([]);
-      setVideoStates({});
-      // 重置项目名称引用
-      prevProjectNameRef.current = '';
-      // 生成新的项目名称（带时间戳，确保唯一）
-      const newProjectName = `新项目_${Date.now()}`;
-      // 跳转到 Dashboard 页面创建新项目，并传递新项目名称
-      navigate('/dashboard', { 
-        state: { 
-          clearPreviousProject: true,
-          previousProjectName: oldProjectName,
-          newProjectName: newProjectName,
-          forceNewProject: true  // 强制创建新项目标志
-        } 
-      });
-    }
-  };
-
-  // 清空当前会话，重新开始
-  const handleClearSession = () => {
-    if (window.confirm('确定要清空当前会话并重新开始吗？这将清除所有消息和进度。')) {
-      // 清空所有状态
-      setMessages([]);
-      setSessionData(null);
-      setInputValue('');
-      setIsSending(false);
-      setIsModifyDialogOpen(false);
-      setModifyNums([]);
-      setVideoStates({});
-      setEndSession(false);
-      // 清空项目名称，让用户重新开始
-      localStorage.removeItem('current-project-name');
-      setProjectName('默认项目');
-    }
-  };
-
   const sendToBackend = async (payload) => {
-    const { content, modify_num = [] } = payload;
-    
-    try {
-      const response = await workflowAPI.processWork(projectName, content, 'production', null, modify_num);
+    const body = {
+      ...payload,
+      workflow,
+      session_id: sessionData?.session_id
+    };
 
-      // 更新项目名称（如果后端返回了新的项目名称）
-      if (response.project_name && response.project_name !== projectName) {
-        setProjectName(response.project_name);
-      }
+    const res = await fetch('/api/interaction/message', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
 
-      // 更新session_id（如果返回了）
-      if (response.session_id && sessionData?.session_id !== response.session_id) {
-        setSessionData(prev => ({
-          ...prev,
-          session_id: response.session_id,
-        }));
-      }
-
-      return response;
-    } catch (error) {
-      throw error;
+    const json = await res.json().catch(() => null);
+    if (!res.ok) {
+      const msg = json?.message || `请求失败(${res.status})`;
+      throw new Error(msg);
     }
+    return json;
   };
 
   const handleSend = async () => {
@@ -276,174 +132,30 @@ const Interaction = () => {
     setInputValue('');
 
     setIsSending(true);
-    
-    // 添加超时提示
-    let timeoutHint = null;
-    timeoutHint = setTimeout(() => {
-      setMessages(prev => {
-        // 检查是否已经有超时提示
-        const hasTimeoutHint = prev.some(msg => 
-          msg.type === 'ai' && msg.content.includes('处理时间较长')
-        );
-        if (!hasTimeoutHint) {
-          return [...prev, {
-            id: Date.now() + 0.5,
-            type: 'ai',
-            content: '⏳ 后端正在处理中，这可能需要几分钟时间，请耐心等待...（如果超过10分钟仍无响应，请检查后端日志）',
-            timestamp: new Date()
-          }];
-        }
-        return prev;
-      });
-    }, 30000); // 30秒后显示提示
-    
     try {
       const resp = await sendToBackend({ content });
-      if (timeoutHint) clearTimeout(timeoutHint);
-      
-      // 调试日志
-      console.log('📥 收到后端响应:', resp);
-      console.log('📥 响应详情:', {
-        success: resp?.success,
-        message: resp?.message,
-        messageType: typeof resp?.message,
-        messageLength: resp?.message?.length,
-        hasReply: !!resp?.reply,
-        replyText: resp?.reply?.text,
-        sessionData: resp?.session_data,
-        nowTask: resp?.session_data?.now_task,
-        nowState: resp?.session_data?.now_state
-      });
-      
-      // 后端响应格式：{ success, message, session_data, ... }
-      const nextSessionData = resp?.session_data || null;
-      
-      // 检查是否有错误
-      if (resp?.success === false) {
-        const errorMsg = resp?.error?.message || resp?.error?.detail || '后端处理出错';
-        console.error('❌ 后端返回错误:', resp.error);
-        console.error('❌ 完整错误响应:', JSON.stringify(resp, null, 2));
-        
-        // 显示详细的错误信息
-        let errorContent = `❌ 后端处理出错：${errorMsg}`;
-        if (resp?.error?.code) {
-          errorContent += `\n错误代码: ${resp.error.code}`;
-        }
-        errorContent += '\n\n建议：\n1. 检查后端终端日志\n2. 确认AI服务配置正确\n3. 尝试重新发送请求';
-        
-        setMessages(prev => [
-          ...prev,
-          {
-            id: Date.now() + 2,
-            type: 'ai',
-            content: errorContent,
-            timestamp: new Date()
-          }
-        ]);
-        setIsSending(false);
-        return; // 提前返回，不继续处理
-      }
-      
-      // 提取AI回复文本，支持多种格式
-      let aiText = '';
-      if (resp?.message) {
-        aiText = normalizeAiContent(resp.message);
-        console.log('✅ 从 message 字段提取:', aiText);
-      } else if (resp?.reply?.text) {
-        aiText = normalizeAiContent(resp.reply.text);
-        console.log('✅ 从 reply.text 字段提取:', aiText);
-      } else if (resp?.response) {
-        aiText = normalizeAiContent(resp.response);
-        console.log('✅ 从 response 字段提取:', aiText);
-      } else {
-        console.warn('⚠️ 后端响应中没有找到消息字段:', resp);
-      }
-      
-      // 如果还是没有内容，根据当前任务状态生成友好提示
-      if (!aiText || aiText.trim() === '') {
-        const currentTask = nextSessionData?.now_task || sessionData?.now_task;
-        if (currentTask === 'outline') {
-          aiText = '正在生成大纲，请稍候...';
-        } else if (currentTask === 'screen') {
-          aiText = '正在生成剧本，请稍候...';
-        } else if (currentTask === 'video' || currentTask === 'animator') {
-          aiText = '正在生成视频，这可能需要几分钟时间，请耐心等待...';
-        } else if (nextSessionData?.now_state === 'modify_confirm') {
-          aiText = '请确认是否需要修改当前内容？';
-        } else {
-          aiText = '处理中，请稍候...';
-        }
-      }
+      const data = resp?.data ?? resp;
+      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
+      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
 
-      if (nextSessionData) {
-        // 清理video_address数组中的None值
-        if (nextSessionData.material?.video_address && Array.isArray(nextSessionData.material.video_address)) {
-          nextSessionData.material.video_address = nextSessionData.material.video_address.filter(
-            v => v !== null && v !== 'None' && v !== undefined && v !== ''
-          );
-        }
-        
-        console.log('📊 更新 session_data:', nextSessionData);
-        console.log('📊 当前任务状态:', {
-          now_task: nextSessionData?.now_task,
-          now_state: nextSessionData?.now_state,
-          video_generating: nextSessionData?.video_generating,
-          video_count: nextSessionData?.material?.video_address?.length || 0,
-          screen_count: nextSessionData?.material?.screen?.length || 0,
-          outline_count: nextSessionData?.material?.outline?.length || 0,
-        });
-        setSessionData(prev => ({
-          ...prev,
-          ...nextSessionData,
-          session_id: resp?.session_id || prev?.session_id,
-        }));
-      }
-      setEndSession(Boolean(resp?.end_session));
+      if (nextSessionData) setSessionData(nextSessionData);
 
-      console.log('💬 准备添加消息，内容:', aiText);
-      
-      // 检查是否有新生成的视频需要显示
-      let newVideos = [];
-      if (nextSessionData?.material?.video_address) {
-        const currentVideos = (sessionData?.material?.video_address || []).filter(v => v && v !== null && v !== 'None');
-        const nextVideos = (nextSessionData.material.video_address || []).filter(v => v && v !== null && v !== 'None');
-        // 找出新增的视频（过滤掉None/null值）
-        newVideos = nextVideos.slice(currentVideos.length).filter(v => v && v !== null && v !== 'None');
-        console.log('📹 视频检测:', {
-          currentVideosCount: currentVideos.length,
-          nextVideosCount: nextVideos.length,
-          newVideosCount: newVideos.length,
-          newVideos: newVideos
-        });
-      }
-      
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 1,
           type: 'ai',
-          content: aiText,
-          videos: newVideos.length > 0 ? newVideos : undefined, // 添加视频数组
+          content: aiText || '（后端未返回可展示内容）',
           timestamp: new Date()
         }
       ]);
-      console.log('✅ 消息已添加到列表', newVideos.length > 0 ? `，包含 ${newVideos.length} 个新视频` : '');
     } catch (e) {
-      if (timeoutHint) clearTimeout(timeoutHint);
-      const errorMessage = e?.message || e?.data?.error?.message || '未知错误';
-      
-      // 如果是超时错误，提供更详细的提示
-      let errorContent = `请求失败：${errorMessage}`;
-      if (errorMessage.includes('超时') || errorMessage.includes('timeout')) {
-        errorContent = `⏱️ ${errorMessage}\n\n建议：\n1. 检查后端服务是否正常运行\n2. 查看后端终端日志\n3. 如果后端正在处理，可以稍后刷新页面查看结果`;
-      }
-      
       setMessages(prev => [
         ...prev,
         {
           id: Date.now() + 2,
           type: 'ai',
-          content: errorContent,
+          content: `请求失败：${e?.message || '未知错误'}`,
           timestamp: new Date()
         }
       ]);
@@ -463,31 +175,19 @@ const Interaction = () => {
     setIsSending(true);
     try {
       const resp = await sendToBackend({ content: '确认' });
-      let aiText = normalizeAiContent(resp?.message || resp?.reply?.text || resp?.response || '');
-      if (!aiText || aiText.trim() === '') {
-        aiText = '已确认，正在处理...';
-      }
-      const nextSessionData = resp?.session_data || null;
-      
-      if (nextSessionData) {
-        setSessionData(prev => ({
-          ...prev,
-          ...nextSessionData,
-          session_id: resp?.session_id || prev?.session_id,
-        }));
-      }
-      setEndSession(Boolean(resp?.end_session));
-      setEndSession(Boolean(resp?.end_session));
+      const data = resp?.data ?? resp;
+      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
+      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
+      if (nextSessionData) setSessionData(nextSessionData);
 
       setMessages(prev => [
         ...prev,
         { id: Date.now() + 1, type: 'ai', content: aiText || '已确认。', timestamp: new Date() }
       ]);
     } catch (e) {
-      const errorMessage = e?.message || e?.data?.error?.message || '未知错误';
       setMessages(prev => [
         ...prev,
-        { id: Date.now() + 2, type: 'ai', content: `确认失败：${errorMessage}`, timestamp: new Date() }
+        { id: Date.now() + 2, type: 'ai', content: `确认失败：${e?.message || '未知错误'}`, timestamp: new Date() }
       ]);
     } finally {
       setIsSending(false);
@@ -499,46 +199,25 @@ const Interaction = () => {
     setIsModifyDialogOpen(false);
 
     if (!needModify) {
-      // 直接告知后端“不需要”
+      // 用户点击「不需要修改」：直接给后端 API 返回 content: '不需要'
       setMessages(prev => [...prev, { id: Date.now(), type: 'user', content: '不需要', timestamp: new Date() }]);
       setIsSending(true);
       try {
         const resp = await sendToBackend({ content: '不需要', modify_num: [] });
-        let aiText = normalizeAiContent(resp?.message || resp?.reply?.text || resp?.response || '');
-        if (!aiText || aiText.trim() === '') {
-          aiText = '已提交：不需要修改，继续下一步处理...';
-        }
-        const nextSessionData = resp?.session_data || null;
-        
-        if (nextSessionData) {
-          setSessionData(prev => ({
-            ...prev,
-            ...nextSessionData,
-            session_id: resp?.session_id || prev?.session_id,
-          }));
-        }
-        setEndSession(Boolean(resp?.end_session));
-        
-        setMessages(prev => [...prev, { 
-          id: Date.now() + 1, 
-          type: 'ai', 
-          content: aiText || '已提交：不需要修改。', 
-          timestamp: new Date() 
-        }]);
+        const data = resp?.data ?? resp;
+        const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
+        const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
+        if (nextSessionData) setSessionData(nextSessionData);
+        setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交：不需要修改。', timestamp: new Date() }]);
       } catch (e) {
-        const errorMessage = e?.message || e?.data?.error?.message || '未知错误';
-        setMessages(prev => [...prev, { 
-          id: Date.now() + 2, 
-          type: 'ai', 
-          content: `提交失败：${errorMessage}`, 
-          timestamp: new Date() 
-        }]);
+        setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
       } finally {
         setIsSending(false);
       }
       return;
     }
 
+    // 用户点击「需要修改」：给后端 API 返回 content: '需要修改' 及 modify_num
     const nums = Array.from(new Set(modifyNums))
       .map(n => Number(n))
       .filter(n => Number.isFinite(n) && n > 0)
@@ -552,34 +231,13 @@ const Interaction = () => {
     setIsSending(true);
     try {
       const resp = await sendToBackend({ content: '需要修改', modify_num: nums });
-      let aiText = normalizeAiContent(resp?.message || resp?.reply?.text || resp?.response || '');
-      if (!aiText || aiText.trim() === '') {
-        aiText = '已提交修改请求，正在处理...';
-      }
-      const nextSessionData = resp?.session_data || null;
-      
-      if (nextSessionData) {
-        setSessionData(prev => ({
-          ...prev,
-          ...nextSessionData,
-          session_id: resp?.session_id || prev?.session_id,
-        }));
-      }
-      
-      setMessages(prev => [...prev, { 
-        id: Date.now() + 1, 
-        type: 'ai', 
-        content: aiText || '已提交修改请求。', 
-        timestamp: new Date() 
-      }]);
+      const data = resp?.data ?? resp;
+      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
+      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
+      if (nextSessionData) setSessionData(nextSessionData);
+      setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交修改请求。', timestamp: new Date() }]);
     } catch (e) {
-      const errorMessage = e?.message || e?.data?.error?.message || '未知错误';
-      setMessages(prev => [...prev, { 
-        id: Date.now() + 2, 
-        type: 'ai', 
-        content: `提交失败：${errorMessage}`, 
-        timestamp: new Date() 
-      }]);
+      setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
     } finally {
       setIsSending(false);
     }
@@ -616,7 +274,6 @@ const Interaction = () => {
         mediaRecorder.start();
         setIsRecording(true);
       } catch (error) {
-        console.error('无法访问麦克风:', error);
         alert('无法访问麦克风，请检查权限设置');
       }
     }
@@ -661,8 +318,7 @@ const Interaction = () => {
 
     navigator.clipboard.writeText(exportText).then(() => {
       alert(sessionId ? `已复制对话ID：${sessionId}` : '已复制链接（暂无对话ID）');
-    }).catch((error) => {
-      console.error('复制失败:', error);
+    }).catch(() => {
       prompt('请复制以下内容:', exportText);
     });
   };
@@ -712,40 +368,14 @@ const Interaction = () => {
             <h1 className="header-title">交互编排 · {workflowLabel}</h1>
             <span className="status-badge">
               {isSending ? (
-                <img key="loading-img" src={logoCircle} alt="loading" className="spin-logo" />
+                <img src={logoCircle} alt="loading" className="spin-logo" />
               ) : (
-                <span key="status-dot" className="status-dot"></span>
+                <span className="status-dot"></span>
               )}
               {t('interaction.statusRunning')}
             </span>
           </div>
           <div className="header-actions">
-            <button 
-              className="header-button" 
-              title="开启新项目：跳转到项目创建页面"
-              onClick={handleCreateNewProject}
-              style={{ 
-                color: 'rgb(37, 99, 235)',
-                fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)'
-              }}
-            >
-              <FolderPlus size={18} weight="bold" />
-              <span style={{ fontSize: '14px' }}>新项目</span>
-            </button>
-            <button 
-              className="header-button" 
-              title="清空会话：重新开始生成视频"
-              onClick={handleClearSession}
-              style={{ color: 'rgb(239, 68, 68)' }}
-            >
-              <X size={18} weight="bold" />
-            </button>
             <button 
               className="header-button" 
               title="分享：导出当前对话ID(session_id)"
@@ -766,11 +396,25 @@ const Interaction = () => {
         {/* 聊天内容流 */}
         <div ref={scrollRef} className="chat-content">
           {messages.length === 0 ? (
-            <React.Fragment key="default-messages">
+            <>
               {/* 默认示例消息 */}
               <div className="message-user">
                 <div className="message-avatar message-avatar-user">
-                  <span className="message-avatar-text">张</span>
+                  <img 
+                    src={userAvatarUrl} 
+                    alt={userInfo?.username || 'User'}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      const parent = e.target.parentElement;
+                      if (parent && !parent.querySelector('.message-avatar-text')) {
+                        const fallback = document.createElement('span');
+                        fallback.className = 'message-avatar-text';
+                        fallback.textContent = (userInfo?.username || 'User').charAt(0).toUpperCase();
+                        parent.appendChild(fallback);
+                      }
+                    }}
+                  />
                 </div>
                 <div className="message-bubble">
                   生成一个高端的电影级雨天街道预览。
@@ -825,287 +469,59 @@ const Interaction = () => {
                   </div>
                 </div>
               </div>
-            </React.Fragment>
+            </>
           ) : (
-            messages.map((msg) => {
-              if (msg.type === 'user') {
-                return (
-                  <div key={msg.id} className="message-user">
-                    <div className="message-avatar message-avatar-user">
-                      <span className="message-avatar-text">张</span>
-                    </div>
-                    <div className="message-bubble">
-                      {msg.content}
-                      {Array.isArray(msg.attachments) && msg.attachments.length > 0 && (
-                        <div className="message-attachments">
-                          {msg.attachments
-                            .filter(a => a.type === 'image')
-                            .map((a, idx) => (
-                              <img
-                                key={`${msg.id}-attachment-${idx}`}
-                                className="message-attachment-image"
-                                src={a.url}
-                                alt={a.name || `image-${idx}`}
-                              />
-                            ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={msg.id} className="message-ai">
-                    <div className="message-avatar message-avatar-ai">
-                      <img src={logoCircle} alt="AI" className="ai-avatar-image" />
-                    </div>
-                    <div className="message-bubble">
-                      {/* 从消息内容中提取视频路径并显示 */}
-                      {(() => {
-                        // 提取消息内容中的视频路径（支持多种格式：./user_files/.../X.mp4, /videos/.../X.mp4, 📹 视频地址: /videos/.../X.mp4）
-                        const videoPathRegex = /(?:📹\s*视频地址:\s*)?((?:\/videos\/|\.\/user_files\/|user_files\/)[^\s]*\.mp4)/gi;
-                        const contentVideos = [];
-                        let match;
-                        const contentText = msg.content || '';
-
-                        // 从文本中提取视频路径 - 使用捕获组1提取纯粹的URL部分
-                        while ((match = videoPathRegex.exec(contentText)) !== null) {
-                          let videoPath = match[1]; // 提取捕获组中的URL部分
-
-                          // 转换为前端期望的格式
-                          let processedPath = videoPath;
-                          if (processedPath.startsWith('./user_files/')) {
-                            processedPath = processedPath.replace('./user_files', '/videos');
-                          } else if (processedPath.startsWith('user_files/')) {
-                            processedPath = '/' + processedPath.replace('user_files', 'videos');
-                          }
-                          // 清理双斜杠
-                          processedPath = processedPath.replace(/\/+/g, '/');
-
-                          // 避免重复添加
-                          if (!contentVideos.includes(processedPath) &&
-                              !(msg.videos && msg.videos.includes(processedPath))) {
-                            contentVideos.push(processedPath);
-                          }
+            messages.map((msg) => (
+              msg.type === 'user' ? (
+                <div key={msg.id} className="message-user">
+                  <div className="message-avatar message-avatar-user">
+                    <img 
+                      src={userAvatarUrl} 
+                      alt={userInfo?.username || 'User'}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        const parent = e.target.parentElement;
+                        if (parent && !parent.querySelector('.message-avatar-text')) {
+                          const fallback = document.createElement('span');
+                          fallback.className = 'message-avatar-text';
+                          fallback.textContent = (userInfo?.username || 'User').charAt(0).toUpperCase();
+                          parent.appendChild(fallback);
                         }
-                        
-                        // 合并 msg.videos 和从内容中提取的视频，过滤掉None/null值
-                        const allVideos = [
-                          ...(msg.videos && Array.isArray(msg.videos) ? msg.videos.filter(v => v && v !== null && v !== 'None') : []),
-                          ...contentVideos.filter(v => v && v !== null && v !== 'None')
-                        ].filter((v, idx, arr) => arr.indexOf(v) === idx); // 去重
-                        
-                        // 如果找到了视频，从内容中移除视频路径文本，避免重复显示
-                        let displayContent = contentText;
-                        if (allVideos.length > 0) {
-                          allVideos.forEach(videoPath => {
-                            // 移除视频路径文本，保留其他内容
-                            displayContent = displayContent.replace(new RegExp(videoPath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), '');
-                          });
-                          // 清理多余的空行
-                          displayContent = displayContent.replace(/\n{3,}/g, '\n\n').trim();
-                        }
-                        
-                        return (
-                          <>
-                            {displayContent && <div>{normalizeAiContent(displayContent)}</div>}
-                            {/* 显示视频 */}
-                            {allVideos.length > 0 && (
-                        <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          {allVideos
-                            .filter(videoUrl => videoUrl && videoUrl !== null && videoUrl !== 'None') // 再次过滤确保没有None值
-                            .map((videoUrl, idx) => {
-                            // 使用统一的后端URL配置
-                            const backendUrl = API_BASE_URL || window.location.origin;
-                            
-                            // 路径转换后备逻辑：如果检测到本地路径，转换为URL
-                            let processedVideoUrl = videoUrl;
-                            if (typeof videoUrl === 'string') {
-                              // 如果是本地路径（以./user_files/或user_files/开头），转换为/videos/URL
-                              if (videoUrl.startsWith('./user_files/')) {
-                                processedVideoUrl = videoUrl.replace('./user_files', '/videos');
-                                console.log(`[聊天视频 ${idx + 1}] 转换本地路径: ${videoUrl} -> ${processedVideoUrl}`);
-                              } else if (videoUrl.startsWith('user_files/')) {
-                                processedVideoUrl = '/' + videoUrl.replace('user_files', 'videos');
-                                console.log(`[聊天视频 ${idx + 1}] 转换本地路径: ${videoUrl} -> ${processedVideoUrl}`);
-                              }
-                              
-                              // 清理双斜杠（包括路径中的双斜杠）
-                              processedVideoUrl = processedVideoUrl.replace(/\/+/g, '/');
-                            }
-                            
-                            // 检查是否是视频URL
-                            const isVideoUrl = typeof processedVideoUrl === 'string' && 
-                              (processedVideoUrl.startsWith('/videos/') || processedVideoUrl.startsWith('http') || processedVideoUrl.endsWith('.mp4'));
-                            // 如果是相对路径，转换为完整URL
-                            let fullVideoUrl = isVideoUrl && processedVideoUrl.startsWith('/') 
-                              ? `${backendUrl}${processedVideoUrl}` 
-                              : processedVideoUrl;
-                            
-                            // 验证URL有效性，避免无效链接
-                            if (fullVideoUrl && (fullVideoUrl.includes('example.com') || fullVideoUrl === 'undefined' || !fullVideoUrl.trim())) {
-                              console.warn(`[聊天视频 ${idx + 1}] 无效的URL: ${fullVideoUrl}`);
-                              fullVideoUrl = null;
-                            }
-                            
-                            const chatVideoKey = `chat_video_${msg.id}_${idx}_${videoUrl}`;
-                            const chatVideoState = videoStates[chatVideoKey] || { loading: true, error: null };
-                            
-                            return isVideoUrl ? (
-                              <div key={idx} style={{ marginTop: '8px' }}>
-                                {chatVideoState.loading && !chatVideoState.error && (
-                                  <div style={{ 
-                                    padding: '20px', 
-                                    textAlign: 'center', 
-                                    backgroundColor: '#f1f5f9', 
-                                    borderRadius: '8px',
-                                    fontSize: '12px',
-                                    color: 'rgb(100, 116, 139)',
-                                    marginBottom: '8px'
-                                  }}>
-                                    正在加载视频...
-                                  </div>
-                                )}
-                                {chatVideoState.error && (
-                                  <div style={{ 
-                                    padding: '20px', 
-                                    textAlign: 'center', 
-                                    backgroundColor: '#fee2e2', 
-                                    borderRadius: '8px',
-                                    fontSize: '12px',
-                                    color: '#dc2626',
-                                    marginBottom: '8px'
-                                  }}>
-                                    <div style={{ marginBottom: '8px', fontWeight: 600 }}>
-                                      视频加载失败: {chatVideoState.error}
-                                    </div>
-                                    <div style={{ fontSize: '10px', color: '#991b1b', marginBottom: '8px', wordBreak: 'break-all' }}>
-                                      URL: {fullVideoUrl}
-                                    </div>
-                                    <div style={{ fontSize: '10px', color: '#991b1b', marginBottom: '12px', wordBreak: 'break-all' }}>
-                                      原始路径: {videoUrl}
-                                    </div>
-                                  </div>
-                                )}
-                                <video 
-                                  controls 
-                                  style={{ 
-                                    width: '100%', 
-                                    maxWidth: '400px', 
-                                    borderRadius: '8px',
-                                    backgroundColor: '#000',
-                                    display: chatVideoState.error ? 'none' : 'block'
-                                  }}
-                                  src={fullVideoUrl}
-                                  onError={(e) => {
-                                    const errorMsg = e.target?.error?.message || '未知错误';
-                                    const errorCode = e.target?.error?.code;
-                                            console.error(`[聊天视频 ${idx + 1}] 加载失败:`, {
-                                      videoUrl: fullVideoUrl,
-                                      originalPath: videoUrl,
-                                      error: errorMsg,
-                                      errorCode,
-                                      networkState: e.target?.networkState,
-                                      readyState: e.target?.readyState,
-                                      backendUrl: API_BASE_URL || window.location.origin
-                                    });
-                                    
-                                    // 提供更详细的错误信息
-                                    let detailedError = '无法加载视频文件';
-                                    if (errorCode === 4) {
-                                      detailedError = '视频格式不支持或文件损坏';
-                                    } else if (errorCode === 3) {
-                                      detailedError = '视频解码失败';
-                                    } else if (errorCode === 2) {
-                                      detailedError = '网络错误，无法获取视频';
-                                    } else if (errorCode === 1) {
-                                      detailedError = '视频加载中断';
-                                    }
-                                    
-                                    setVideoStates(prev => ({
-                                      ...prev,
-                                      [chatVideoKey]: { loading: false, error: detailedError }
-                                    }));
-                                  }}
-                                  onLoadedData={() => {
-                                    console.log(`[聊天视频 ${idx + 1}] 加载成功:`, fullVideoUrl);
-                                    setVideoStates(prev => ({
-                                      ...prev,
-                                      [chatVideoKey]: { loading: false, error: null }
-                                    }));
-                                  }}
-                                  onLoadStart={() => {
-                                    setVideoStates(prev => ({
-                                      ...prev,
-                                      [chatVideoKey]: { loading: true, error: null }
-                                    }));
-                                  }}
-                                >
-                                  您的浏览器不支持视频播放。
-                                </video>
-                                {fullVideoUrl && fullVideoUrl !== 'undefined' && !fullVideoUrl.includes('example.com') && fullVideoUrl.trim() && (
-                                  <a 
-                                    href={fullVideoUrl} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    style={{ 
-                                      display: 'block', 
-                                      marginTop: '4px', 
-                                      fontSize: '12px', 
-                                      color: '#3b82f6',
-                                      textDecoration: 'none'
-                                    }}
-                                  >
-                                    在新窗口打开视频
-                                  </a>
-                                )}
-                              </div>
-                            ) : null;
-                          })}
-                        </div>
-                            )}
-                          </>
-                        );
-                      })()}
-                    </div>
+                      }}
+                    />
                   </div>
-                );
-              }
-            })
+                  <div className="message-bubble">
+                    {msg.content}
+                    {Array.isArray(msg.attachments) && msg.attachments.length > 0 && (
+                      <div className="message-attachments">
+                        {msg.attachments
+                          .filter(a => a.type === 'image')
+                          .map((a, idx) => (
+                            <img
+                              key={idx}
+                              className="message-attachment-image"
+                              src={a.url}
+                              alt={a.name || `image-${idx}`}
+                            />
+                          ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div key={msg.id} className="message-ai">
+                  <div className="message-avatar message-avatar-ai">
+                    <img src={logoCircle} alt="AI" className="ai-avatar-image" />
+                  </div>
+                  <div className="message-bubble">
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            ))
           )}
         </div>
-
-        {/* 创建新项目提示（当项目完成时显示） */}
-        {sessionData?.chat_with_assistant === false && (
-          <div style={{
-            padding: '16px',
-            margin: '16px 0',
-            backgroundColor: '#f0f9ff',
-            border: '1px solid #0ea5e9',
-            borderRadius: '8px',
-            textAlign: 'center'
-          }}>
-            <p style={{ margin: '0 0 12px 0', color: '#0369a1', fontSize: '14px' }}>
-              🎉 当前项目已完成！想要生成新项目吗？
-            </p>
-            <button
-              onClick={handleCreateNewProject}
-              style={{
-                padding: '8px 16px',
-                backgroundColor: '#0ea5e9',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: 500
-              }}
-            >
-              <Plus size={16} weight="bold" style={{ marginRight: '6px', verticalAlign: 'middle' }} />
-              创建新项目
-            </button>
-          </div>
-        )}
 
         {/* 底部输入框 */}
         <div className="input-section">
@@ -1125,15 +541,6 @@ const Interaction = () => {
               aria-label={t('interaction.uploadImage')}
             >
               <Paperclip size={20} />
-            </button>
-            <button
-              className="input-add-button-simple"
-              onClick={handleCreateNewProject}
-              title="创建新项目"
-              aria-label="创建新项目"
-              style={{ marginLeft: '8px' }}
-            >
-              <Plus size={20} />
             </button>
             <input 
               type="text"
@@ -1258,33 +665,16 @@ const Interaction = () => {
                 {sessionData?.now_task ? (
                   <>
                     <div className="preview-metric">
-                      <span>当前任务</span>
-                      <span style={{ 
-                        color: sessionData.now_task === 'imagination' ? '#3b82f6' :
-                               sessionData.now_task === 'outline' ? '#8b5cf6' :
-                               sessionData.now_task === 'screen' ? '#ec4899' :
-                               sessionData.now_task === 'video' ? '#10b981' : '#6b7280'
-                      }}>
-                        {sessionData.now_task === 'imagination' ? '💭 创意构思' :
-                         sessionData.now_task === 'outline' ? '📝 大纲编写' :
-                         sessionData.now_task === 'screen' ? '🎬 剧本编写' :
-                         sessionData.now_task === 'video' ? '🎥 视频生成' :
-                         sessionData.now_task}
-                      </span>
+                      <span>任务</span>
+                      <span>{sessionData.now_task?.name || sessionData.now_task?.title || sessionData.now_task?.task_type || '进行中'}</span>
                     </div>
                     <div className="preview-metric">
-                      <span>状态</span>
-                      <span>{sessionData.now_task?.step || sessionData.now_task?.stage || sessionData.now_task?.status || sessionData?.now_state || '处理中...'}</span>
+                      <span>阶段</span>
+                      <span>{sessionData.now_task?.step || sessionData.now_task?.stage || sessionData.now_task?.status || sessionData?.now_state || '-'}</span>
                     </div>
                     <div className="preview-metric">
-                      <span>预计时间</span>
-                      <span>
-                        {sessionData.now_task === 'imagination' ? '1-2分钟' :
-                         sessionData.now_task === 'outline' ? '2-3分钟' :
-                         sessionData.now_task === 'screen' ? '3-5分钟' :
-                         sessionData.now_task === 'video' ? '5-10分钟（取决于视频长度）' :
-                         '处理中...'}
-                      </span>
+                      <span>进度</span>
+                      <span>{typeof sessionData.now_task?.progress === 'number' ? `${sessionData.now_task.progress}%` : (sessionData.now_task?.progress || '-')}</span>
                     </div>
                   </>
                 ) : (
@@ -1299,254 +689,15 @@ const Interaction = () => {
                 <div className="preview-simulation-header">
                   <Lightning weight="fill" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} size={16} /> {t('interaction.materialsTitle')}
                 </div>
-                {sessionData?.material ? (
-                  (() => {
-                    const material = sessionData.material;
-                    const hasContent = 
-                      (Array.isArray(material.idea) && material.idea.length > 0) ||
-                      (Array.isArray(material.outline) && material.outline.length > 0) ||
-                      (Array.isArray(material.screen) && material.screen.length > 0) ||
-                      (Array.isArray(material.video_address) && material.video_address.length > 0);
-                    
-                    if (hasContent) {
-                      return (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                          {material.idea && Array.isArray(material.idea) && material.idea.length > 0 && (
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px', color: 'rgb(100, 116, 139)' }}>创意</div>
-                              {material.idea.map((item, idx) => (
-                                <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
-                                  <span style={{ minWidth: 24 }}>{idx + 1}</span>
-                                  <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(item)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {material.outline && Array.isArray(material.outline) && material.outline.length > 0 && (
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px', color: 'rgb(100, 116, 139)' }}>大纲</div>
-                              {material.outline.map((item, idx) => (
-                                <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
-                                  <span style={{ minWidth: 24 }}>{idx + 1}</span>
-                                  <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(item)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {material.screen && Array.isArray(material.screen) && material.screen.length > 0 && (
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px', color: 'rgb(100, 116, 139)' }}>剧本</div>
-                              {material.screen.map((item, idx) => (
-                                <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
-                                  <span style={{ minWidth: 24 }}>{idx + 1}</span>
-                                  <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(item)}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {material.video_address && Array.isArray(material.video_address) && material.video_address.length > 0 && (
-                            <div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, marginBottom: '4px', color: 'rgb(100, 116, 139)' }}>
-                                视频 {material.video_address.filter(v => v && v !== null && v !== 'None').length} 个
-                                {sessionData?.material?.screen && Array.isArray(sessionData.material.screen) && (
-                                  <span style={{ fontSize: '10px', color: 'rgb(148, 163, 184)', marginLeft: '8px' }}>
-                                    (共 {sessionData.material.screen.length} 个剧本)
-                                  </span>
-                                )}
-                              </div>
-                              {material.video_address
-                                .filter(item => item && item !== null && item !== 'None') // 过滤掉None/null值
-                                .map((item, idx) => {
-                                // 使用统一的后端URL配置
-                                const backendUrl = API_BASE_URL || window.location.origin;
-                                
-                                // 路径转换后备逻辑：如果检测到本地路径，转换为URL
-                                let processedItem = item;
-                                if (typeof item === 'string') {
-                                  // 如果是本地路径（以./user_files/或user_files/开头），转换为/videos/URL
-                                  if (item.startsWith('./user_files/')) {
-                                    processedItem = item.replace('./user_files', '/videos');
-                                    console.log(`[视频 ${idx + 1}] 转换本地路径: ${item} -> ${processedItem}`);
-                                  } else if (item.startsWith('user_files/')) {
-                                    processedItem = '/' + item.replace('user_files', 'videos');
-                                    console.log(`[视频 ${idx + 1}] 转换本地路径: ${item} -> ${processedItem}`);
-                                  }
-                                  
-                                  // 清理双斜杠
-                                  while (processedItem.includes('//')) {
-                                    processedItem = processedItem.replace('//', '/');
-                                  }
-                                }
-                                
-                                // 检查是否是视频URL（以/videos/或http开头）
-                                const isVideoUrl = typeof processedItem === 'string' && 
-                                  (processedItem.startsWith('/videos/') || processedItem.startsWith('http') || processedItem.endsWith('.mp4'));
-                                
-                                // 如果是相对路径，转换为完整URL
-                                let videoUrl = processedItem;
-                                if (isVideoUrl && processedItem.startsWith('/')) {
-                                  videoUrl = `${backendUrl}${processedItem}`;
-                                }
-                                
-                                // 验证URL有效性
-                                if (videoUrl && (videoUrl.includes('example.com') || videoUrl === 'undefined' || !videoUrl.trim())) {
-                                  console.warn(`[视频 ${idx + 1}] 无效的URL: ${videoUrl}`);
-                                  videoUrl = null;
-                                }
-                                
-                                // 调试日志
-                                console.log(`[视频 ${idx + 1}] 原始路径: ${item}, 处理后路径: ${processedItem}, 完整URL: ${videoUrl}, 是视频URL: ${isVideoUrl}`);
-                                
-                                // 获取当前视频的加载状态
-                                const videoKey = `video_${idx}_${item}`;
-                                const videoState = videoStates[videoKey] || { loading: true, error: null };
-                                
-                                return (
-                                  <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start', flexDirection: 'column', gap: '8px' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgb(100, 116, 139)' }}>视频 {idx + 1}</span>
-                                    {isVideoUrl ? (
-                                      <div style={{ width: '100%', maxWidth: '400px' }}>
-                                        {videoState.loading && !videoState.error && (
-                                          <div style={{ 
-                                            padding: '20px', 
-                                            textAlign: 'center', 
-                                            backgroundColor: '#f1f5f9', 
-                                            borderRadius: '8px',
-                                            fontSize: '12px',
-                                            color: 'rgb(100, 116, 139)'
-                                          }}>
-                                            正在加载视频...
-                                          </div>
-                                        )}
-                                        {videoState.error && (
-                                          <div style={{ 
-                                            padding: '20px', 
-                                            textAlign: 'center', 
-                                            backgroundColor: '#fee2e2', 
-                                            borderRadius: '8px',
-                                            fontSize: '12px',
-                                            color: '#dc2626'
-                                          }}>
-                                            <div style={{ marginBottom: '8px', fontWeight: 600 }}>
-                                              视频加载失败: {videoState.error}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: '#991b1b', marginBottom: '8px', wordBreak: 'break-all' }}>
-                                              URL: {videoUrl}
-                                            </div>
-                                            <div style={{ fontSize: '10px', color: '#991b1b', marginBottom: '12px', wordBreak: 'break-all' }}>
-                                              原始路径: {item}
-                                            </div>
-                                            {videoUrl && videoUrl !== 'undefined' && !videoUrl.includes('example.com') && videoUrl.trim() && (
-                                              <a 
-                                                href={videoUrl} 
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
-                                                style={{ 
-                                                  marginTop: '8px',
-                                                  display: 'inline-block',
-                                                  fontSize: '12px', 
-                                                  color: '#3b82f6',
-                                                  textDecoration: 'none',
-                                                  padding: '4px 8px',
-                                                  border: '1px solid #3b82f6',
-                                                  borderRadius: '4px'
-                                                }}
-                                              >
-                                                尝试在新窗口打开
-                                              </a>
-                                            )}
-                                          </div>
-                                        )}
-                                        <video 
-                                          controls 
-                                          style={{ 
-                                            width: '100%', 
-                                            maxWidth: '400px', 
-                                            borderRadius: '8px',
-                                            backgroundColor: '#000',
-                                            display: videoState.error ? 'none' : 'block'
-                                          }}
-                                          src={videoUrl}
-                                          onError={(e) => {
-                                            const errorMsg = e.target?.error?.message || '未知错误';
-                                            const errorCode = e.target?.error?.code;
-                                            console.error(`[视频 ${idx + 1}] 加载失败:`, {
-                                              videoUrl,
-                                              originalPath: item,
-                                              error: errorMsg,
-                                              errorCode,
-                                              networkState: e.target?.networkState,
-                                              readyState: e.target?.readyState,
-                                              backendUrl: API_BASE_URL || window.location.origin
-                                            });
-                                            
-                                            // 提供更详细的错误信息
-                                            let detailedError = '无法加载视频文件';
-                                            if (errorCode === 4) {
-                                              detailedError = '视频格式不支持或文件损坏';
-                                            } else if (errorCode === 3) {
-                                              detailedError = '视频解码失败';
-                                            } else if (errorCode === 2) {
-                                              detailedError = '网络错误，无法获取视频';
-                                            } else if (errorCode === 1) {
-                                              detailedError = '视频加载中断';
-                                            }
-                                            
-                                            setVideoStates(prev => ({
-                                              ...prev,
-                                              [videoKey]: { loading: false, error: detailedError }
-                                            }));
-                                          }}
-                                          onLoadedData={() => {
-                                            console.log(`[视频 ${idx + 1}] 加载成功:`, videoUrl);
-                                            setVideoStates(prev => ({
-                                              ...prev,
-                                              [videoKey]: { loading: false, error: null }
-                                            }));
-                                          }}
-                                          onLoadStart={() => {
-                                            setVideoStates(prev => ({
-                                              ...prev,
-                                              [videoKey]: { loading: true, error: null }
-                                            }));
-                                          }}
-                                        >
-                                          您的浏览器不支持视频播放。
-                                        </video>
-                                        {videoUrl && videoUrl !== 'undefined' && !videoUrl.includes('example.com') && videoUrl.trim() && (
-                                          <a 
-                                            href={videoUrl} 
-                                            target="_blank" 
-                                            rel="noopener noreferrer"
-                                            style={{ 
-                                              display: 'block', 
-                                              marginTop: '4px', 
-                                              fontSize: '12px', 
-                                              color: '#3b82f6',
-                                              textDecoration: 'none'
-                                            }}
-                                          >
-                                            在新窗口打开视频
-                                          </a>
-                                        )}
-                                      </div>
-                                    ) : (
-                                      <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(item)}</span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-                    return (
-                      <p className="preview-simulation-text">
-                        {t('interaction.noMaterials')}
-                      </p>
-                    );
-                  })()
+                {Array.isArray(sessionData?.material) && sessionData.material.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {sessionData.material.map((m, idx) => (
+                      <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
+                        <span style={{ minWidth: 24 }}>{idx + 1}</span>
+                        <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(m)}</span>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <p className="preview-simulation-text">
                     {t('interaction.noMaterials')}
@@ -1559,23 +710,33 @@ const Interaction = () => {
       </aside>
 
       {isModifyDialogOpen && (
-        <div className="modify-overlay" role="dialog" aria-modal="true">
+        <div
+          className="modify-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modify-dialog-title"
+          aria-describedby="modify-dialog-desc"
+        >
           <div className="modify-modal">
-            <div className="modify-title">{t('interaction.modifyTitle')}</div>
-            <div className="modify-desc">{t('interaction.modifyDesc')}</div>
+            <h2 id="modify-dialog-title" className="modify-title">{t('interaction.modifyTitle')}</h2>
+            <p id="modify-dialog-desc" className="modify-desc">{t('interaction.modifyDesc')}</p>
 
             <div className="modify-actions">
               <button
+                type="button"
                 className="modify-secondary"
                 onClick={() => submitModifyDecision({ needModify: false })}
                 disabled={isSending}
+                aria-label={t('interaction.noNeedModify')}
               >
                 {t('interaction.noNeedModify')}
               </button>
               <button
+                type="button"
                 className="modify-primary"
                 onClick={() => submitModifyDecision({ needModify: true })}
                 disabled={isSending}
+                aria-label={t('interaction.needModify')}
               >
                 {t('interaction.needModify')}
               </button>
@@ -1583,67 +744,29 @@ const Interaction = () => {
 
             <div className="modify-picker">
               <div className="modify-picker-title">{t('interaction.modifyPickTitle')}</div>
-              {sessionData?.material ? (
-                (() => {
-                  const material = sessionData.material;
-                  const currentTask = sessionData.now_task;
-                  let itemsToShow = [];
-                  
-                  // 根据当前任务显示对应的材料
-                  if (currentTask === 'outline' && material.outline && Array.isArray(material.outline)) {
-                    itemsToShow = material.outline;
-                  } else if (currentTask === 'screen' && material.screen && Array.isArray(material.screen)) {
-                    itemsToShow = material.screen;
-                  } else if (material.outline && Array.isArray(material.outline) && material.outline.length > 0) {
-                    itemsToShow = material.outline;
-                  } else if (material.screen && Array.isArray(material.screen) && material.screen.length > 0) {
-                    itemsToShow = material.screen;
-                  }
-                  
-                  if (itemsToShow.length > 0) {
+              {Array.isArray(sessionData?.material) && sessionData.material.length > 0 ? (
+                <div className="modify-checklist">
+                  {sessionData.material.map((m, idx) => {
+                    const num = idx + 1;
+                    const checked = modifyNums.includes(num);
                     return (
-                      <div className="modify-checklist">
-                        {itemsToShow.map((m, idx) => {
-                          const num = idx + 1;
-                          const checked = modifyNums.includes(num);
-                          return (
-                            <label key={idx} className="modify-checkitem">
-                              <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={(e) => {
-                                  setModifyNums(prev => {
-                                    if (e.target.checked) return Array.from(new Set([...prev, num]));
-                                    return prev.filter(x => x !== num);
-                                  });
-                                }}
-                              />
-                              <span className="modify-checkitem-num">{num}</span>
-                              <span className="modify-checkitem-text">{normalizeAiContent(m)}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
+                      <label key={idx} className="modify-checkitem">
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) => {
+                            setModifyNums(prev => {
+                              if (e.target.checked) return Array.from(new Set([...prev, num]));
+                              return prev.filter(x => x !== num);
+                            });
+                          }}
+                        />
+                        <span className="modify-checkitem-num">{num}</span>
+                        <span className="modify-checkitem-text">{normalizeAiContent(m)}</span>
+                      </label>
                     );
-                  }
-                  
-                  return (
-                    <input
-                      className="modify-input"
-                      placeholder={t('interaction.modifyPlaceholder')}
-                      value={modifyNums.join(',')}
-                      onChange={(e) => {
-                        const nums = e.target.value
-                          .split(',')
-                          .map(s => s.trim())
-                          .filter(Boolean)
-                          .map(s => Number(s))
-                          .filter(n => Number.isFinite(n) && n > 0);
-                        setModifyNums(Array.from(new Set(nums)));
-                      }}
-                    />
-                  );
-                })()
+                  })}
+                </div>
               ) : (
                 <input
                   className="modify-input"

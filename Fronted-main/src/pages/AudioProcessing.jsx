@@ -28,7 +28,6 @@ const AudioProcessing = () => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedAudio(file);
-      console.log('上传的音频文件:', file.name);
     }
   };
 

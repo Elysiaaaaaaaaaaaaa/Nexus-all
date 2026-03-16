@@ -99,7 +99,7 @@ const Analytics = () => {
             <h3 className="chart-title">任务完成趋势</h3>
             <button 
               className="chart-action"
-              onClick={() => console.log('查看详细数据')}
+              onClick={() => {}}
             >
               <ArrowUpRight size={16} />
             </button>
@@ -122,7 +122,7 @@ const Analytics = () => {
             <h3 className="chart-title">智能体使用分布</h3>
             <button 
               className="chart-action"
-              onClick={() => console.log('查看详细数据')}
+              onClick={() => {}}
             >
               <ArrowUpRight size={16} />
             </button>

@@ -1,20 +1,25 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, Camera, Check } from '@phosphor-icons/react';
 import './Profile.css';
 import { useApp } from '../contexts/AppContext';
-import { API_BASE_URL } from '../services/api';
-import defaultAvatar from '../assets/default-avatar.jpg';
+import { getUserAvatarUrl } from '../utils/avatar';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { t, logout, userInfo, userId } = useApp();
-  const [userName, setUserName] = useState(userInfo?.username || '');
-  const [userEmail, setUserEmail] = useState(userInfo?.email || '');
+  const { t } = useApp();
+  const { userInfo } = useApp();
+  const [userName, setUserName] = useState(userInfo?.username || '张恒基');
+  const [userEmail, setUserEmail] = useState(userInfo?.email || 'zhanghengji@example.com');
   const [userWorkspace, setUserWorkspace] = useState('专业工作区');
   const [isEditing, setIsEditing] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState('');
   const avatarInputRef = useRef(null);
+
+  // 生成默认头像 URL（当没有上传头像时使用）
+  const defaultAvatarUrl = useMemo(() => {
+    return getUserAvatarUrl(avatarUrl, userName);
+  }, [avatarUrl, userName]);
 
   const handleSave = () => {
     setIsEditing(false);
@@ -40,30 +45,16 @@ const Profile = () => {
     try {
       const formData = new FormData();
       formData.append('avatar', file);
-      // 添加user_id参数
-      formData.append('user_id', userId);
-      
-      const url = `${API_BASE_URL}/api/user/avatar`;
-      const res = await fetch(url, {
+      const res = await fetch('/api/user/avatar', {
         method: 'POST',
         body: formData
       });
-      
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || errorData.message || `上传失败(${res.status})`);
-      }
-      
-      const json = await res.json();
+      const json = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(json?.message || `上传失败(${res.status})`);
       const nextUrl = json?.data?.avatarUrl || json?.data?.url;
-      if (nextUrl) {
-        // 如果是相对路径，需要加上API_BASE_URL
-        const fullUrl = nextUrl.startsWith('http') ? nextUrl : `${API_BASE_URL}${nextUrl}`;
-        setAvatarUrl(fullUrl);
-      }
+      if (nextUrl) setAvatarUrl(nextUrl);
     } catch (err) {
-      console.warn('头像上传失败，已使用本地预览：', err);
-      // 可以在这里添加用户提示
+      // 头像上传失败，已使用本地预览
     }
   };
 
@@ -82,7 +73,6 @@ const Profile = () => {
             className="profile-save-button"
             onClick={handleSave}
           >
-            <Check size={18} weight="bold" />
             {t('profile.save')}
           </button>
         )}
@@ -101,8 +91,20 @@ const Profile = () => {
             <div className="profile-avatar" aria-label="用户头像">
               <img 
                 className="profile-avatar-image" 
-                src={avatarUrl || userInfo?.avatar || defaultAvatar} 
-                alt="avatar" 
+                src={defaultAvatarUrl} 
+                alt="avatar"
+                onError={(e) => {
+                  // 如果图片加载失败，显示首字母
+                  e.target.style.display = 'none';
+                  const parent = e.target.parentElement;
+                  if (parent && !parent.querySelector('.profile-avatar-fallback')) {
+                    const fallback = document.createElement('div');
+                    fallback.className = 'profile-avatar-fallback';
+                    fallback.textContent = userName.charAt(0) || 'U';
+                    fallback.style.cssText = 'display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 48px; font-weight: 600; color: white;';
+                    parent.appendChild(fallback);
+                  }
+                }}
               />
             </div>
             <button
@@ -163,25 +165,13 @@ const Profile = () => {
           </div>
 
           {!isEditing && (
-            <button
+            <button 
               className="profile-edit-button"
               onClick={() => setIsEditing(true)}
             >
               {t('profile.edit')}
             </button>
           )}
-        </div>
-
-        <div className="profile-actions">
-          <button
-            className="profile-logout-button"
-            onClick={() => {
-              logout();
-              navigate('/login');
-            }}
-          >
-            退出登录
-          </button>
         </div>
       </div>
     </div>

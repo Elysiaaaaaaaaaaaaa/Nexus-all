@@ -19,7 +19,6 @@ const ImageGeneration = () => {
     const file = e.target.files?.[0];
     if (file) {
       setUploadedImage(file);
-      console.log('上传的图片文件:', file.name);
     }
   };
 
