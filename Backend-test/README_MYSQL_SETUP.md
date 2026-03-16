@@ -91,7 +91,7 @@
 3. **修改 `.env` 文件**
    ```
    DB_USER=nexus_user
-   DB_PASSWORD=@20050518Zzy
+   DB_PASSWORD=n2wwaxxYejDRhGWe
    ```
 
 ### 方案5：使用SQLite（临时替代方案）

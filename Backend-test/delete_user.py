@@ -11,9 +11,9 @@ def delete_user(username):
         # Connect to database
         conn = mysql.connector.connect(
             host='localhost',
-            user='root',
-            password='@20050518Zzy',
-            database='nexus_db'
+            user='img_2_video',
+            password='n2wwaxxYejDRhGWe',
+            database='img_2_video'
         )
         cursor = conn.cursor()
 

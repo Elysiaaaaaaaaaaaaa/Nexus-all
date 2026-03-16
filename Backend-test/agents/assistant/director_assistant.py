@@ -181,8 +181,9 @@ class Assistant:
         if now_material == 'outline':
             return '当前要修改的内容是视频大纲',str(session_data['material']['outline'])
         if now_material == 'screen':
-            screen = str(session_data['material']['screen'])
-            return f'当前要修改的内容是分镜脚本提示词',str(screen)
+            screen_id = session_data['modify_num'][session_data['have_modify']]-1
+            screen = session_data['material']['screen'][screen_id]
+            return f'当前要修改的内容是镜号{screen_id+1}的分镜脚本',str(screen)
         if now_material == 'story_board_prompting':
             return '当前要修改的内容是分镜首帧提示词',str(session_data['material']['story_board'][-1]['prompt'])
         if now_material == 'story_board':

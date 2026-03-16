@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Archive, FlowArrow, Flask, DownloadSimple, ShieldCheck } from '@phosphor-icons/react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Folder, FlowArrow, Flask, DownloadSimple, ShieldCheck, FilePdf, Users } from '@phosphor-icons/react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import logoTransparent from '../assets/logo_transparent.png';
-import defaultAvatar from '../assets/default-avatar.jpg';
 import { useApp } from '../contexts/AppContext';
+import { getUserAvatarUrl } from '../utils/avatar';
 import './Layout.css';
 
 const Layout = ({ children }) => {
@@ -11,7 +11,13 @@ const Layout = ({ children }) => {
   const [opacity, setOpacity] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const { t, userInfo } = useApp();
+  const { t, isAuthenticated, userInfo } = useApp();
+
+  // 生成用户头像 URL
+  const userAvatarUrl = useMemo(() => {
+    const username = userInfo?.username || 'User';
+    return getUserAvatarUrl(null, username);
+  }, [userInfo?.username]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -24,13 +30,15 @@ const Layout = ({ children }) => {
 
   const navItems = [
     { icon: <SquaresFour />, label: t('nav.dashboard'), path: '/dashboard' },
-    { icon: <Archive />, label: t('nav.assets'), path: '/assets' },
+    { icon: <Folder />, label: t('nav.assets'), path: '/assets' },
     { icon: <FlowArrow />, label: t('nav.workflows'), path: '/workflows' },
     { icon: <Flask />, label: t('nav.lab'), path: '/lab' },
     { icon: <DownloadSimple />, label: t('nav.export'), path: '/export' },
     { icon: <ShieldCheck />, label: t('security.title'), path: '/security' },
     { icon: <ClockCounterClockwise />, label: t('nav.history'), path: '/history' },
     { icon: <BookOpen />, label: t('nav.manual'), path: '/manual' },
+    { icon: <FilePdf />, label: t('nav.techShowcase') || '技术展示', path: '/tech-showcase' },
+    { icon: <Users />, label: t('nav.team') || '团队介绍', path: '/team' },
   ];
 
   return (
@@ -50,20 +58,20 @@ const Layout = ({ children }) => {
 
       {/* 侧边栏 */}
       <aside className="sidebar">
-        <div 
-          className="sidebar-header" 
-          onClick={() => navigate('/homepage')} 
-          style={{ cursor: 'pointer' }}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              navigate('/homepage');
-            }
-          }}
-        >
-          <div className="logo-container">
+        <div className="sidebar-header">
+          <div 
+            className="logo-container"
+            onClick={() => navigate('/homepage')}
+            style={{ cursor: 'pointer' }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/homepage');
+              }
+            }}
+          >
             <img src={logoTransparent} alt="Nexus" className="logo-image" />
           </div>
           <span className="logo-text">Nexus</span>
@@ -111,13 +119,28 @@ const Layout = ({ children }) => {
           >
             <div className="user-avatar">
               <div className="user-avatar-circle">
-                <img src={userInfo?.avatar || defaultAvatar} alt="Avatar" className="user-avatar-image" />
+                <img 
+                  src={userAvatarUrl} 
+                  alt={userInfo?.username || 'User'}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    const parent = e.target.parentElement;
+                    if (parent && !parent.querySelector('.user-avatar-fallback')) {
+                      const fallback = document.createElement('span');
+                      fallback.className = 'user-avatar-fallback';
+                      fallback.textContent = (userInfo?.username || 'User').charAt(0).toUpperCase();
+                      fallback.style.cssText = 'display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-size: 18px; font-weight: 600; color: white;';
+                      parent.appendChild(fallback);
+                    }
+                  }}
+                />
               </div>
               <div className="user-status"></div>
             </div>
             <div className="user-info">
-              <p className="user-name">{userInfo?.username || 'User'}</p>
-              <p className="user-workspace">{userInfo?.workspace || '工作区'}</p>
+              <p className="user-name">{userInfo?.username || '张恒基'}</p>
+              <p className="user-workspace">专业工作区</p>
             </div>
           </div>
         </div>

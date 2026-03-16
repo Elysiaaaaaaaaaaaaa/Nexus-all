@@ -26,7 +26,7 @@ def create_database():
         port = os.getenv("DB_PORT", "3306")
         database = os.getenv("DB_NAME", "nexus_db")
         username = os.getenv("DB_USER", "root")
-        password = os.getenv("DB_PASSWORD", "@20050518Zzy")
+        password = os.getenv("DB_PASSWORD", "n2wwaxxYejDRhGWe")
 
         # 对密码进行URL编码以处理特殊字符（如@符号）
         encoded_password = quote_plus(password)

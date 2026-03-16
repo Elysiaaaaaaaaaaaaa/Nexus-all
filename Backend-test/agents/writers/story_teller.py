@@ -56,6 +56,20 @@ story_board_example = '''
 "negative":"不要低质量，避免模糊，不要角色变形，不要肢体残缺，不要多余手指，不要角色悬浮，不要光影混乱，不要背景细节丢失，不要角色比例失调，避免角色边缘有白边，避免色彩溢出，避免水印，避免文字，避免背景被篡改，避免画风割裂"}
 '''
 
+story_board_modify_prompt = PromptTemplate.from_template(f'''
+你是一个专业的文生图提示词工程师，你需要根据用户的需求，修改以下分镜首帧图片生成提示词：{{now_prompt}}
+【回复格式要求】
+1. 你的回复必须是纯JSON格式，不允许包含任何其他文本或格式！
+    请严格按照以下要求输出JSON格式字符串，**必须遵守以下规则**：
+    1. 仅输出JSON，无任何额外文字、注释、说明；
+    2. JSON字符串中所有换行必须用转义符\\n表示，禁止出现真实换行；
+    3. 所有字段名和字符串值必须用双引号包裹，禁止使用单引号；
+    4. 禁止添加任何JSON注释（// 或 /* */）。
+2. JSON必须包含以下字段：
+   - positive：正向提示词，包含分镜描述的正面部分
+   - negative：负面提示词，包含不希望出现在画面中的要素，如人物割裂、多余肢体等。
+''')
+
 story_board_prompt = f'''
 你是一个专业的文生图提示词工程师，你需要根据用户的需求，创作出符合要求的分镜首帧图片生成提示词。
 提示词的格式为json格式，你必须按照提示词模板的格式创作，json有两个字段，分别是positive和negative，分别对应分镜描述的正面部分和负面部分：
@@ -202,7 +216,9 @@ class StoryTeller:
         :param session_data: 包含主体描述和背景描述的字典
         """
         if session_data['modify_request']['story_board']:
-            sys_prompt = story_board_modify_prompt.invoke({'now_prompt':json.dumps(session_data['material']['story_board'][-1]['prompt'])}).to_string()
+            sys_prompt = story_board_modify_prompt.invoke({
+                'now_prompt': session_data['material']['story_board'][-1].get('prompt')
+            }).to_string()
             message = session_data['modify_request']['story_board']
             session_data['modify_request']['story_board'] = None
         else:

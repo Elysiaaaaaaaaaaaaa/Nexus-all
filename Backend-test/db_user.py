@@ -134,6 +134,34 @@ class DatabaseUserFile:
 
             # 创建项目
             project = self._create_project(db, new_project_name, session_id, workflow_type)
+            
+            # 创建项目文件夹结构
+            user_dir = f"./user_files/{self.user_id}"
+            project_dir = os.path.join(user_dir, "projects", new_project_name)
+            
+            # 创建用户文件夹
+            if not os.path.exists(user_dir):
+                os.makedirs(user_dir)
+            
+            # 创建项目文件夹
+            if not os.path.exists(project_dir):
+                os.makedirs(project_dir)
+            
+            # 创建工作流相关的子文件夹
+            if workflow_type == 'text2video':
+                # 文本到视频工作流的文件夹结构
+                video_dir = os.path.join(project_dir, "video")
+                if not os.path.exists(video_dir):
+                    os.makedirs(video_dir)
+            elif workflow_type == 'image2video':
+                # 图片到视频工作流的文件夹结构
+                video_dir = os.path.join(project_dir, "video")
+                image_dir = os.path.join(project_dir, "image")
+                if not os.path.exists(video_dir):
+                    os.makedirs(video_dir)
+                if not os.path.exists(image_dir):
+                    os.makedirs(image_dir)
+            
             return new_project_name
 
     def _create_project(self, db: Session, project_name: str, session_id: str, workflow_type: str = 'text2video') -> Project:
@@ -280,7 +308,7 @@ class DatabaseUserFile:
         user_dir = f"./user_files/{self.user_id}"
         project_dir = os.path.join(user_dir, "projects", project_name, 'photos')
 
-        supported_exts = ['.jpg', '.png', '.webp']
+        supported_exts = ['.jpg', '.png', '.webp', '.jpeg']
         for ext in supported_exts:
             photo_path = os.path.join(project_dir, f'photos{ext}')
             if os.path.exists(photo_path):

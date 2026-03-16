@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional, Set, TypedDict
 from urllib.parse import urlsplit, urlunsplit
 from langgraph.types import Command
 from dotenv import load_dotenv
+import re
 
 _CURRENT_DIR = os.path.dirname(__file__)
 _PROJECT_ROOT = os.path.abspath(_CURRENT_DIR)
@@ -412,6 +413,40 @@ class Text2VideoWorkflow:
                 res = '已完成第'+str(session_data["video_generating"])+'个视频生成'
             session_data["video_generating"] += 1
         return res
+
+    def _advance_after_generation(self, state: ChatGraphState, now_task: str) -> None:
+        session_data = state["session_data"]
+        session_id = state["session_id"]
+        if now_task == "outline":
+            session_data["now_task"] = "screen"
+            session_data["now_state"] = "pending"
+            session_data["have_modify"] = 0
+            session_data["modify_num"] = []
+            logger.info(
+                "event=auto_advance session_id=%s stage=outline next_task=screen next_state=pending",
+                session_id,
+            )
+        elif now_task == "screen":
+            session_data["now_state"] = "modify_comfirm"
+            logger.info(
+                "event=await_modify session_id=%s stage=screen next_state=modify_comfirm",
+                session_id,
+            )
+        elif now_task == "animator":
+            session_data["now_state"] = "pending"
+            logger.info(
+                "event=await_next_video session_id=%s stage=animator next_state=pending video_generating=%s screen_count=%s",
+                session_id,
+                session_data.get("video_generating"),
+                len(session_data.get("material", {}).get("screen") or []),
+            )
+        else:
+            session_data["now_state"] = "modify_comfirm"
+            logger.info(
+                "event=default_modify_state session_id=%s stage=%s next_state=modify_comfirm",
+                session_id,
+                now_task,
+            )
     
     def _get_session_state(self, session_id: str) -> Dict[str, Any]:
         """返回或创建指定会话的运行时状态字典。
@@ -446,7 +481,8 @@ class Text2VideoWorkflow:
                 "last_id": {
                     "assistant": None,
                     "outline_writer": None,
-                    "screen_writer": None
+                    "screen_writer": None,
+                    "story_board": None
                 },
             }
             self._sessions[session_id] = session_data
@@ -493,13 +529,12 @@ class Text2VideoWorkflow:
             
             if is_confirm:
                 # 用户确认，开始生成内容
-                if state['session_data']['video_generating'] >= len(state['session_data']['material']['screen']) and now_task == "animator":
-                    state['session_data']['chat_with_assistant'] = False
-                    return state
                 print(f'assistant_node: 用户确认生成 {now_task} 阶段内容')
                 agentans = self.fun_call_agent(state)
-                state['session_data']["now_state"] = "modify_comfirm"
+                self._advance_after_generation(state, now_task)
                 state['reply'] = AssistantReply(agentans)
+                if state['session_data']['video_generating'] >= len(state['session_data']['material']['screen']) and now_task == "animator":
+                    state['session_data']['chat_with_assistant'] = False
                 return state
             else:
                 # 用户输入其他内容，提示需要确认
@@ -516,7 +551,7 @@ class Text2VideoWorkflow:
         if now_state == "create":
             # 正常流程：调用agent生成内容
             agentans = self.fun_call_agent(state)
-            state['session_data']["now_state"] = "modify_comfirm"
+            self._advance_after_generation(state, now_task)
             state['reply'] = AssistantReply(agentans)
             if state['session_data']['video_generating'] >= len(state['session_data']['material']['screen']) and now_task == "animator":
                 state['session_data']['chat_with_assistant'] = False
@@ -691,6 +726,7 @@ class Text2VideoWorkflow:
         builder.add_edge("assistant",END)
         return builder.compile()
     
+
 class Image2VideoWorkflow:
     '''
     图片到视频工作流
@@ -782,7 +818,8 @@ class Image2VideoWorkflow:
                 "last_id": {
                     "assistant": None,
                     "outline_writer": None,
-                    "story_board": None,
+                    "screen_writer": None,
+                    "story_board": None
                 },
             }
             self._sessions[session_id] = session_data
@@ -899,12 +936,7 @@ class Image2VideoWorkflow:
             if now_task == 'story_board':
                 state['session_data']['now_task'] = 'script'
             if now_task == 'script':
-                # state['session_data']['story_board_generating']+=1
-                # if state['session_data']['story_board_generating']>=len(session_data['material']['outline']):
-                #     state['session_data']['now_task'] = 'animator'
-                # else:
-                #     state['session_data']['now_task'] = 'figure_design'
-                #     # state['session_data']['now_task'] = 'script'
+                state['session_data']['story_board_generating']+=1
                 state['session_data']['now_task'] = 'animator'
             if now_task == 'animator':
                 state['session_data']['video_generating']+=1
@@ -1001,6 +1033,68 @@ class Image2VideoWorkflow:
             state['session_data']['modify_request']['story_board'] = result['idea']
             state['session_data']['last_id']['assistant'] = last_id
             return state
+
+    def _generate_story_board_image(self, session_data: dict) -> Optional[str]:
+        session_id = session_data.get('session_id') or self.main_session_id
+        screen_id = session_data.get('story_board_generating', 0)
+        story_board = session_data.get('material', {}).get('story_board') or []
+        if screen_id >= len(story_board):
+            logger.error(
+                "event=storyboard_item_missing session_id=%s project=%s screen_id=%s story_count=%s",
+                session_id,
+                self.project_name,
+                screen_id,
+                len(story_board),
+            )
+            return None
+        story_item = story_board[screen_id]
+        prompt = story_item.get('prompt')
+        figure_image = story_item.get('figure_image_address')
+
+        if not prompt:
+            logger.error(
+                "event=storyboard_prompt_missing session_id=%s project=%s screen_id=%s",
+                session_id,
+                self.project_name,
+                screen_id,
+            )
+            return None
+
+        try:
+            if figure_image:
+                logger.info(
+                    "event=storyboard_generate mode=i2i session_id=%s project=%s screen_id=%s",
+                    session_id,
+                    self.project_name,
+                    screen_id,
+                )
+                return self.storyboard_painter.call(session_data)
+
+            logger.info(
+                "event=storyboard_generate mode=t2i session_id=%s project=%s screen_id=%s",
+                session_id,
+                self.project_name,
+                screen_id,
+            )
+            image_url = self.painter.get_image_url(prompt)
+            if not image_url:
+                logger.error(
+                    "event=storyboard_t2i_failed session_id=%s project=%s screen_id=%s",
+                    session_id,
+                    self.project_name,
+                    screen_id,
+                )
+                return None
+            return self.painter.download(image_url, idx=screen_id)
+        except Exception as exc:
+            logger.exception(
+                "event=storyboard_generate_exception session_id=%s project=%s screen_id=%s error=%s",
+                session_id,
+                self.project_name,
+                screen_id,
+                exc,
+            )
+            return None
         
     def story_board_node(self,state:ChatGraphState)->ChatGraphState:
         session_id = state["session_id"]
@@ -1013,7 +1107,16 @@ class Image2VideoWorkflow:
             if self.mode == 'test':
                 ans = '这里是story_board'
             else:
-                ans = self.storyboard_painter.call(session_data)
+                ans = self._generate_story_board_image(session_data)
+            if not ans:
+                logger.error(
+                    "event=storyboard_generate_failed session_id=%s project=%s screen_id=%s",
+                    session_id,
+                    self.project_name,
+                    session_data.get("story_board_generating"),
+                )
+                state['reply'] = AssistantReply("分镜首帧生成失败，请稍后重试或查看日志。")
+                return state
             state['session_data']['material']['story_board'][-1]['image_address'] = ans
             state['reply'] = AssistantReply('已生成分镜图片：'+ans)
             state['session_data']['now_state'] = 'modify_confirm'
@@ -1054,15 +1157,29 @@ class Image2VideoWorkflow:
                     state['reply'] = AssistantReply(ans)
                     return state
                 else:
-                    figure_name = user_text
+                    figure_name = (user_text or "").strip()
+                    if figure_name == "defaultdefault":
+                        figure_name = "default"
                     figure_photo = self.userfile.get_figure_photo(self.project_name,figure_name)
                     if figure_name not in session_data['material']['figure']:
                         session_data['material']['figure'][figure_name] = {'prompt':None,'image_address':figure_photo}
-                        figure_describe = self.describer.call(session_data)
+                        if figure_photo:
+                            figure_describe = self.describer.call(session_data)
+                        else:
+                            figure_describe = f"角色描述：{figure_name}"
+                            logger.info(
+                                "event=figure_reference_missing session_id=%s project=%s figure=%s",
+                                session_id,
+                                self.project_name,
+                                figure_name,
+                            )
                         session_data['material']['figure'][figure_name]['prompt'] = figure_describe
                     # state['session_data']['material']['figure']['prompt'] = ans
-                    figure_describe = session_data['material']['figure'][figure_name]['prompt']
-                    state['session_data']['material']['story_board'].append({'figure_describe':figure_describe,'figure_image_address':figure_photo})
+                    figure_describe = session_data['material']['figure'][figure_name]['prompt'] or f"角色描述：{figure_name}"
+                    state['session_data']['material']['story_board'].append({
+                        'figure_describe': figure_describe,
+                        'figure_image_address': figure_photo
+                    })
                     # state['reply'] = AssistantReply(ans)
                     state['session_data']['now_task'] = 'story_board_prompting'
                     # state['session_data']['now_state'] = 'modify_confirm'
@@ -1233,6 +1350,3 @@ def acps():
 if __name__ == "__main__":
     #acps()
     run_test_image2video()
-
-
-

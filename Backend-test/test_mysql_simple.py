@@ -15,8 +15,8 @@ def test_mysql():
         # 获取配置
         host = os.getenv("DB_HOST", "localhost")
         port = int(os.getenv("DB_PORT", "3306"))
-        user = os.getenv("DB_USER", "root")
-        password = os.getenv("DB_PASSWORD", "@20050518Zzy")
+        user = os.getenv("DB_USER", "img_2_video")
+        password = os.getenv("DB_PASSWORD", "n2wwaxxYejDRhGWe")
 
         print(f"尝试连接到: {user}@{host}:{port}")
         print(f"使用密码: {password}")

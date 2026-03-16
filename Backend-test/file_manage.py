@@ -113,8 +113,8 @@ class UserFile:
         # 支持的图片扩展名列表
         if figure_name == 'default':
             return None
-        supported_exts = ['.jpg', '.png', '.webp']
-        base_dir = os.path.join(self.project_path, project_name, 'photos')
+        supported_exts = ['.jpg', '.png', '.webp', '.jpeg']
+        base_dir = os.path.join(self.project_path, project_name, figure_name)
         # 依次尝试支持的扩展名
         for ext in supported_exts:
             photo_path = os.path.join(base_dir, f'photos{ext}')

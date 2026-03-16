@@ -2,7 +2,7 @@
 echo Testing MySQL connection...
 
 REM Test MySQL connection
-"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p@20050518Zzy -e "SELECT VERSION(); SHOW DATABASES;"
+"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -pn2wwaxxYejDRhGWe -e "SELECT VERSION(); SHOW DATABASES;"
 
 if %ERRORLEVEL% EQU 0 (
     echo MySQL connection successful!

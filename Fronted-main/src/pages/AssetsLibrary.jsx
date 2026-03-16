@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Archive, ArrowLeft, Copy, MagnifyingGlass } from '@phosphor-icons/react';
+import { Folder, ArrowLeft, Copy, MagnifyingGlass } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
 import './AssetsLibrary.css';
 
@@ -40,17 +40,17 @@ const AssetsLibrary = () => {
     <div className="assets-library-container">
       <header className="assets-library-header">
         <button className="assets-back" onClick={() => navigate(-1)} type="button">
-          <ArrowLeft size={18} />
+          <ArrowLeft size={18} weight="bold" />
         </button>
         <div className="assets-title">
-          <Archive weight="fill" size={18} />
+          <Folder weight="fill" size={18} />
           <span>{t('assets.title')}</span>
         </div>
       </header>
 
       <div className="assets-toolbar">
         <div className="assets-search">
-          <MagnifyingGlass size={16} />
+          <MagnifyingGlass size={16} weight="bold" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -68,7 +68,7 @@ const AssetsLibrary = () => {
                 <div className="asset-updated">{t('assets.updatedAt', { time: i.updatedAt })}</div>
               </div>
               <button className="asset-copy" type="button" onClick={() => copyId(i.id)} title={t('assets.copyId')}>
-                <Copy size={16} />
+                <Copy size={16} weight="bold" />
               </button>
             </div>
 

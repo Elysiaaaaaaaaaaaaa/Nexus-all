@@ -1,116 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  BookOpen, Play, Code, Gear, 
-  FilmStrip, PaintBrush, Image, MusicNote,
-  CaretRight
-} from '@phosphor-icons/react';
+import { BookOpen, Play, Code, Gear, FilmStrip } from '@phosphor-icons/react';
+import ReactMarkdown from 'react-markdown';
 import './Manual.css';
 import { useApp } from '../contexts/AppContext';
 
 const Manual = () => {
   const navigate = useNavigate();
   const { t } = useApp();
-  const [expandedSection, setExpandedSection] = useState(null);
+  const [markdown, setMarkdown] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const toggleSection = (section) => {
-    setExpandedSection(expandedSection === section ? null : section);
-  };
-
-  const sections = [
-    {
-      id: 'getting-started',
-      title: '快速开始',
-      icon: <Play weight="fill" />,
-      content: [
-        {
-          subtitle: '1. 创建项目',
-          text: '点击侧边栏的"创建项目"按钮，或从仪表盘开始您的第一个项目。'
-        },
-        {
-          subtitle: '2. 输入需求',
-          text: '在输入框中描述您的创作需求，例如："生成一个赛博朋克风格的视频开场"。'
-        },
-        {
-          subtitle: '3. 智能体协作',
-          text: '系统会自动分配多个智能体协作完成您的任务，包括剧本编写、动画生成等。'
-        },
-        {
-          subtitle: '4. 查看结果',
-          text: '在项目详情页面查看生成结果，可以预览、下载或继续编辑。'
-        }
-      ]
-    },
-    {
-      id: 'features',
-      title: '功能模块',
-      icon: <FilmStrip weight="fill" />,
-      content: [
-        {
-          subtitle: '视频生成',
-          text: '将文本脚本转换为高质量视频，支持多种风格和特效。',
-          icon: <FilmStrip />
-        },
-        {
-          subtitle: 'UI/UX设计',
-          text: '快速生成界面原型和设计稿，支持多种设计风格。',
-          icon: <PaintBrush />
-        },
-        {
-          subtitle: '图像生成',
-          text: 'AI绘图功能，根据描述生成高质量图像。',
-          icon: <Image />
-        },
-        {
-          subtitle: '音频处理',
-          text: '音乐创作和音频处理，支持多种音频格式。',
-          icon: <MusicNote />
-        }
-      ]
-    },
-    {
-      id: 'agents',
-      title: '智能体团队',
-      icon: <Code weight="fill" />,
-      content: [
-        {
-          subtitle: '编排器 V2',
-          text: '核心工作流编排引擎，负责任务分配和协调。'
-        },
-        {
-          subtitle: '动画专家',
-          text: '专业视频合成和动画制作智能体。'
-        },
-        {
-          subtitle: '代码架构师',
-          text: '全栈开发智能体，负责代码生成和架构设计。'
-        },
-        {
-          subtitle: '数据分析师',
-          text: '数据洞察和分析智能体，提供数据可视化支持。'
-        }
-      ]
-    },
-    {
-      id: 'settings',
-      title: '系统设置',
-      icon: <Gear weight="fill" />,
-      content: [
-        {
-          subtitle: '语言设置',
-          text: '支持中文、英文等多种语言切换。'
-        },
-        {
-          subtitle: '主题设置',
-          text: '目前支持浅色主题，更多主题正在开发中。'
-        },
-        {
-          subtitle: '通知设置',
-          text: '配置邮件订阅和系统通知偏好。'
-        }
-      ]
-    }
-  ];
+  useEffect(() => {
+    // 加载 Markdown 内容
+    fetch('/MANUAL.md')
+      .then((res) => res.text())
+      .then((text) => {
+        setMarkdown(text);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+        setMarkdown('# 使用指南\n\n文档加载失败，请稍后重试。');
+      });
+  }, []);
 
   return (
     <div className="manual-container">
@@ -127,54 +40,40 @@ const Manual = () => {
 
       {/* Content */}
       <div className="manual-content">
-        <div className="manual-intro">
-          <h2>欢迎使用 Nexus Engine</h2>
-          <p>
-            Nexus Engine V4.0.2 是一个专业的 AIGC 视频全流程辅助系统。
-            本手册将帮助您快速上手并充分利用系统的各项功能。
-          </p>
-        </div>
-
-        {/* Sections */}
-        <div className="manual-sections">
-          {sections.map((section) => (
-            <div key={section.id} className="manual-section">
-              <button
-                className="manual-section-header"
-                onClick={() => toggleSection(section.id)}
-              >
-                <div className="manual-section-header-left">
-                  <div className="manual-section-icon">
-                    {section.icon}
-                  </div>
-                  <h3 className="manual-section-title">{section.title}</h3>
-                </div>
-                <CaretRight 
-                  size={20} 
-                  className={`manual-section-arrow ${expandedSection === section.id ? 'expanded' : ''}`}
-                />
-              </button>
-              
-              {expandedSection === section.id && (
-                <div className="manual-section-content">
-                  {section.content.map((item, index) => (
-                    <div key={index} className="manual-item">
-                      <div className="manual-item-header">
-                        {item.icon && (
-                          <div className="manual-item-icon">
-                            {item.icon}
-                          </div>
-                        )}
-                        <h4 className="manual-item-title">{item.subtitle}</h4>
-                      </div>
-                      <p className="manual-item-text">{item.text}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <div className="manual-loading">
+            <p>正在加载使用指南...</p>
+          </div>
+        ) : (
+          <div className="manual-markdown">
+            <ReactMarkdown
+            components={{
+              h1: ({ node, ...props }) => <h1 className="manual-md-h1" {...props} />,
+              h2: ({ node, ...props }) => <h2 className="manual-md-h2" {...props} />,
+              h3: ({ node, ...props }) => <h3 className="manual-md-h3" {...props} />,
+              h4: ({ node, ...props }) => <h4 className="manual-md-h4" {...props} />,
+              p: ({ node, ...props }) => <p className="manual-md-p" {...props} />,
+              ul: ({ node, ...props }) => <ul className="manual-md-ul" {...props} />,
+              ol: ({ node, ...props }) => <ol className="manual-md-ol" {...props} />,
+              li: ({ node, ...props }) => <li className="manual-md-li" {...props} />,
+              hr: ({ node, ...props }) => <hr className="manual-md-hr" {...props} />,
+              code: ({ node, inline, ...props }) => 
+                inline ? (
+                  <code className="manual-md-code-inline" {...props} />
+                ) : (
+                  <code className="manual-md-code-block" {...props} />
+                ),
+              pre: ({ node, ...props }) => <pre className="manual-md-pre" {...props} />,
+              blockquote: ({ node, ...props }) => <blockquote className="manual-md-blockquote" {...props} />,
+              a: ({ node, ...props }) => <a className="manual-md-link" target="_blank" rel="noopener noreferrer" {...props} />,
+              strong: ({ node, ...props }) => <strong className="manual-md-strong" {...props} />,
+              em: ({ node, ...props }) => <em className="manual-md-em" {...props} />,
+            }}
+          >
+            {markdown}
+          </ReactMarkdown>
+          </div>
+        )}
 
         {/* Quick Actions */}
         <div className="manual-quick-actions">

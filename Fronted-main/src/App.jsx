@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './contexts/AppContext';
+import { SecurityProvider } from './middleware/security';
 import Layout from './components/Layout.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Homepage from './pages/Homepage.jsx';
@@ -27,10 +28,22 @@ import WorkflowHub from './pages/WorkflowHub.jsx';
 import PlatformLab from './pages/PlatformLab.jsx';
 import ExportCenter from './pages/ExportCenter.jsx';
 import SecurityCenter from './pages/SecurityCenter.jsx';
-import SimpleTest from './pages/SimpleTest.jsx';
+import TechShowcase from './pages/TechShowcase.jsx';
+import TeamIntroduction from './pages/TeamIntroduction.jsx';
+import { isProduction } from './utils/security';
 
-// 简单的测试组件
+// 简单的测试组件（仅开发环境）
 function TestPage() {
+  // 生产环境禁用测试路由
+  if (isProduction()) {
+    return (
+      <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+        <h1 style={{ color: '#ef4444' }}>404 - 页面不存在</h1>
+        <p>您访问的页面不存在。</p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ 
       padding: '40px', 
@@ -54,21 +67,62 @@ function TestPage() {
 }
 
 function App() {
-  console.log('📱 App 组件开始渲染...');
+  // 生产环境不输出调试信息
+  if (!isProduction()) {
+    console.log('📱 App 组件开始渲染...');
+    console.log('📍 当前路径:', window.location.pathname);
+  }
+  
+  // 错误边界包装器
+  class ErrorBoundary extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+      return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+      // 错误已由 ErrorBoundary 处理
+    }
+
+    render() {
+      if (this.state.hasError) {
+        return (
+          <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+            <h1 style={{ color: '#ef4444' }}>页面加载失败</h1>
+            <p>请刷新页面重试。</p>
+            {!isProduction() && this.state.error && (
+              <pre style={{ background: '#f5f5f5', padding: '20px', borderRadius: '4px', marginTop: '20px' }}>
+                {this.state.error.toString()}
+                {this.state.error.stack}
+              </pre>
+            )}
+          </div>
+        );
+      }
+
+      return this.props.children;
+    }
+  }
+
   try {
     return (
-      <AppProvider>
-        <Router>
-          <Routes>
-            {/* 测试路由 - 用于诊断 */}
-            <Route path="/test" element={<TestPage />} />
-            <Route path="/simple" element={<SimpleTest />} />
-            
-            {/* 独立页面（不在Layout内） */}
-            <Route path="/homepage" element={<Homepage />} />
-            <Route path="/" element={<Homepage />} />
-            
-            {/* 需要Layout的页面 */}
+      <SecurityProvider>
+        <AppProvider>
+          <ErrorBoundary>
+            <Router>
+            <Routes>
+              {/* 测试路由 - 仅开发环境可用 */}
+              {!isProduction() && <Route path="/test" element={<TestPage />} />}
+              
+              {/* 独立页面（不在Layout内） */}
+              <Route path="/homepage" element={<Homepage />} />
+              <Route path="/" element={<Homepage />} />
+              
+              {/* 需要Layout的页面 */}
             <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
             <Route path="/manual" element={<ProtectedRoute><Layout><Manual /></Layout></ProtectedRoute>} />
             <Route path="/example" element={<ProtectedRoute><Layout><Example /></Layout></ProtectedRoute>} />
@@ -92,21 +146,34 @@ function App() {
             <Route path="/agent/:id" element={<ProtectedRoute><Layout><AgentDetail /></Layout></ProtectedRoute>} />
             <Route path="/project/:id" element={<ProtectedRoute><Layout><ProjectDetail /></Layout></ProtectedRoute>} />
             <Route path="/history/:id" element={<ProtectedRoute><Layout><HistoryDetail /></Layout></ProtectedRoute>} />
-          </Routes>
-        </Router>
-      </AppProvider>
+            <Route path="/tech-showcase" element={<ProtectedRoute><Layout><TechShowcase /></Layout></ProtectedRoute>} />
+            <Route path="/team" element={<ProtectedRoute><Layout><TeamIntroduction /></Layout></ProtectedRoute>} />
+            </Routes>
+          </Router>
+          </ErrorBoundary>
+        </AppProvider>
+      </SecurityProvider>
     );
   } catch (error) {
-    console.error('❌ App组件渲染错误:', error);
-    return (
-      <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
-        <h1 style={{ color: '#ef4444' }}>应用启动失败</h1>
-        <p>错误: {error.message}</p>
-        <pre style={{ background: '#f5f5f5', padding: '20px', borderRadius: '4px' }}>
-          {error.stack}
-        </pre>
-      </div>
-    );
+    // 生产环境不暴露堆栈信息
+    if (isProduction()) {
+      return (
+        <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+          <h1 style={{ color: '#ef4444' }}>应用启动失败</h1>
+          <p>请刷新页面重试，如果问题持续存在，请联系管理员。</p>
+        </div>
+      );
+    } else {
+      return (
+        <div style={{ padding: '40px', fontFamily: 'sans-serif' }}>
+          <h1 style={{ color: '#ef4444' }}>应用启动失败</h1>
+          <p>错误: {error.message}</p>
+          <pre style={{ background: '#f5f5f5', padding: '20px', borderRadius: '4px' }}>
+            {error.stack}
+          </pre>
+        </div>
+      );
+    }
   }
 }
 

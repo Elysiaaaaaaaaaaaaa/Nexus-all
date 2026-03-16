@@ -40,7 +40,7 @@ def main():
 
     # Try different passwords
     print("\nTesting MySQL connections...")
-    passwords = ["@20050518Zzy", "20050518Zzy", "", "root"]
+    passwords = ["n2wwaxxYejDRhGWe", "20050518Zzy", "", "root"]
 
     mysql_exe = r"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 

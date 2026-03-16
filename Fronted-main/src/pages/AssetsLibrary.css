@@ -17,12 +17,44 @@
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.assets-back:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.assets-back svg {
+  display: block; /* 防止行内元素的间隙问题 */
+  width: 18px;    /* 强制指定宽度 */
+  height: 18px;   /* 强制指定高度 */
+  flex-shrink: 0; /* 防止被挤压 */
+  color: inherit; /* 确保颜色继承 */
+  stroke-width: 2;
+}
+
+:root.dark .assets-back {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--border-color);
+}
+
+:root.dark .assets-back:hover {
+  background: rgba(30, 41, 59, 1);
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+:root.dark .assets-back svg {
+  color: var(--text-primary);
 }
 
 .assets-title {
@@ -50,6 +82,14 @@
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border-color);
   color: var(--text-tertiary);
+}
+
+.assets-search svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: inherit;
 }
 
 .assets-search input {
@@ -122,13 +162,44 @@
   width: 34px;
   height: 34px;
   border-radius: 12px;
-  background: rgba(239, 246, 255, 0.8);
-  border: 1px solid rgba(191, 219, 254, 0.9);
+  background: rgb(239, 246, 255);
+  border: 1.5px solid rgb(96, 165, 250);
   color: rgb(37, 99, 235);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(37, 99, 235, 0.1);
+}
+
+.asset-copy:hover {
+  background: rgb(219, 234, 254);
+  border-color: rgb(59, 130, 246);
+  color: rgb(29, 78, 216);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+  transform: scale(1.05);
+}
+
+.asset-copy svg {
+  display: block; /* 防止行内元素的间隙问题 */
+  width: 16px;    /* 强制指定宽度 */
+  height: 16px;   /* 强制指定高度 */
+  flex-shrink: 0; /* 防止被挤压 */
+  color: inherit; /* 确保颜色继承 */
+  stroke-width: 2;
+}
+
+:root.dark .asset-copy {
+  background: rgba(30, 58, 138, 0.3);
+  border-color: rgb(59, 130, 246);
+  color: rgb(147, 197, 253);
+}
+
+:root.dark .asset-copy:hover {
+  background: rgba(30, 58, 138, 0.5);
+  border-color: rgb(96, 165, 250);
+  color: rgb(191, 219, 254);
 }
 
 .asset-title {

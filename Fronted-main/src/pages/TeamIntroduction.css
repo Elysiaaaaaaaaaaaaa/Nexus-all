@@ -1,0 +1,730 @@
+/* TeamIntroduction.css */
+
+/* 全局样式 */
+:root {
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+}
+
+:root.dark {
+  --bg-light: #0f172a;
+  --bg-white: #1e293b;
+  --text-dark: #f8fafc;
+  --text-muted: #94a3b8;
+}
+
+/* 导航栏 */
+.navbar {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  padding: 20px 40px;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-link {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: #2563eb;
+}
+
+.theme-toggle {
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* 暗色模式导航栏 */
+:root.dark .navbar {
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom-color: #334155;
+}
+
+:root.dark .nav-link {
+  color: #94a3b8;
+}
+
+:root.dark .nav-link:hover {
+  color: #60a5fa;
+}
+
+:root.dark .theme-toggle {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark .theme-toggle:hover {
+  background: #334155;
+}
+
+/* 提示信息 */
+.info-banner {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border: 1px solid #93c5fd;
+  border-radius: 12px;
+  padding: 20px 32px;
+  margin: 40px auto;
+  max-width: 1320px;
+  text-align: center;
+}
+
+.info-banner-title {
+  color: #1e40af;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.info-banner-text {
+  color: #3b82f6;
+  font-size: 14px;
+}
+
+:root.dark .info-banner {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+  border-color: #3b82f6;
+}
+
+:root.dark .info-banner-title {
+  color: #93c5fd;
+}
+
+:root.dark .info-banner-text {
+  color: #bfdbfe;
+}
+
+/* 全局容器 */
+.team-container {
+  padding: 60px 0;
+  width: 100%;
+  position: relative;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  color: var(--text-dark);
+  
+  /* 修改这里：确保它至少占满全屏，但允许无限向下延伸 */
+  min-height: 100vh; 
+  display: block; /* 确保是块级元素 */
+  overflow: visible; /* 显式声明可见 */
+  
+  background: transparent;
+}
+
+/* 点阵背景 */
+.team-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background-color: var(--bg-color, #ffffff);
+  background-image: radial-gradient(var(--dot-color, #d1d5db) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+  animation: team-drift 60s linear infinite;
+  pointer-events: none;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.03));
+}
+
+@keyframes team-drift {
+  from { background-position: 0 0; }
+  to { background-position: 24px 24px; }
+}
+
+/* 不设置任何 ::-webkit-scrollbar 样式，让浏览器使用原生滚动条 */
+
+/* 背景渐变层（在点阵之上） */
+.team-container::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background: linear-gradient(to bottom, var(--bg-light) 0%, var(--bg-white) 100%);
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* 背景光效 */
+.team-bg-gradient {
+  position: absolute;
+  top: 0; /* 改为0 */
+  right: 0;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.05) 40%, transparent 70%);
+  filter: blur(60px);
+  z-index: 0; /* 只要比内容低即可 */
+  pointer-events: none;
+}
+
+/* 顶部 Hero 区域 */
+.team-hero {
+  margin-bottom: 60px;
+  text-align: center;
+  animation: fadeUp 0.8s ease-out;
+  padding: 0 40px;
+}
+
+.team-headline {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.team-subheadline {
+  font-size: 20px;
+  color: #64748b;
+  max-width: 600px;
+  line-height: 1.6;
+  font-weight: 400;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* 团队合照区域 */
+.team-photo-section {
+  margin-bottom: 80px;
+  animation: fadeUp 0.8s ease-out 0.2s backwards;
+  padding: 0 40px;
+}
+
+.team-photo-wrapper {
+  position: relative;
+  max-width: 800px;
+  width: 100%;
+  height: 400px;
+  margin: 0 auto;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.team-photo-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.2);
+}
+
+.team-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.4s ease;
+}
+
+.team-photo-wrapper:hover .team-photo {
+  transform: scale(1.02);
+}
+
+.photo-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.team-photo-wrapper:hover .photo-overlay {
+  opacity: 1;
+}
+
+.photo-caption {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 成员网格布局 */
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+  margin-bottom: 100px;
+  padding: 0 40px;
+}
+
+/* 成员卡片设计 */
+.member-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-radius: 20px;
+  padding: 32px;
+  position: relative;
+  height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+
+.member-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* 卡片顶部 */
+.member-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: auto;
+}
+
+.member-index {
+  font-family: 'Monaco', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  opacity: 0.5;
+}
+
+.member-link-icon {
+  color: #1e293b;
+  opacity: 0;
+  transform: translate(-10px, 10px);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.member-card:hover .member-link-icon {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* 视觉中心 (头像/照片) */
+.member-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  min-height: 140px;
+}
+
+.avatar-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 20%; /* 再次下移图片，露出更多正脸 */
+  border: 4px solid #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover .avatar-image {
+  transform: scale(1.08);
+  box-shadow: 0 12px 32px rgba(37, 99, 235, 0.2);
+  border-color: #eff6ff;
+}
+
+.avatar-placeholder {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: #94a3b8;
+  border: 4px solid #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover .avatar-placeholder {
+  transform: scale(1.08);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #2563eb;
+}
+
+/* 成员信息文字 */
+.member-info-group {
+  position: relative;
+  z-index: 2;
+}
+
+.member-name {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+.affiliation-ref {
+  font-size: 12px;
+  color: #3b82f6;
+  margin-left: 4px;
+  font-weight: 600;
+  vertical-align: super;
+}
+
+.member-role {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.member-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tech-tag {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  border: 1px solid #e2e8f0;
+}
+
+/* 社交按钮 (Hover时出现) */
+.member-socials {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease 0.1s;
+}
+
+.member-card:hover .member-socials {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.social-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.social-btn:hover {
+  background: #0f172a;
+  color: white;
+  border-color: #0f172a;
+}
+
+/* 脚注 (引用文献风格) */
+.affiliations-footer {
+  margin-top: auto;
+  opacity: 0.8;
+  padding: 0 40px;
+}
+
+.divider-line {
+  height: 1px;
+  background: #e2e8f0;
+  margin-bottom: 32px;
+  width: 100%;
+}
+
+.affiliations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.affiliation-item {
+  font-size: 13px;
+  color: #64748b;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.aff-index {
+  font-weight: 700;
+  color: #3b82f6;
+  font-family: 'Monaco', monospace;
+  min-width: 20px;
+}
+
+.aff-name {
+  line-height: 1.5;
+}
+
+/* 动画 */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .members-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .team-headline { 
+    font-size: 42px; 
+  }
+  .team-container { 
+    padding: 32px 0; 
+  }
+  
+  .team-hero,
+  .team-photo-section,
+  .members-grid,
+  .affiliations-footer {
+    padding: 0 20px;
+  }
+  .team-photo-wrapper { 
+    height: 300px; 
+  }
+  .members-grid { 
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .member-card { 
+    height: auto; 
+    min-height: 380px; 
+  }
+}
+
+@media (max-width: 480px) {
+  .team-headline { 
+    font-size: 32px; 
+  }
+  .team-subheadline { 
+    font-size: 16px; 
+  }
+  .photo-caption { 
+    font-size: 14px;
+    padding: 20px;
+  }
+  .team-photo-wrapper {
+    height: 250px;
+  }
+  .member-card {
+    padding: 24px;
+  }
+  .avatar-container,
+  .avatar-image,
+  .avatar-placeholder {
+    width: 100px;
+    height: 100px;
+  }
+  .avatar-placeholder {
+    font-size: 30px;
+  }
+}
+
+/* Dark Mode 适配 */
+:root.dark .team-container { 
+  color: #f8fafc; 
+}
+
+:root.dark .team-container::before {
+  background-color: #0a0a0a;
+  background-image: radial-gradient(#404040 1.5px, transparent 1.5px);
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
+}
+
+:root.dark .team-container::after {
+  background: linear-gradient(to bottom, var(--bg-light) 0%, var(--bg-white) 100%);
+  opacity: 0.95;
+}
+
+:root.dark .team-subheadline { 
+  color: #94a3b8; 
+}
+
+:root.dark .team-photo-wrapper {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+:root.dark .member-card {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .member-card:hover {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(96, 165, 250, 0.5);
+}
+
+:root.dark .member-name { 
+  color: #f1f5f9; 
+}
+
+:root.dark .member-role { 
+  color: #cbd5e1; 
+}
+
+:root.dark .tech-tag {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark .avatar-image {
+  border-color: #334155;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+:root.dark .member-card:hover .avatar-image {
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.3);
+  border-color: #1e293b;
+}
+
+:root.dark .avatar-placeholder {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-color: #334155;
+  color: #64748b;
+}
+
+:root.dark .divider-line { 
+  background: #334155; 
+}
+
+:root.dark .affiliation-item { 
+  color: #94a3b8; 
+}
+
+:root.dark .social-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+:root.dark .social-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+:root.dark .member-link-icon {
+  color: #cbd5e1;
+}
+
+/* 页脚 */
+.footer {
+  background: #0f172a;
+  color: #cbd5e1;
+  padding: 40px;
+  text-align: center;
+  margin-top: 80px;
+}
+
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-text {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.footer-links {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.footer-link {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: #60a5fa;
+}

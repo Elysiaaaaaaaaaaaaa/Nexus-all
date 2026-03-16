@@ -84,7 +84,7 @@ def reset_mysql_root_password():
         reset_cmd = '''
 mysql -u root -e "
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY '@20050518Zzy';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'n2wwaxxYejDRhGWe';
 FLUSH PRIVILEGES;
 "
 '''

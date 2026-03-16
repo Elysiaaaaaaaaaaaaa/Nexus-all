@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Eye, EyeSlash, Key, User } from '@phosphor-icons/react';
 import './Login.css';
-import { authAPI } from '../services/api';
+import { register, login } from '../services/api';
 import { useApp } from '../contexts/AppContext';
+import { validateUsername, validateEmail, validatePassword, validateRedirectPath, sanitizeInput } from '../utils/security';
+import { rateLimiter } from '../utils/rateLimiter';
+import { devBypassRateLimit, devBypassAuth } from '../utils/devMode';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { setUserId, setUserInfo } = useApp();
+  const [searchParams] = useSearchParams();
+  const { setUserId, setUserInfo, isAuthenticated } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [lockoutUntil, setLockoutUntil] = useState(null);
+  const [remainingAttempts, setRemainingAttempts] = useState(5);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -19,18 +25,106 @@ const Login = () => {
     confirmPassword: ''
   });
 
+  // 如果已登录，重定向到首页（开发模式可绕过）
+  useEffect(() => {
+    if (isAuthenticated && !devBypassAuth()) {
+      const redirect = searchParams.get('redirect');
+      const safeRedirect = redirect ? validateRedirectPath(redirect) : null;
+      navigate(safeRedirect || '/', { replace: true });
+    }
+  }, [isAuthenticated, navigate, searchParams]);
+
+  // 检查锁定状态
+  useEffect(() => {
+    const checkLockout = () => {
+      const username = formData.username.trim().toLowerCase();
+      if (!username) return;
+
+      const lockoutStatus = rateLimiter.isLocked(username);
+      if (lockoutStatus.locked) {
+        setLockoutUntil(lockoutStatus.lockoutUntil);
+        const remaining = rateLimiter.getRemainingAttempts(username);
+        setRemainingAttempts(remaining);
+      } else {
+        setLockoutUntil(null);
+        const remaining = rateLimiter.getRemainingAttempts(username);
+        setRemainingAttempts(remaining);
+      }
+    };
+
+    checkLockout();
+    const interval = setInterval(checkLockout, 1000);
+    return () => clearInterval(interval);
+  }, [formData.username]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
+      // 输入验证和清理
+      const username = sanitizeInput(formData.username.trim(), 50);
+      const email = isLogin ? null : sanitizeInput(formData.email.trim().toLowerCase(), 254);
+      const password = formData.password; // 密码不需要清理，但需要验证
+
+      // 验证用户名
+      const usernameValidation = validateUsername(username);
+      if (!usernameValidation.valid) {
+        setError(usernameValidation.message);
+        setIsLoading(false);
+        return;
+      }
+
+      // 验证邮箱（注册时）
+      if (!isLogin) {
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.valid) {
+          setError(emailValidation.message);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // 验证密码
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.valid) {
+        setError(passwordValidation.message);
+        setIsLoading(false);
+        return;
+      }
+
+      // 检查频率限制（开发模式可绕过）
+      const rateLimitKey = username.toLowerCase();
+      let rateLimitResult = { allowed: true, remaining: 5 };
+      
+      if (!devBypassRateLimit()) {
+        rateLimitResult = rateLimiter.recordAttempt(rateLimitKey);
+      }
+
+      if (!rateLimitResult.allowed) {
+        if (rateLimitResult.lockoutUntil) {
+          const minutes = Math.ceil((rateLimitResult.lockoutUntil - Date.now()) / 60000);
+          setError(`登录尝试次数过多，账户已被锁定 ${minutes} 分钟。请稍后再试。`);
+          setLockoutUntil(rateLimitResult.lockoutUntil);
+        } else {
+          setError('登录尝试次数过多，请稍后再试。');
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      setRemainingAttempts(rateLimitResult.remaining || 0);
+
       if (isLogin) {
         // 登录
-        const response = await authAPI.login(
-          formData.username,
-          formData.password
-        );
+        const response = await login({
+          username,
+          password
+        });
+
+        // 登录成功，清除尝试记录
+        rateLimiter.clearAttempts(rateLimitKey);
 
         // 保存用户信息和token
         setUserId(response.user.id.toString());
@@ -39,19 +133,27 @@ const Login = () => {
           email: response.user.email
         });
 
-        navigate('/');
+        // 登录成功后，重定向到之前访问的页面（如果有），否则跳转到首页
+        // 验证重定向路径，防止开放重定向攻击
+        const redirect = searchParams.get('redirect');
+        const safeRedirect = redirect ? validateRedirectPath(redirect) : null;
+        navigate(safeRedirect || '/', { replace: true });
       } else {
         // 注册
-        if (formData.password !== formData.confirmPassword) {
+        if (password !== formData.confirmPassword) {
           setError('两次输入的密码不一致');
+          setIsLoading(false);
           return;
         }
 
-        const response = await authAPI.register(
-          formData.username,
-          formData.email,
-          formData.password
-        );
+        const response = await register({
+          username,
+          email,
+          password
+        });
+
+        // 注册成功，清除尝试记录
+        rateLimiter.clearAttempts(rateLimitKey);
 
         // 保存用户信息和token
         setUserId(response.user.id.toString());
@@ -60,10 +162,47 @@ const Login = () => {
           email: response.user.email
         });
 
-        navigate('/');
+        // 注册成功后，重定向到之前访问的页面（如果有），否则跳转到首页
+        // 验证重定向路径，防止开放重定向攻击
+        const redirect = searchParams.get('redirect');
+        const safeRedirect = redirect ? validateRedirectPath(redirect) : null;
+        navigate(safeRedirect || '/', { replace: true });
       }
     } catch (error) {
-      setError(error.message || (isLogin ? '登录失败' : '注册失败'));
+      // 安全记录错误（不泄露敏感信息）
+
+      // 显示用户友好的错误信息（不泄露系统细节）
+      let errorMessage = isLogin ? '登录失败，请检查用户名和密码' : '注册失败，请检查输入信息';
+
+      if (error instanceof Error) {
+        // AppError 类型
+        if (error.code === 401) {
+          errorMessage = '用户名或密码错误';
+        } else if (error.code === 400) {
+          errorMessage = error.message || '请求参数错误';
+        } else if (error.code === 500) {
+          errorMessage = '服务器错误，请稍后重试';
+        } else if (error.code === 0 || error.code === 504) {
+          errorMessage = '网络连接失败，请检查网络设置';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+      } else if (error && typeof error === 'object') {
+        // 兼容旧格式错误对象
+        if (error.status === 401) {
+          errorMessage = '用户名或密码错误';
+        } else if (error.status === 400) {
+          errorMessage = error.message || '请求参数错误';
+        } else if (error.status === 500) {
+          errorMessage = '服务器错误，请稍后重试';
+        } else if (error.status === 0) {
+          errorMessage = '网络连接失败，请检查网络设置';
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+      }
+
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +307,28 @@ const Login = () => {
             </div>
           )}
 
-          <button type="submit" className="login-submit-button" disabled={isLoading}>
+          {lockoutUntil && (
+            <div className="error-message" style={{ background: 'rgb(254, 226, 226)', borderColor: 'rgb(252, 165, 165)' }}>
+              账户已锁定，请在 {Math.ceil((lockoutUntil - Date.now()) / 60000)} 分钟后重试
+            </div>
+          )}
+
+          {remainingAttempts < 5 && remainingAttempts > 0 && !lockoutUntil && (
+            <div style={{ 
+              fontSize: '12px', 
+              color: 'rgb(239, 68, 68)', 
+              marginTop: '-10px', 
+              marginBottom: '10px' 
+            }}>
+              剩余尝试次数: {remainingAttempts}
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="login-submit-button" 
+            disabled={isLoading || !!lockoutUntil}
+          >
             {isLoading ? '处理中...' : (isLogin ? '登录' : '注册')}
           </button>
         </form>

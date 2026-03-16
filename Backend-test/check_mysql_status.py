@@ -64,7 +64,7 @@ def test_mysql_connection(password):
 def try_different_passwords():
     """尝试不同的密码组合"""
     passwords_to_try = [
-        "@20050518Zzy",  # 用户指定的密码
+        "n2wwaxxYejDRhGWe",  # 用户指定的密码
         "20050518Zzy",   # 不带@的密码
         "",              # 空密码
         "root",          # 默认密码

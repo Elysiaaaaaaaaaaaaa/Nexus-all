@@ -120,7 +120,7 @@ class OutlineWriter:
         :return: 分镜大纲和last_id的元组
         """
         self.outline = session_data['material']['outline']
-        if session_data['modify_request']['outline']==None:
+        if session_data['now_state']=='create':
             sys_prompt = outline_develop_prompt
             message  = ''.join(session_data['material']['idea'])
         else:

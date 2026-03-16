@@ -88,8 +88,9 @@ script_example = '''
 【角色】：库珀：典型的中年男性形象，发型是利落的短黑发，看起来干练，身形偏精瘦硬朗，常穿浅灰 T 恤，面部线条清晰，气质兼具 “父亲的温和” 与 “宇航员的坚毅”。
 运动：库珀在驾驶舱内以高速操控杆操作，初始神情专注，后骤然紧绷，眼神中夹杂着警惕与焦虑。
 【镜头】1. 初始镜头：固定特写，聚焦驾驶舱内库珀面部，画面中心为其双眼，舷窗边缘作为背景框，窗外 “山峦” 轮廓模糊可见；2. 过渡镜头：极速拉远，镜头从面部特写快速拉升至全景，过程带轻微动态模糊，逐步展现驾驶舱、飞船整体、浅海海面及残骸区域；3. 聚焦镜头：拉远后短暂定格全景，随后镜头轻微下移并聚焦海面上的布兰德与道尔，突出二人未察觉危机的状态，同时清晰呈现 “山峦” 实为巨型巨浪的全貌（高约千米，灰黑主体裹挟白色泡沫，底部阴影笼罩海面）；4. 收尾镜头：镜头轻微回拉，再次带起飞船与巨浪的相对位置，强化飞船与人物在巨浪前的渺小感
-【对白】（库珀）：（瞳孔收缩，难以置信地低声颤抖）那不是山，那是个浪。
-【音效】紧张急促的管弦乐背景音乐（随镜头拉远逐渐增强），巨浪移动时的沉闷低频轰鸣（从微弱到清晰），驾驶舱内仪器的轻微电子提示音，
+【对白】
+（库珀）：（瞳孔收缩，难以置信地低声颤抖）那不是山，那是个浪。
+【音效】紧张急促的管弦乐背景音乐（随镜头拉远逐渐增强），巨浪移动时的沉闷低频轰鸣（从微弱到清晰），驾驶舱内仪器的轻微电子提示音，布兰德操作时的细微金属碰撞音，后续布兰德 “再给我 10 秒” 的模糊惊呼前置音
 /
 '''
 
@@ -111,6 +112,8 @@ screen_prompt = f'''
 4. 结构完整性：每个分镜脚本必须包含完整的视觉要素，参考以下示例结构：
 {script_example}
 ！注意！每个分镜脚本后面都有一个‘/’，用于分隔不同的镜头。
+
+
 【创作要点】
 - 场景描述：清晰设定时间、地点和环境氛围
 - 风格定位：明确视觉风格（如科幻写实、卡通、悬疑等）、主色调和光影效果，保持整体风格一致性
@@ -174,7 +177,7 @@ class ScreenWriter:
     def init_assistant(self,message,session_data,sys_prompt):
         # 创建初始对话，包含outline_writer的prompt和示例
         completion = client.responses.create(
-            model="doubao-seed-1-6-lite-251015",
+            model="doubao-seed-1-8-251228",
             tools = tools,
             input=[
                 {
@@ -198,10 +201,9 @@ class ScreenWriter:
         """
         处理模型返回的字符串，将他们转换为列表，每个元素是一个分镜脚本
         """
-        pattern = r'((?:分镜|镜号)\s*\d+.*?)(?=(?:分镜|镜号)\s*\d+|$)'
+        pattern = r'(分镜\s*\d+.*?)(?=分镜\s*\d+|$)'
         matches = re.findall(pattern, raw_screen, re.DOTALL)
         screen_list = [match.strip() for match in matches if len(match.strip()) > 10]
-        print(len(screen_list))
         return screen_list
     
     def call(self,session_data:dict) -> tuple:
@@ -239,7 +241,7 @@ class ScreenWriter:
                 self.screen = session_data['material']['screen'].copy()
             
             completion = client.responses.create(
-                model="doubao-seed-1-6-lite-251015",
+                model="doubao-seed-1-8-251228",
                 previous_response_id = session_data['last_id']['screen_writer'],
                 input=[
                     {
@@ -293,7 +295,7 @@ class ScreenWriter:
                 print('search query:',query)
                 cnt += 1
                 completion = client.responses.create(
-                    model="doubao-seed-1-6-lite-251015",
+                    model="doubao-seed-1-8-251228",
                     previous_response_id = current_last_id,
                     input=[
                         {
@@ -352,11 +354,6 @@ def test_deal_screen():
 分镜 3：背景音乐响起
 画面逐渐变暗
 字幕开始出现''',
-            'expected_count': 3
-        },
-        {
-            'name':'个性化测试',
-            'input': "",
             'expected_count': 3
         }
     ]

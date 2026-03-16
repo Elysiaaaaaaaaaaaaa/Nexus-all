@@ -5,12 +5,12 @@ import uvicorn
 import os
 import asyncio
 from pydantic import BaseModel, ValidationError
-from typing import Dict, Any
+from typing import Dict, Any, List, Optional
 import shutil
 from pathlib import Path
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
-from run_acps import Text2VideoWorkflow, AssistantReply, Image2VideoWorkflow
+from run_acps import Text2VideoWorkflow, Image2VideoWorkflow, AssistantReply
 from db_user import DatabaseUserFile
 from base import get_agent_logger
 from database import SessionLocal, init_database
@@ -146,16 +146,15 @@ class WorkRequest(BaseModel):
     user_input: str
     mode: str = "production"
     video_duration: int = None  # 视频时长（秒），可选，默认使用后端配置
+    modify_num: Optional[List[int]] = None  # 需要修改的内容序号
 
 class UserIdRequest(BaseModel):
     user_id: str
 
 class ProjectHistoryRequest(BaseModel):
-    user_id: str
     project_name: str
 
 class NewProjectRequest(BaseModel):
-    user_id: str
     project_name: str
     workflow_type: str
 
@@ -173,14 +172,6 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: Dict[str, Any]
-
-class UploadImageRequest(BaseModel):
-    user_id: str
-    figure_name: str
-    project_name: str
-    file: UploadFile = File(...)
-
-
 
 # 健康检查路由
 @app.get("/")
@@ -289,6 +280,7 @@ async def test_video_placeholder():
             status_code=307  # 临时重定向
         )
 
+
 # 全局异常处理 - 通用异常处理器
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
@@ -317,21 +309,17 @@ async def validation_exception_handler(request: Request, exc: ValidationError):
         example = {
             "project_name": "测试项目",
             "user_input": "测试请求",
-            "user_id": "测试用户ID",
-            "mode": "test"
+            "mode": "test",
+            "modify_num": [1, 2]
         }
     elif path.endswith("/api/v1/projects/list"):
-        example = {
-            "user_id": "测试用户ID"
-        }
+        example = {}
     elif path.endswith("/api/v1/projects/history"):
         example = {
-            "user_id": "测试用户ID",
             "project_name": "测试项目"
         }
     elif path.endswith("/api/v1/projects/new"):
         example = {
-            "user_id": "测试用户ID",
             "project_name": "新测试项目",
             "workflow_type": "text2video"
         }
@@ -412,26 +400,42 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         
         return get_error_response(detail=error_detail, status_code=500)
 
-@app.post("/api/v1/image2video")
-async def i2vwork(request:WorkRequest, current_user: Dict[str, Any] = Depends(get_current_user)):
-    try:
-        project_name = request.project_name
-        user_id = str(current_user["user_id"])  # 从JWT中获取用户ID
-        user_input = request.user_input
-        mode = request.mode
-        userfile = DatabaseUserFile(user_id)
-        print(f"User ID: {user_id}, Project: {project_name}")
-        # 创建Image2VideoWorkflow实例
-        orchestrator = Image2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
+        workflow_type = "text2video"
+        try:
+            project_content = userfile.load_content(project_name)
+            workflow_type = project_content.get("workflow_type", "text2video")
+        except FileNotFoundError:
+            workflow_type = "text2video"
+
+        logger.info(
+            "event=work_start user_id=%s project=%s mode=%s workflow_type=%s",
+            user_id,
+            project_name,
+            mode,
+            workflow_type,
+        )
+
+        if workflow_type == "image2video":
+            orchestrator = Image2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
+        else:
+            orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
         
         # 如果请求中包含video_duration，设置到session_data中
-        if request.video_duration is not None:
+        if request.video_duration is not None and workflow_type == "text2video":
             session_data = orchestrator._get_session_state(orchestrator.main_session_id)
             session_data['video_duration'] = request.video_duration
             orchestrator._sessions[orchestrator.main_session_id] = session_data
         
         # 调用handle_user_input方法处理用户输入
-        result_state = await orchestrator.handle_user_input(orchestrator.main_session_id, user_input)
+        if workflow_type == "image2video":
+            result_state = await orchestrator.handle_user_input(orchestrator.main_session_id, user_input)
+        else:
+            modify_num = request.modify_num or []
+            result_state = await orchestrator.handle_user_input(
+                orchestrator.main_session_id,
+                user_input,
+                modify_num=modify_num,
+            )
         
         # 从结果状态中提取回复
         reply = result_state.get('reply')

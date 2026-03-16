@@ -18,7 +18,7 @@ class Animator:
         screen_id = session_data['video_generating']
         prompt = session_data['material']['screen'][screen_id]
         self.video_url.append(self.get_video_url(prompt))
-        return self.download(self.video_url[-1],idx = screen_id)
+        return self.download(self.video_url[-1],idx = len(self.video_url))
 
     def download(self,url,idx):
         os.makedirs(self.download_link, exist_ok=True)
@@ -41,7 +41,6 @@ class Animator:
         rsp = VideoSynthesis.call(model='wan2.5-t2v-preview',
                                 prompt=prompt,
                                 size='832*480',
-                                negative_prompt='多余肢体、物品漂浮、人物与场景割裂、人物变形',
                                 duration = 5)
         print(rsp)
         if rsp.status_code == HTTPStatus.OK:
@@ -53,4 +52,7 @@ class Animator:
 
 
 if __name__ == '__main__':
-    pass
+    a = animator(name = "western_food",download_link = r'./test/video/documentary')
+    a.get_story(query = "",link = r'./test/screen/documentary/western_food.json')
+    a.create_request(num = 1)
+    a.download()
