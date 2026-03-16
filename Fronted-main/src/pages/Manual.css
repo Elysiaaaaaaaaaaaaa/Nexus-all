@@ -1,14 +1,17 @@
 /* Manual页面样式 */
 .manual-container {
-  width: 100%;
-  min-height: 100vh;
-  background: white;
-  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: relative;
+  overflow-y: auto;
+  min-height: 100%;
 }
 
 .manual-header {
   max-width: 1200px;
-  margin: 0 auto 48px;
+  margin: 0 0 48px 0;
   display: flex;
   align-items: center;
 }
@@ -39,6 +42,201 @@
 .manual-content {
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* 加载状态 */
+.manual-loading {
+  background: white;
+  border-radius: 16px;
+  padding: 48px;
+  margin-bottom: 48px;
+  border: 1px solid rgb(226, 232, 240);
+  text-align: center;
+  color: rgb(100, 116, 139);
+}
+
+/* Markdown 内容样式 */
+.manual-markdown {
+  background: white;
+  border-radius: 16px;
+  padding: 48px;
+  margin-bottom: 48px;
+  border: 1px solid rgb(226, 232, 240);
+  line-height: 1.8;
+  color: rgb(15, 23, 42);
+}
+
+.manual-md-h1 {
+  font-size: 32px;
+  font-weight: 900;
+  color: rgb(15, 23, 42);
+  margin: 0 0 24px 0;
+  padding-bottom: 16px;
+  border-bottom: 2px solid rgb(226, 232, 240);
+}
+
+.manual-md-h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+  margin: 48px 0 16px 0;
+  padding-top: 16px;
+}
+
+.manual-md-h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: rgb(30, 41, 59);
+  margin: 32px 0 12px 0;
+}
+
+.manual-md-h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(51, 65, 85);
+  margin: 24px 0 8px 0;
+}
+
+.manual-md-p {
+  font-size: 16px;
+  color: rgb(71, 85, 105);
+  margin: 0 0 16px 0;
+  line-height: 1.7;
+}
+
+.manual-md-ul,
+.manual-md-ol {
+  margin: 16px 0;
+  padding-left: 24px;
+}
+
+.manual-md-li {
+  font-size: 16px;
+  color: rgb(71, 85, 105);
+  margin: 8px 0;
+  line-height: 1.7;
+}
+
+.manual-md-hr {
+  border: none;
+  border-top: 1px solid rgb(226, 232, 240);
+  margin: 32px 0;
+}
+
+.manual-md-code-inline {
+  background: rgb(248, 250, 252);
+  color: rgb(220, 38, 38);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+}
+
+.manual-md-code-block {
+  display: block;
+  background: rgb(15, 23, 42);
+  color: rgb(248, 250, 252);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 16px 0;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.manual-md-pre {
+  margin: 16px 0;
+  overflow-x: auto;
+}
+
+.manual-md-pre code {
+  display: block;
+  background: rgb(15, 23, 42);
+  color: rgb(248, 250, 252);
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.manual-md-blockquote {
+  border-left: 4px solid rgb(37, 99, 235);
+  padding-left: 16px;
+  margin: 16px 0;
+  color: rgb(100, 116, 139);
+  font-style: italic;
+}
+
+.manual-md-link {
+  color: rgb(37, 99, 235);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.manual-md-link:hover {
+  color: rgb(29, 78, 216);
+  text-decoration: underline;
+}
+
+.manual-md-strong {
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+}
+
+.manual-md-em {
+  font-style: italic;
+  color: rgb(51, 65, 85);
+}
+
+/* Dark mode for markdown */
+:root.dark .manual-markdown {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(51, 65, 85, 0.8);
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .manual-md-h1,
+:root.dark .manual-md-h2,
+:root.dark .manual-md-h3,
+:root.dark .manual-md-h4,
+:root.dark .manual-md-strong {
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .manual-md-p,
+:root.dark .manual-md-li {
+  color: rgb(203, 213, 225);
+}
+
+:root.dark .manual-md-hr {
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .manual-md-code-inline {
+  background: rgba(15, 23, 42, 0.8);
+  color: rgb(147, 197, 253);
+}
+
+:root.dark .manual-md-code-block,
+:root.dark .manual-md-pre code {
+  background: rgb(15, 23, 42);
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .manual-md-blockquote {
+  border-color: rgb(59, 130, 246);
+  color: rgb(148, 163, 184);
+}
+
+:root.dark .manual-md-link {
+  color: rgb(96, 165, 250);
+}
+
+:root.dark .manual-md-link:hover {
+  color: rgb(147, 197, 253);
 }
 
 .manual-intro {

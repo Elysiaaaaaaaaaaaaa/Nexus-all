@@ -145,6 +145,16 @@
 
 .example-message-avatar-user {
   background: rgb(226, 232, 240);
+  overflow: hidden;
+  position: relative;
+}
+
+.example-message-avatar-user img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .example-message-avatar-ai {
@@ -156,6 +166,11 @@
   font-size: 10px;
   font-weight: bold;
   color: rgb(71, 85, 105);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .example-message-bubble {
@@ -290,11 +305,12 @@
   }
 }
 
+/* 与 Dashboard 一致的简洁输入区域 */
 .example-input-container-simple {
   width: 100%;
   max-width: 768px;
   background: white;
-  border-radius: 16px;
+  border-radius: 24px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   border: 1px solid rgb(226, 232, 240);
   display: flex;
@@ -313,20 +329,35 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  color: rgb(148, 163, 184);
+  color: rgb(30, 41, 59);
   background: transparent;
   border: none;
   cursor: pointer;
   transition: all 200ms;
   flex-shrink: 0;
+  font-weight: 600;
+  position: relative;
+  z-index: 10;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .example-input-add-button-simple:hover {
   background: rgb(241, 245, 249);
-  color: rgb(71, 85, 105);
+  color: rgb(37, 99, 235);
+}
+
+.example-input-add-button-simple svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: rgb(30, 41, 59) !important;
+  fill: currentColor !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
 }
 
 .example-input-simple {
@@ -347,15 +378,20 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  color: rgb(148, 163, 184);
+  color: rgb(30, 41, 59);
   background: transparent;
   border: none;
   cursor: pointer;
   transition: all 200ms;
   flex-shrink: 0;
+  font-weight: 600;
+  position: relative;
+  z-index: 10;
+  min-width: 40px;
+  min-height: 40px;
 }
 
 .example-input-send-button-simple:hover:not(:disabled) {
@@ -364,12 +400,58 @@
 }
 
 .example-input-send-button-simple:disabled {
-  opacity: 0.5;
+  color: rgb(100, 116, 139);
   cursor: not-allowed;
+  opacity: 0.8;
 }
 
 .example-input-send-button-simple:not(:disabled) {
   color: rgb(37, 99, 235);
+}
+
+.example-input-send-button-simple:not(:disabled):hover {
+  background: rgb(239, 246, 255);
+  color: rgb(29, 78, 216);
+}
+
+.example-input-send-button-simple svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: inherit !important;
+  fill: currentColor !important;
+  display: block !important;
+  flex-shrink: 0 !important;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+}
+
+.example-input-send-button-simple:disabled svg {
+  color: rgb(100, 116, 139) !important;
+}
+
+.example-input-send-button-simple:not(:disabled) svg {
+  color: rgb(37, 99, 235) !important;
+}
+
+:root.dark .example-input-container-simple {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(51, 65, 85, 0.8);
+  box-shadow: 0 8px 28px -18px rgba(0, 0, 0, 0.55);
+}
+
+:root.dark .example-input-add-button-simple svg {
+  color: rgb(226, 232, 240) !important;
+}
+
+:root.dark .example-input-simple {
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .example-input-simple::placeholder {
+  color: rgb(148, 163, 184);
+}
+
+:root.dark .example-input-send-button-simple svg {
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
 }
 
 .example-ai-avatar-image {

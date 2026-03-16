@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { 
   Brain, Check, Play, Plus, ArrowUp, 
   Export, Sidebar, Copy, Lightning,
@@ -6,11 +6,20 @@ import {
 } from '@phosphor-icons/react';
 import logoCircle from '../assets/logo_circle.png';
 import './Example.css';
+import { useApp } from '../contexts/AppContext';
+import { getUserAvatarUrl } from '../utils/avatar';
 
 const Example = () => {
+  const { userInfo } = useApp();
   const scrollRef = useRef(null);
   const [showPreview, setShowPreview] = useState(false);
   const [inputValue, setInputValue] = useState('');
+
+  // 生成用户头像 URL
+  const userAvatarUrl = useMemo(() => {
+    const username = userInfo?.username || 'User';
+    return getUserAvatarUrl(null, username);
+  }, [userInfo?.username]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -20,7 +29,6 @@ const Example = () => {
 
   const handleSend = () => {
     if (inputValue.trim()) {
-      console.log('发送消息:', inputValue);
       setInputValue('');
     }
   };
@@ -57,7 +65,21 @@ const Example = () => {
           {/* 默认示例消息 */}
           <div className="example-message-user">
             <div className="example-message-avatar example-message-avatar-user">
-              <span className="example-message-avatar-text">张</span>
+              <img 
+                src={userAvatarUrl} 
+                alt={userInfo?.username || 'User'}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }}
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  const parent = e.target.parentElement;
+                  if (parent && !parent.querySelector('.example-message-avatar-text')) {
+                    const fallback = document.createElement('span');
+                    fallback.className = 'example-message-avatar-text';
+                    fallback.textContent = (userInfo?.username || 'User').charAt(0).toUpperCase();
+                    parent.appendChild(fallback);
+                  }
+                }}
+              />
             </div>
             <div className="example-message-bubble">
               生成一个高端的电影级雨天街道预览。

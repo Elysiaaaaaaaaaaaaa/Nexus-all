@@ -151,6 +151,16 @@
 
 .message-avatar-user {
   background: rgb(226, 232, 240);
+  overflow: hidden;
+  position: relative;
+}
+
+.message-avatar-user img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
 }
 
 .message-avatar-ai {
@@ -162,6 +172,11 @@
   font-size: 10px;
   font-weight: bold;
   color: rgb(71, 85, 105);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .message-bubble {
@@ -408,65 +423,103 @@
   cursor: not-allowed;
 }
 
+/* 修改生成内容弹窗 - 现代化、国际化 */
 .modify-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.55);
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 999;
   padding: 24px;
+  animation: modify-overlay-in 0.2s ease-out;
+}
+
+@keyframes modify-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modify-modal {
   width: 100%;
-  max-width: 720px;
+  max-width: 480px;
   background: white;
   border: 1px solid rgb(226, 232, 240);
-  border-radius: 16px;
-  box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.25);
-  padding: 18px;
+  border-radius: 20px;
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  padding: 24px;
+  animation: modify-modal-in 0.25s ease-out;
+}
+
+@keyframes modify-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modify-title {
-  font-size: 14px;
-  font-weight: 800;
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
   color: rgb(15, 23, 42);
+  line-height: 1.35;
+  letter-spacing: -0.02em;
 }
 
 .modify-desc {
-  margin-top: 6px;
-  font-size: 12px;
+  margin: 8px 0 0;
+  font-size: 14px;
   color: rgb(100, 116, 139);
+  line-height: 1.5;
 }
 
 .modify-actions {
-  margin-top: 14px;
+  margin-top: 20px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .modify-primary,
 .modify-secondary {
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid rgb(226, 232, 240);
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 700;
-  transition: all 200ms;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border: 1px solid transparent;
 }
 
 .modify-secondary {
-  background: white;
-  color: rgb(30, 41, 59);
+  background: rgb(248, 250, 252);
+  color: rgb(51, 65, 85);
+  border-color: rgb(226, 232, 240);
 }
 
 .modify-secondary:hover:not(:disabled) {
-  background: rgb(248, 250, 252);
+  background: rgb(241, 245, 249);
+  color: rgb(30, 41, 59);
+  border-color: rgb(203, 213, 225);
+}
+
+.modify-secondary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgb(148, 163, 184);
 }
 
 .modify-primary {
@@ -477,6 +530,13 @@
 
 .modify-primary:hover:not(:disabled) {
   background: rgb(29, 78, 216);
+  border-color: rgb(29, 78, 216);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.modify-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px rgb(37, 99, 235);
 }
 
 .modify-primary:disabled,
@@ -486,60 +546,103 @@
 }
 
 .modify-picker {
-  margin-top: 16px;
+  margin-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid rgb(241, 245, 249);
-  padding-top: 12px;
 }
 
 .modify-picker-title {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: rgb(51, 65, 85);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 .modify-checklist {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-height: 320px;
-  overflow: auto;
-  padding-right: 6px;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-inline-end: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgb(203, 213, 225) transparent;
+}
+
+.modify-checklist::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modify-checklist::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modify-checklist::-webkit-scrollbar-thumb {
+  background: rgb(203, 213, 225);
+  border-radius: 3px;
+}
+
+.modify-checklist::-webkit-scrollbar-thumb:hover {
+  background: rgb(148, 163, 184);
 }
 
 .modify-checkitem {
   display: grid;
-  grid-template-columns: 16px 26px 1fr;
-  gap: 10px;
+  grid-template-columns: auto 28px 1fr;
+  gap: 12px;
   align-items: start;
-  font-size: 12px;
+  font-size: 14px;
   color: rgb(30, 41, 59);
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.modify-checkitem:hover {
+  background: rgb(248, 250, 252);
+}
+
+.modify-checkitem input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: rgb(37, 99, 235);
+  cursor: pointer;
 }
 
 .modify-checkitem-num {
-  font-weight: 800;
+  font-weight: 700;
   color: rgb(37, 99, 235);
+  font-variant-numeric: tabular-nums;
 }
 
 .modify-checkitem-text {
   white-space: pre-wrap;
   word-break: break-word;
   color: rgb(30, 41, 59);
+  line-height: 1.45;
 }
 
 .modify-input {
   width: 100%;
-  height: 40px;
+  min-height: 44px;
   border-radius: 12px;
   border: 1px solid rgb(226, 232, 240);
-  padding: 0 12px;
+  padding: 10px 14px;
   outline: none;
-  font-size: 12px;
+  font-size: 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .modify-input:focus {
   border-color: rgb(37, 99, 235);
-  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.modify-input::placeholder {
+  color: rgb(148, 163, 184);
 }
 
 /* Dark mode overrides */
@@ -638,9 +741,14 @@
   background: rgb(37, 99, 235);
 }
 
+:root.dark .modify-overlay {
+  background: rgba(15, 23, 42, 0.6);
+}
+
 :root.dark .modify-modal {
   background: rgba(30, 41, 59, 0.98);
   border-color: rgba(51, 65, 85, 0.85);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(51, 65, 85, 0.5);
 }
 
 :root.dark .modify-title {
@@ -651,6 +759,17 @@
   color: rgb(148, 163, 184);
 }
 
+:root.dark .modify-secondary {
+  background: rgba(51, 65, 85, 0.6);
+  color: rgb(226, 232, 240);
+  border-color: rgba(71, 85, 105, 0.8);
+}
+
+:root.dark .modify-secondary:hover:not(:disabled) {
+  background: rgba(71, 85, 105, 0.8);
+  color: rgb(248, 250, 252);
+}
+
 :root.dark .modify-picker {
   border-top-color: rgba(51, 65, 85, 0.7);
 }
@@ -659,10 +778,22 @@
   color: rgb(226, 232, 240);
 }
 
+:root.dark .modify-checkitem:hover {
+  background: rgba(51, 65, 85, 0.4);
+}
+
+:root.dark .modify-checkitem-text {
+  color: rgb(226, 232, 240);
+}
+
 :root.dark .modify-input {
-  background: rgba(15, 23, 42, 0.5);
+  background: rgba(15, 23, 42, 0.6);
   border-color: rgba(51, 65, 85, 0.8);
   color: rgb(248, 250, 252);
+}
+
+:root.dark .modify-input::placeholder {
+  color: rgb(148, 163, 184);
 }
 
 .ai-avatar-image {

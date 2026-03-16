@@ -11,7 +11,7 @@ const Settings = () => {
   const [reasoningEffort, setReasoningEffort] = useState('Balanced');
 
   const handleSave = () => {
-    console.log('保存设置');
+    // 保存设置
   };
 
   return (
@@ -233,7 +233,7 @@ const Settings = () => {
                 className="danger-button"
                 onClick={() => {
                   if (window.confirm(t('settings.confirmClear'))) {
-                    console.log('删除所有数据');
+                    // 删除所有数据
                   }
                 }}
               >

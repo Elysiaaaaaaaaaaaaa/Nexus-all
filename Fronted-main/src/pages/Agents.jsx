@@ -41,7 +41,7 @@ const Agents = () => {
       <div className="agents-actions">
         <button 
           className="action-button primary"
-          onClick={() => console.log('添加智能体')}
+          onClick={() => {}}
         >
           <Plus size={16} weight="bold" /> 添加智能体
         </button>
@@ -74,7 +74,7 @@ const Agents = () => {
         </div>
         <button 
           className="action-button"
-          onClick={() => console.log('打开筛选')}
+          onClick={() => {}}
         >
           <Faders size={16} /> 筛选
         </button>
@@ -132,7 +132,7 @@ const Agents = () => {
         </div>
         <button 
           className="performance-button"
-          onClick={() => console.log('优化集群')}
+          onClick={() => {}}
         >
           优化集群
         </button>

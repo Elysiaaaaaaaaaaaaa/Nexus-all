@@ -1,0 +1,545 @@
+/* TechShowcase.css */
+
+/* 容器定义 */
+.tech-dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 32px;
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* 顶部 Header */
+.tech-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  animation: slideDown 0.4s ease-out;
+}
+
+.tech-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tech-title-icon {
+  color: rgb(37, 99, 235);
+  flex-shrink: 0;
+}
+
+.tech-title {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: -0.025em;
+  color: rgb(15, 23, 42);
+  margin: 0;
+}
+
+.tech-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  color: rgb(22, 163, 74);
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+.system-version {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 12px;
+  color: rgb(148, 163, 184);
+  opacity: 0.8;
+}
+
+/* 核心网格布局 */
+.tech-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px; /* 左侧自适应，右侧固定宽度 */
+  gap: 24px;
+  flex: 1;
+  min-height: 0; /* 防止溢出 */
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* 左侧主视图面板 */
+.main-viewer-panel {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 16px;
+  border: 1px solid rgb(226, 232, 240);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 顶部工具栏 */
+.viewer-toolbar {
+  height: 56px;
+  border-bottom: 1px solid rgb(241, 245, 249);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.file-icon {
+  color: rgb(239, 68, 68); /* PDF Red */
+}
+
+.file-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: rgb(51, 65, 85);
+}
+
+.file-tag {
+  font-size: 10px;
+  background: rgb(241, 245, 249);
+  color: rgb(100, 116, 139);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.viewer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* 确保按钮容器在最上层，防止被 iframe 遮挡 */
+  position: relative; 
+  z-index: 20; 
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex; /* 确保 Flex 居中生效 */
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid transparent; /* 预留边框位置防止抖动 */
+  background: transparent;
+  
+  /* 修改颜色：使用更深的灰色，确保可见性 */
+  color: #475569; /* Slate-600 */
+  
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0; /* 清除默认 padding */
+}
+
+/* 新增：专门针对 SVG 的样式修复 */
+.action-btn svg {
+  display: block; /* 防止行内元素的间隙问题 */
+  width: 20px;    /* 强制指定宽度 */
+  height: 20px;   /* 强制指定高度 */
+  flex-shrink: 0; /* 防止被挤压 */
+  /* 确保颜色继承 */
+  color: inherit; 
+}
+
+.action-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a; /* Hover 时变为深黑色 */
+  border-color: #e2e8f0;
+}
+
+/* Primary 按钮（影院模式）的特殊样式 */
+.action-btn.primary {
+  color: #2563eb; /* 蓝色 */
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.action-btn.primary:hover {
+  background: rgba(37, 99, 235, 0.15);
+  color: #1d4ed8;
+}
+
+.zoom-indicator {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: rgb(100, 116, 139);
+  width: 40px;
+  text-align: center;
+}
+
+.divider-vertical {
+  width: 1px;
+  height: 16px;
+  background: rgb(226, 232, 240);
+  margin: 0 4px;
+}
+
+/* PDF 视口 */
+.pdf-viewport {
+  flex: 1;
+  background: rgb(248, 250, 252); /* PDF 背景灰 */
+  position: relative;
+  overflow: hidden; /* 这里设为 auto 如果想要原生滚动条，但在 zoom 模式下 hidden 更好 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-transform-layer {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tech-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: white;
+}
+
+/* 右侧 Side Panel */
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.metric-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgb(226, 232, 240);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 0.2s;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-color: rgb(203, 213, 225);
+}
+
+.metric-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgb(248, 250, 252);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(37, 99, 235);
+  font-size: 20px;
+}
+
+.metric-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgb(148, 163, 184);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgb(15, 23, 42);
+}
+
+.metric-status {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.metric-status.active {
+  color: rgb(22, 163, 74);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.metric-status.latency {
+  color: rgb(234, 179, 8);
+  background: rgba(234, 179, 8, 0.1);
+}
+
+.metric-status.encrypted {
+  color: rgb(99, 102, 241);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* 技术栈列表卡片 */
+.stack-details-card {
+  background: linear-gradient(180deg, white 0%, rgb(248, 250, 252) 100%);
+  border: 1px solid rgb(226, 232, 240);
+  border-radius: 12px;
+  padding: 20px;
+  flex: 1;
+}
+
+.stack-details-card h3 {
+  font-size: 12px;
+  color: rgb(100, 116, 139);
+  text-transform: uppercase;
+  margin: 0 0 16px 0;
+  letter-spacing: 0.8px;
+}
+
+.tech-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tech-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgb(51, 65, 85);
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 4px;
+  background: rgb(226, 232, 240);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: rgb(37, 99, 235);
+  border-radius: 2px;
+}
+
+/* 文档导航器 */
+.doc-navigator {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 50px;
+  border: 1px solid rgb(226, 232, 240);
+  font-size: 11px;
+  font-weight: 700;
+  color: rgb(100, 116, 139);
+  letter-spacing: 0.5px;
+}
+
+.nav-arrow {
+  border: none;
+  background: transparent;
+  color: rgb(30, 41, 59);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 50%;
+}
+
+.nav-arrow:hover {
+  background: rgb(241, 245, 249);
+}
+
+/* 全屏 Cinema Mode 样式重写 */
+.tech-dashboard.cinema-mode-active {
+  padding: 0;
+  max-width: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: black;
+}
+
+.tech-dashboard.cinema-mode-active .tech-grid-layout {
+  grid-template-columns: 1fr; /* 单列，移除侧边栏 */
+  gap: 0;
+  height: 100%;
+}
+
+.tech-dashboard.cinema-mode-active .main-viewer-panel {
+  border-radius: 0;
+  border: none;
+  height: 100%;
+  background: black;
+}
+
+.tech-dashboard.cinema-mode-active .viewer-toolbar {
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.tech-dashboard.cinema-mode-active .viewer-toolbar .file-name,
+.tech-dashboard.cinema-mode-active .viewer-toolbar .file-tag {
+  color: white;
+}
+
+.tech-dashboard.cinema-mode-active .viewer-toolbar .file-icon {
+  color: rgb(239, 68, 68);
+}
+
+.tech-dashboard.cinema-mode-active .action-btn {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tech-dashboard.cinema-mode-active .action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: white;
+}
+
+.tech-dashboard.cinema-mode-active .action-btn.primary {
+  background: rgba(37, 99, 235, 0.3);
+  border-color: rgba(37, 99, 235, 0.5);
+  color: rgb(147, 197, 253);
+}
+
+.tech-dashboard.cinema-mode-active .action-btn.primary:hover {
+  background: rgba(37, 99, 235, 0.5);
+  border-color: rgba(37, 99, 235, 0.7);
+  color: white;
+}
+
+.tech-dashboard.cinema-mode-active .action-btn svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+.tech-dashboard.cinema-mode-active .zoom-indicator {
+  color: white;
+}
+
+.tech-dashboard.cinema-mode-active .divider-vertical {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* 动画定义 */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark Mode 适配 (复用 Dashboard 逻辑) */
+:root.dark .tech-title { color: white; }
+:root.dark .tech-title-icon { color: rgb(96, 165, 250); }
+:root.dark .main-viewer-panel,
+:root.dark .metric-card,
+:root.dark .stack-details-card,
+:root.dark .doc-navigator {
+  background: rgb(30, 41, 59);
+  border-color: rgb(51, 65, 85);
+}
+:root.dark .viewer-toolbar {
+  background: rgba(30, 41, 59, 0.8);
+  border-bottom-color: rgb(51, 65, 85);
+}
+:root.dark .file-name,
+:root.dark .metric-value {
+  color: rgb(241, 245, 249);
+}
+:root.dark .file-tag {
+  background: rgb(15, 23, 42);
+  color: rgb(148, 163, 184);
+}
+:root.dark .action-btn { 
+  color: #94a3b8; /* 浅灰色 */
+}
+
+:root.dark .action-btn svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+:root.dark .action-btn:hover { 
+  background: #334155;
+  color: #fff;
+  border-color: #475569;
+}
+
+:root.dark .action-btn.primary {
+  color: #60a5fa; /* 亮蓝色 */
+  background: rgba(96, 165, 250, 0.15);
+}
+
+:root.dark .action-btn.primary:hover {
+  background: rgba(96, 165, 250, 0.25);
+}
+:root.dark .tech-iframe { filter: invert(0.9) hue-rotate(180deg); /* 这是一个黑科技，反转白色PDF为黑色 */ }
+:root.dark .pdf-viewport { background: rgb(15, 23, 42); }
+:root.dark .metric-icon { background: rgba(15, 23, 42, 0.5); }
+:root.dark .tech-name { color: rgb(203, 213, 225); }
+:root.dark .progress-bar { background: rgb(51, 65, 85); }
+:root.dark .stack-details-card { background: rgb(30, 41, 59); } /* 移除渐变在暗色模式 */

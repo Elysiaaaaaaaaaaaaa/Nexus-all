@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell, Paperclip, Microphone, ArrowUp,
   FilmStrip, Image
 } from '@phosphor-icons/react';
 import './Dashboard.css';
 import { useApp } from '../contexts/AppContext';
-import { projectAPI } from '../services/api';
+import { isProduction } from '../utils/security';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { t, userId } = useApp();
+  const { t } = useApp();
   const [inputValue, setInputValue] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const fileInputRef = useRef(null);
@@ -32,67 +32,43 @@ const Dashboard = () => {
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log('选择的文件:', file.name);
       // 这里可以处理文件上传逻辑
     }
   };
 
   const handleMicrophoneClick = async () => {
-    console.log('🎤 麦克风按钮被点击了！');
-    console.log('当前录音状态:', isRecording ? '正在录音' : '未录音');
-    console.log('输入框内容:', inputValue);
-    console.log('输入框是否为空:', !inputValue.trim());
-    
+    // 移除详细日志，避免泄露敏感信息
     if (isRecording) {
-      console.log('🛑 停止录音流程开始...');
       // 停止录音
       if (mediaRecorderRef.current) {
-        console.log('🛑 调用 mediaRecorder.stop()');
         mediaRecorderRef.current.stop();
         setIsRecording(false);
-        console.log('✅ 录音已停止，isRecording 设为 false');
-      } else {
-        console.warn('⚠️ mediaRecorderRef.current 为 null，无法停止录音');
       }
     } else {
-      console.log('🎙️ 开始录音流程开始...');
       // 开始录音
       try {
-        console.log('🔑 正在请求麦克风权限...');
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log('✅ 麦克风权限获取成功，stream:', stream);
         
         const mediaRecorder = new MediaRecorder(stream);
         mediaRecorderRef.current = mediaRecorder;
-        console.log('✅ MediaRecorder 创建成功:', mediaRecorder);
 
         const chunks = [];
         mediaRecorder.ondataavailable = (e) => {
-          console.log('📦 收到音频数据块，大小:', e.data.size);
           chunks.push(e.data);
         };
 
         mediaRecorder.onstop = () => {
-          console.log('⏹️ MediaRecorder onstop 事件触发');
           const blob = new Blob(chunks, { type: 'audio/wav' });
-          console.log('✅ 录音完成，音频大小:', blob.size, 'bytes');
-          console.log('📁 生成的 Blob:', blob);
           
           // 这里可以处理录音文件
           stream.getTracks().forEach(track => {
-            console.log('🔌 停止音轨:', track);
             track.stop();
           });
         };
 
-        console.log('▶️ 开始录音...');
         mediaRecorder.start();
         setIsRecording(true);
-        console.log('✅ 录音已开始，isRecording 设为 true');
-        console.log('🎤 可以开始说话了...');
       } catch (error) {
-        console.error('❌ 无法访问麦克风:', error);
-        console.error('错误详情:', error.name, error.message);
         alert('无法访问麦克风，请检查权限设置');
       }
     }
@@ -177,7 +153,7 @@ const Dashboard = () => {
       </div>
 
       {/* 快捷卡片 */}
-      <div className="mode-grid">
+      <div className="mode-grid-single">
         <ModeCard
           icon={<FilmStrip weight="fill" />}
           title={t('dashboard.workflowFastTitle')}
@@ -185,20 +161,7 @@ const Dashboard = () => {
           color="rgb(219, 234, 254)"
           textColor="rgb(37, 99, 235)"
           path="/interaction"
-          state={{ workflow: 'text_to_video_fast', workflowType: 'text2video' }}
-        />
-        <ModeCard
-          icon={<Image weight="fill" />}
-          title="图片到视频 · 图生视频"
-          desc="将图片转换为动态视频"
-          color="rgb(255, 237, 213)"
-          textColor="rgb(249, 115, 22)"
-          path="/interaction"
-          state={{ workflow: 'image_to_video', workflowType: 'image2video' }}
-          onCreateProject={async () => {
-            const projectName = `图生视频_${Date.now()}`;
-            return await projectAPI.createProject(projectName, 'image2video');
-          }}
+          state={{ workflow: 'text_to_video_fast' }}
         />
         <ModeCard
           icon={<Image weight="fill" />}
@@ -220,7 +183,7 @@ const Dashboard = () => {
         </div>
         <div className="footer-info">
           <div className="footer-dot"></div>
-          <span className="footer-text">Nexus Engine v4.0.2 Active</span>
+          <span className="footer-text">Nexus Studio v4.0.2 Active</span>
         </div>
       </footer>
     </div>
@@ -231,88 +194,19 @@ const IconButton = ({ icon, title, onClick }) => (
   <button
     className="icon-button"
     title={title}
-    onClick={onClick || (() => console.log(title))}
+    onClick={onClick || (() => {})}
   >
     {icon}
   </button>
 );
 
-const ModeCard = ({ icon, title, desc, color, textColor, path, state, onCreateProject }) => {
+const ModeCard = ({ icon, title, desc, color, textColor, path, state }) => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const handleClick = async () => {
-    // 检查是否是从Interaction页面跳转过来的，需要创建新项目
-    const forceNewProject = location.state?.forceNewProject;
-    const newProjectName = location.state?.newProjectName;
-    
-    // 如果需要创建项目（图片到视频），先创建项目再跳转
-    if (onCreateProject) {
-      try {
-        const response = await onCreateProject();
-        if (response && response.success) {
-          navigate(path, {
-            state: {
-              ...state,
-              projectName: response.project_name,
-              isNewProject: true,  // 标记这是新创建的项目
-              session_id: response.session_id  // 传递新的session_id
-            }
-          });
-        } else {
-          // 如果创建失败，仍然跳转（让后端处理）
-          navigate(path, state ? { state } : undefined);
-        }
-      } catch (error) {
-        console.error('创建项目失败:', error);
-        // 创建失败时仍然跳转
-        navigate(path, state ? { state } : undefined);
-      }
-    } else if (forceNewProject && newProjectName) {
-      // 如果强制创建新项目，先调用API创建项目，然后跳转
-      try {
-        const { projectAPI } = await import('../services/api');
-        const workflowType = state?.workflowType || 'text2video';
-        const response = await projectAPI.createProject(newProjectName, workflowType);
-        if (response && response.success) {
-          navigate(path, {
-            state: {
-              ...state,
-              projectName: response.project_name,
-              isNewProject: true,
-              session_id: response.session_id
-            }
-          });
-        } else {
-          // 如果创建失败，使用传递的项目名称直接跳转
-          navigate(path, {
-            state: {
-              ...state,
-              projectName: newProjectName,
-              isNewProject: true
-            }
-          });
-        }
-      } catch (error) {
-        console.error('创建新项目失败:', error);
-        // 创建失败时使用传递的项目名称直接跳转
-        navigate(path, {
-          state: {
-            ...state,
-            projectName: newProjectName,
-            isNewProject: true
-          }
-        });
-      }
-    } else {
-      navigate(path, state ? { state } : undefined);
-    }
-  };
 
   return (
     <button
       className="mode-card"
-      onClick={handleClick}
+      onClick={() => navigate(path, state ? { state } : undefined)}
     >
       <div className="mode-icon-container" style={{ background: color, color: textColor }}>
         {icon}

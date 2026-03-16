@@ -9,7 +9,9 @@ export const messages = {
       lab: '平台拓展',
       export: '导出中心',
       settings: '设置',
-      createProject: '创建项目'
+      createProject: '创建项目',
+      techShowcase: '技术展示',
+      team: '团队介绍'
     },
     dashboard: {
       headlineMain: '重塑',
@@ -101,12 +103,49 @@ export const messages = {
       startCreate: '开始创作',
       tryFree: '免费试用',
       docs: '技术文档',
-      demo: 'Nexus Engine 实时生成演示',
-      heroSubtitle: 'Nexus Engine V4.0.2: 专业的 AIGC 视频全流程辅助系统。基于 LangGraph 与 ACPs 协议，将创意构思秒级转化为高质量视频。'
+      demo: 'Nexus Studio 实时生成演示',
+      heroSubtitle: 'Nexus Studio V4.0.2: 专业的 AIGC 视频全流程辅助系统。基于 LangGraph 与 ACPs 协议，将创意构思秒级转化为高质量视频。',
+      heroTagline: '专业的 AIGC 视频全流程辅助系统',
+      heroDescription: '基于 LangGraph 与 ACPs 协议，将创意构思秒级转化为高质量视频',
+      navTeam: '团队',
+      navTech: '技术',
+      partnersTitle: '合作伙伴',
+      partnerBUPT: '北京邮电大学',
+      partnerDesc: '连接学术研究与产业创新的桥梁，我们来自北京邮电大学。',
+      strategicPartner: '战略合作伙伴',
+      partnerGitHub: 'GitHub',
+      partnerGitHubDesc: '开源代码托管与协作平台，支持项目开发与版本管理。',
+      partnerLangGraph: 'LangGraph',
+      partnerLangGraphDesc: 'LangChain 官方工作流编排框架，支持复杂 AI 应用构建。',
+      partnerOpenAI: 'OpenAI',
+      partnerOpenAIDesc: '领先的人工智能研究机构，提供强大的 AI 模型与 API。',
+      partnerVercel: 'Vercel',
+      partnerVercelDesc: '现代化前端部署平台，提供极速的全球 CDN 与边缘计算。',
+      partnerMongoDB: 'MongoDB',
+      partnerMongoDBDesc: 'NoSQL 数据库解决方案，支持灵活的数据存储与查询。',
+      partnerPython: 'Python',
+      partnerPythonDesc: '强大的编程语言，广泛应用于 AI、数据科学与后端开发。',
+      partnerReact: 'React',
+      partnerReactDesc: 'Facebook 开发的 UI 框架，构建现代交互式用户界面。',
+      mentorTitle: '领头导师',
+      mentorName: '刘军（副教授）',
+      mentorNameEn: 'Liu Jun',
+      mentorTitle1: '博士生导师',
+      mentorTitle2: '硕士生导师',
+      mentorTitle3: '数据科学中心主任',
+      mentorRole: '北京邮电大学人工智能学院 副教授',
+      mentorEmail: '电子邮箱',
+      mentorEmailValue: 'liujun@bupt.edu.cn',
+      mentorPosition: '主要任职',
+      mentorPositionValue: '数据科学中心主任 | 智能体育研究中心首席科学家',
+      mentorResearch: '研究方向',
+      mentorResearchValue: '智能体（Agentic AI）与运动智能（Sport AI）',
+      mentorBio: '刘军，男，1976年生人，博士，北京邮电大学人工智能学院，副教授，博士生导师，北京邮电大学数据科学中心主任，北京大数据协会常务理事。研究方向为智能体（Agentic AI）与运动智能（Sport AI），开设课程《海量信息处理技术与实践》、《深度学习》，已发表大数据与人工智能相关SCI/EI检索论文十余篇，包括SCI影响因子大于30的高影响力论文。编写《Hadoop大数据处理》、《Spark大数据处理：原理、算法与实例》、《人工智能核心-神经网络》三部大数据、人工智能理论与算法著作，已被多所高校的相关课程作为参考教材使用。',
+      mentorLink: '查看百度学术主页'
     },
     manual: {
       title: '使用指南',
-      subtitle: 'Nexus Engine 使用指南',
+      subtitle: 'Nexus Studio 使用指南',
       quickActions: '快速操作',
       start: '开始创作',
       settings: '系统设置'
@@ -163,6 +202,103 @@ export const messages = {
       permissions: '权限与角色',
       permissionsDesc: '为团队成员配置最小权限与可见范围。',
       comingSoon: '功能占位：敬请期待'
+    },
+    ideas: {
+      title: '产品灵感板',
+      subtitle: '把“平台”做成体系：功能方向、页面规划与落地入口。',
+      open: '打开',
+      comingSoon: '功能占位：敬请期待',
+      filter: {
+        all: '全部',
+        materials: '素材',
+        workflow: '工作流',
+        export: '导出',
+        security: '安全',
+        growth: '增长'
+      },
+      materialsWorkbenchTitle: '素材工作台（资产/分镜/提示词）',
+      materialsWorkbenchDesc: '按 session 聚合素材，支持检索、引用、导出与复用。',
+      workflowComposerTitle: '工作流编排器（可视化）',
+      workflowComposerDesc: '拖拽节点配置步骤/智能体，保存为模板，一键开跑。',
+      exportPackTitle: '导出包（可复现）',
+      exportPackDesc: '把对话、参数、日志、产出打包成可复现的“生产包”。',
+      securityTitle: '安全能力（企业级）',
+      securityDesc: '权限、审计、密钥、合规与分享控制。',
+      galleryTitle: '作品展示墙',
+      galleryDesc: '把生成结果做成可分享的作品页与团队展示面板。',
+      oneClickDemoTitle: '一键演示场景',
+      oneClickDemoDesc: '提供一组内置 demo 会话，几秒钟展示平台能力。'
+    },
+    techShowcase: {
+      title: '技术展示',
+      liveMonitoring: '实时监控',
+      buildVersion: '构建版本 2024.10.45-RC',
+      coreTechnologies: '核心技术',
+      frontendCore: '前端核心',
+      serverRuntime: '服务器运行时',
+      globalCDN: '全球 CDN',
+      securityProtocol: '安全协议',
+      frontendArchitecture: '前端架构',
+      apiResponseRate: 'API 响应率',
+      systemCoverage: '系统覆盖率',
+      document: '文档',
+      zoomOut: '缩小',
+      zoomIn: '放大',
+      cinemaMode: '影院模式',
+      exitCinemaMode: '退出影院模式',
+      description: '探索我们的技术方案与创新展示',
+      performance: '采用最新的前端技术栈，确保最快的加载速度和流畅的用户体验。',
+      design: '精心设计每一个细节，提供视觉上的完美体验。',
+      features: '集成多项先进技术功能，满足各种复杂业务需求。',
+      compatibility: '完美支持各种设备和浏览器，提供一致的体验。'
+    },
+    faq: {
+      title: '常见问题',
+      description: '关于 Nexus Studio 产品、技术与使用的常见解答',
+      items: [
+        { question: 'Nexus Studio 支持哪些视频生成场景？', answer: '支持文本到视频极速生成、故事板精准生成、分镜脚本创作、AI 辅助编辑等。您可在仪表盘选择「文本到视频 · 极速生成」或「故事板模式 · 精准生成」进入对应工作流。' },
+        { question: '如何保证生成内容的安全与合规？', answer: '我们采用权限与审计机制、密钥与可控分享策略，并遵循 ACPs 协议。所有生成内容均可追溯，支持团队协作时的权限管理。' },
+        { question: '是否支持私有化部署或 API 对接？', answer: '支持。Nexus Studio 提供架构文档与集成指南，可对接现有 CI/CD 与素材库。如需私有化或定制 API，请联系商务或查看文档中的「定制化解决方案」。' },
+        { question: '导出的项目格式有哪些？', answer: '支持常见视频工程格式及分镜/脚本导出，便于在专业剪辑软件中继续编辑。导出中心提供预估时长与一键导出。' },
+        { question: '遇到问题如何获取支持？', answer: '可查阅使用指南、技术展示与文档。如需人工支持，请通过页脚联系方式或「技术咨询支持」提交需求，我们会在工作日内回复。' }
+      ]
+    },
+    testimonials: {
+      title: '用户评价',
+      description: '来自创作者与团队的真实反馈',
+      items: [
+        { quote: 'Nexus Studio 把我们从繁琐的分镜与素材整理里解放出来，文本到视频的极速模式特别适合快速验证创意。', authorName: '张明', authorRole: '短视频团队负责人', avatarUrl: 'https://i.pravatar.cc/300?img=11' },
+        { quote: '故事板模式对精细控制分镜和节奏非常有用，导出格式也能直接进剪辑软件，省了不少时间。', authorName: '李思', authorRole: '独立创作者', avatarUrl: 'https://i.pravatar.cc/300?img=23' },
+        { quote: '多智能体协作和 ACPs 协议让我们的工作流更清晰，权限与审计也满足合规要求，团队协作体验很好。', authorName: '王磊', authorRole: '内容制作公司技术负责人', avatarUrl: 'https://i.pravatar.cc/300?img=33' }
+      ]
+    },
+    teamIntroduction: {
+      headline: 'Nexus 背后的团队',
+      headlineHighlight: 'Nexus Intelligence',
+      subtitle: '连接学术研究与产业创新的桥梁\n我们来自北京邮电大学',
+      photoCaption: '我们的团队 @ 北京邮电大学 2026',
+      affiliations: [
+        '北京邮电大学计算机学院（国家示范性软件学院）',
+        '北京邮电大学国际学院',
+        '北京邮电大学人工智能学院'
+      ],
+      roles: {
+        hengji: '项目负责人 & 核心架构师',
+        zixuan: '研究工程师',
+        haocheng: '前端工程师',
+        zhengyang: 'AI 研究员'
+      },
+      tags: {
+        fullStack: '全栈',
+        product: '产品',
+        vision: '愿景',
+        algorithms: '算法',
+        systemDesign: '系统设计',
+        uiux: 'UI/UX',
+        interaction: '交互',
+        deepLearning: '深度学习',
+        modelOpt: '模型优化'
+      }
     }
   },
   'en-US': {
@@ -175,7 +311,9 @@ export const messages = {
       lab: 'Lab',
       export: 'Export',
       settings: 'Settings',
-      createProject: 'Create Project'
+      createProject: 'Create Project',
+      techShowcase: 'Tech Showcase',
+      team: 'Team'
     },
     dashboard: {
       headlineMain: 'Redefine',
@@ -267,12 +405,49 @@ export const messages = {
       startCreate: 'Start',
       tryFree: 'Try for free',
       docs: 'Docs',
-      demo: 'Nexus Engine realtime demo',
-      heroSubtitle: 'Nexus Engine V4.0.2: a professional AIGC video end-to-end assistant. Built on LangGraph and ACPs to turn ideas into high-quality videos in seconds.'
+      demo: 'Nexus Studio realtime demo',
+      heroSubtitle: 'Nexus Studio V4.0.2: a professional AIGC video end-to-end assistant. Built on LangGraph and ACPs to turn ideas into high-quality videos in seconds.',
+      heroTagline: 'Professional AIGC Video End-to-End Assistant',
+      heroDescription: 'Built on LangGraph and ACPs to turn ideas into high-quality videos in seconds',
+      navTeam: 'Team',
+      navTech: 'Tech',
+      partnersTitle: 'Partners',
+      partnerBUPT: 'Beijing University of Posts and Telecommunications',
+      partnerDesc: 'A bridge connecting academic research and industrial innovation. We are from Beijing University of Posts and Telecommunications.',
+      strategicPartner: 'Strategic Partner',
+      partnerGitHub: 'GitHub',
+      partnerGitHubDesc: 'Open source code hosting and collaboration platform, supporting project development and version control.',
+      partnerLangGraph: 'LangGraph',
+      partnerLangGraphDesc: 'Official workflow orchestration framework from LangChain, enabling complex AI application development.',
+      partnerOpenAI: 'OpenAI',
+      partnerOpenAIDesc: 'Leading artificial intelligence research organization, providing powerful AI models and APIs.',
+      partnerVercel: 'Vercel',
+      partnerVercelDesc: 'Modern frontend deployment platform, offering ultra-fast global CDN and edge computing.',
+      partnerMongoDB: 'MongoDB',
+      partnerMongoDBDesc: 'NoSQL database solution, supporting flexible data storage and querying.',
+      partnerPython: 'Python',
+      partnerPythonDesc: 'Powerful programming language, widely used in AI, data science, and backend development.',
+      partnerReact: 'React',
+      partnerReactDesc: 'UI framework developed by Facebook, building modern interactive user interfaces.',
+      mentorTitle: 'Leading Mentor',
+      mentorName: 'Jun Liu (Associate Professor)',
+      mentorNameEn: 'Liu Jun',
+      mentorTitle1: 'Ph.D. Supervisor',
+      mentorTitle2: 'Master Supervisor',
+      mentorTitle3: 'Director of Data Science Center',
+      mentorRole: 'Associate Professor, School of Artificial Intelligence, Beijing University of Posts and Telecommunications',
+      mentorEmail: 'Email',
+      mentorEmailValue: 'liujun@bupt.edu.cn',
+      mentorPosition: 'Main Position',
+      mentorPositionValue: 'Director of Data Science Center | Chief Scientist of Intelligent Sports Research Center',
+      mentorResearch: 'Research Direction',
+      mentorResearchValue: 'Agentic AI and Sport AI',
+      mentorBio: 'Jun Liu, male, born in 1976, Ph.D., Associate Professor and Ph.D. Supervisor at the School of Artificial Intelligence, Beijing University of Posts and Telecommunications, Director of the Data Science Center, and Executive Director of Beijing Big Data Association. Research focuses on Agentic AI and Sport AI. Teaches courses "Massive Information Processing Technology and Practice" and "Deep Learning". Has published more than ten SCI/EI indexed papers on big data and artificial intelligence, including high-impact papers with SCI impact factors greater than 30. Authored three books on big data and AI theory and algorithms: "Hadoop Big Data Processing", "Spark Big Data Processing: Principles, Algorithms and Examples", and "Artificial Intelligence Core - Neural Networks", which have been used as reference textbooks in related courses at multiple universities.',
+      mentorLink: 'View Baidu Scholar Profile'
     },
     manual: {
       title: 'Guide',
-      subtitle: 'Nexus Engine guide',
+      subtitle: 'Nexus Studio guide',
       quickActions: 'Quick actions',
       start: 'Start',
       settings: 'Settings'
@@ -329,6 +504,103 @@ export const messages = {
       permissions: 'Roles & permissions',
       permissionsDesc: 'Configure least-privilege access for teams.',
       comingSoon: 'Coming soon'
+    },
+    ideas: {
+      title: 'Idea Board',
+      subtitle: 'Turn the product into a platform: directions, pages and entry points.',
+      open: 'Open',
+      comingSoon: 'Coming soon',
+      filter: {
+        all: 'All',
+        materials: 'Materials',
+        workflow: 'Workflow',
+        export: 'Export',
+        security: 'Security',
+        growth: 'Growth'
+      },
+      materialsWorkbenchTitle: 'Materials Workbench',
+      materialsWorkbenchDesc: 'Aggregate per session, search, reference and export for reuse.',
+      workflowComposerTitle: 'Workflow Composer',
+      workflowComposerDesc: 'Drag-and-drop nodes for steps/agents, save templates and run.',
+      exportPackTitle: 'Reproducible Export Pack',
+      exportPackDesc: 'Bundle chat, params, logs and artifacts into a reproducible pack.',
+      securityTitle: 'Enterprise Security',
+      securityDesc: 'Permissions, audits, keys and controlled sharing.',
+      galleryTitle: 'Showcase Wall',
+      galleryDesc: 'Publish outputs as shareable pages and team dashboards.',
+      oneClickDemoTitle: 'One-click Demo',
+      oneClickDemoDesc: 'Built-in demo sessions to showcase the platform in seconds.'
+    },
+    techShowcase: {
+      title: 'Tech Showcase',
+      liveMonitoring: 'LIVE MONITORING',
+      buildVersion: 'BUILD 2024.10.45-RC',
+      coreTechnologies: 'CORE TECHNOLOGIES',
+      frontendCore: 'Frontend Core',
+      serverRuntime: 'Server Runtime',
+      globalCDN: 'Global CDN',
+      securityProtocol: 'Security Protocol',
+      frontendArchitecture: 'Frontend Architecture',
+      apiResponseRate: 'API Response Rate',
+      systemCoverage: 'System Coverage',
+      document: 'DOCUMENT',
+      zoomOut: 'Zoom Out',
+      zoomIn: 'Zoom In',
+      cinemaMode: 'Cinema Mode',
+      exitCinemaMode: 'Exit Cinema Mode',
+      description: 'Explore our technology solutions and innovation showcase',
+      performance: 'Using the latest frontend technology stack to ensure the fastest loading speed and smooth user experience.',
+      design: 'Carefully design every detail to provide a visually perfect experience.',
+      features: 'Integrate multiple advanced technology features to meet various complex business needs.',
+      compatibility: 'Perfect support for various devices and browsers, providing consistent experience.'
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      description: 'Common answers about Nexus Studio product, technology and usage',
+      items: [
+        { question: 'What video generation scenarios does Nexus Studio support?', answer: 'We support text-to-video fast generation, storyboard-based precise generation, shot script creation, and AI-assisted editing. From the dashboard you can choose "Text-to-Video · Fast" or "Storyboard · Precise" to start the corresponding workflow.' },
+        { question: 'How do you ensure safety and compliance of generated content?', answer: 'We use permission and audit mechanisms, key management, and controlled sharing, following the ACPs protocol. All generated content is traceable and supports team permission management.' },
+        { question: 'Do you support on-premise deployment or API integration?', answer: 'Yes. Nexus Studio provides architecture docs and integration guides, and can integrate with your CI/CD and asset libraries. For on-premise or custom API, contact sales or see "Custom solutions" in the docs.' },
+        { question: 'What export formats are available?', answer: 'We support common video project formats and storyboard/script export for use in professional editing tools. The Export Center offers duration estimates and one-click export.' },
+        { question: 'How can I get support when I run into issues?', answer: 'Check the user guide, tech showcase, and documentation. For human support, use the footer contact or "Technical support" to submit a request; we respond within business days.' }
+      ]
+    },
+    testimonials: {
+      title: 'What People Say',
+      description: 'Real feedback from creators and teams',
+      items: [
+        { quote: 'Nexus Studio freed us from tedious storyboarding and asset management. The text-to-video fast mode is perfect for validating ideas quickly.', authorName: 'Ming Zhang', authorRole: 'Short-form Video Team Lead', avatarUrl: 'https://i.pravatar.cc/300?img=11' },
+        { quote: 'Storyboard mode is great for fine control over shots and pacing. Export formats plug straight into our editing suite and save a lot of time.', authorName: 'Si Li', authorRole: 'Independent Creator', avatarUrl: 'https://i.pravatar.cc/300?img=23' },
+        { quote: 'Multi-agent orchestration and ACPs make our workflow clearer. Permissions and auditing meet compliance needs, and team collaboration feels smooth.', authorName: 'Lei Wang', authorRole: 'Tech Lead, Content Studio', avatarUrl: 'https://i.pravatar.cc/300?img=33' }
+      ]
+    },
+    teamIntroduction: {
+      headline: 'The Team Behind',
+      headlineHighlight: 'Nexus Intelligence',
+      subtitle: 'Bridging the gap between academic research and industrial innovation\nWe are builders from BUPT',
+      photoCaption: 'Our Team @ BUPT Campus 2026',
+      affiliations: [
+        'School of Computer Science (National Pilot Software Engineering School), BUPT',
+        'International School, Beijing University of Posts and Telecommunications',
+        'School of Artificial Intelligence, Beijing University of Posts and Telecommunications'
+      ],
+      roles: {
+        hengji: 'Project Lead & Core Architect',
+        zixuan: 'Research Engineer',
+        haocheng: 'Frontend Engineer',
+        zhengyang: 'AI Researcher'
+      },
+      tags: {
+        fullStack: 'Full Stack',
+        product: 'Product',
+        vision: 'Vision',
+        algorithms: 'Algorithms',
+        systemDesign: 'System Design',
+        uiux: 'UI/UX',
+        interaction: 'Interaction',
+        deepLearning: 'Deep Learning',
+        modelOpt: 'Model Opt'
+      }
     }
   },
   'ja-JP': {
@@ -433,12 +705,49 @@ export const messages = {
       startCreate: '開始',
       tryFree: '無料で試す',
       docs: 'ドキュメント',
-      demo: 'Nexus Engine リアルタイムデモ',
-      heroSubtitle: 'Nexus Engine V4.0.2：LangGraph と ACPs を基盤に、アイデアを秒単位で高品質な動画へ変換する AIGC 制作支援システム。'
+      demo: 'Nexus Studio リアルタイムデモ',
+      heroSubtitle: 'Nexus Studio V4.0.2：LangGraph と ACPs を基盤に、アイデアを秒単位で高品質な動画へ変換する AIGC 制作支援システム。',
+      heroTagline: 'プロフェッショナルな AIGC 動画エンドツーエンド支援システム',
+      heroDescription: 'LangGraph と ACPs を基盤に、アイデアを秒単位で高品質な動画へ変換',
+      navTeam: 'チーム',
+      navTech: '技術',
+      partnersTitle: 'パートナー',
+      partnerBUPT: '北京郵電大学',
+      partnerDesc: '学術研究と産業イノベーションを結ぶ架け橋。私たちは北京郵電大学から来ました。',
+      strategicPartner: '戦略的パートナー',
+      partnerGitHub: 'GitHub',
+      partnerGitHubDesc: 'オープンソースコードホスティングとコラボレーションプラットフォーム、プロジェクト開発とバージョン管理をサポート。',
+      partnerLangGraph: 'LangGraph',
+      partnerLangGraphDesc: 'LangChain公式のワークフローオーケストレーションフレームワーク、複雑なAIアプリケーション構築を可能に。',
+      partnerOpenAI: 'OpenAI',
+      partnerOpenAIDesc: '最先端の人工知能研究機関、強力なAIモデルとAPIを提供。',
+      partnerVercel: 'Vercel',
+      partnerVercelDesc: 'モダンなフロントエンドデプロイメントプラットフォーム、超高速グローバルCDNとエッジコンピューティングを提供。',
+      partnerMongoDB: 'MongoDB',
+      partnerMongoDBDesc: 'NoSQLデータベースソリューション、柔軟なデータストレージとクエリをサポート。',
+      partnerPython: 'Python',
+      partnerPythonDesc: '強力なプログラミング言語、AI、データサイエンス、バックエンド開発に広く使用。',
+      partnerReact: 'React',
+      partnerReactDesc: 'Facebookが開発したUIフレームワーク、モダンなインタラクティブユーザーインターフェースを構築。',
+      mentorTitle: 'リーディングメンター',
+      mentorName: '劉軍（准教授）',
+      mentorNameEn: 'Liu Jun',
+      mentorTitle1: '博士課程指導教員',
+      mentorTitle2: '修士課程指導教員',
+      mentorTitle3: 'データサイエンスセンター長',
+      mentorRole: '北京郵電大学人工知能学院 准教授',
+      mentorEmail: 'メールアドレス',
+      mentorEmailValue: 'liujun@bupt.edu.cn',
+      mentorPosition: '主な職務',
+      mentorPositionValue: 'データサイエンスセンター長 | インテリジェントスポーツ研究センター首席科学者',
+      mentorResearch: '研究方向',
+      mentorResearchValue: 'エージェントAI（Agentic AI）とスポーツAI（Sport AI）',
+      mentorBio: '劉軍、男性、1976年生まれ、博士、北京郵電大学人工知能学院准教授、博士課程指導教員、北京郵電大学データサイエンスセンター長、北京ビッグデータ協会常務理事。研究方向はエージェントAI（Agentic AI）とスポーツAI（Sport AI）。「大量情報処理技術と実践」、「深層学習」のコースを開設。ビッグデータと人工知能に関するSCI/EI検索論文10編以上を発表し、SCI影響因子30以上の高影響力論文を含む。『Hadoopビッグデータ処理』、『Sparkビッグデータ処理：原理、アルゴリズムと実例』、『人工知能の核心-ニューラルネットワーク』の3冊のビッグデータ・人工知能理論とアルゴリズムの著作を執筆し、複数の大学の関連コースで参考教材として使用されている。',
+      mentorLink: '百度学術プロフィールを見る'
     },
     manual: {
       title: 'ガイド',
-      subtitle: 'Nexus Engine ガイド',
+      subtitle: 'Nexus Studio ガイド',
       quickActions: 'クイック操作',
       start: '開始',
       settings: '設定'
@@ -495,6 +804,103 @@ export const messages = {
       permissions: '権限',
       permissionsDesc: '最小権限でチームアクセスを管理。',
       comingSoon: '近日公開'
+    },
+    ideas: {
+      title: 'アイデアボード',
+      subtitle: '「プラットフォーム」へ：方向性、ページ、入口を整理。',
+      open: '開く',
+      comingSoon: '近日公開',
+      filter: {
+        all: 'すべて',
+        materials: '素材',
+        workflow: 'ワークフロー',
+        export: 'エクスポート',
+        security: 'セキュリティ',
+        growth: '成長'
+      },
+      materialsWorkbenchTitle: '素材ワークベンチ',
+      materialsWorkbenchDesc: 'セッション単位で集約し、検索・参照・エクスポート。',
+      workflowComposerTitle: 'ワークフロー作成',
+      workflowComposerDesc: 'ノードをドラッグして手順/エージェントを構成。',
+      exportPackTitle: '再現可能なエクスポート',
+      exportPackDesc: 'チャット/パラメータ/ログ/成果物をパック化。',
+      securityTitle: '企業向けセキュリティ',
+      securityDesc: '権限・監査・キー・共有制御。',
+      galleryTitle: 'ショーケース',
+      galleryDesc: '成果物を共有ページ/ダッシュボードとして公開。',
+      oneClickDemoTitle: 'ワンクリックデモ',
+      oneClickDemoDesc: '内蔵デモで数秒で価値を見せる。'
+    },
+    techShowcase: {
+      title: '技術展示',
+      liveMonitoring: 'ライブ監視',
+      buildVersion: 'ビルド 2024.10.45-RC',
+      coreTechnologies: 'コア技術',
+      frontendCore: 'フロントエンドコア',
+      serverRuntime: 'サーバーランタイム',
+      globalCDN: 'グローバル CDN',
+      securityProtocol: 'セキュリティプロトコル',
+      frontendArchitecture: 'フロントエンドアーキテクチャ',
+      apiResponseRate: 'API 応答率',
+      systemCoverage: 'システムカバレッジ',
+      document: 'ドキュメント',
+      zoomOut: 'ズームアウト',
+      zoomIn: 'ズームイン',
+      cinemaMode: 'シネマモード',
+      exitCinemaMode: 'シネマモード終了',
+      description: '我々の技術ソリューションと革新的なデモをご紹介します',
+      performance: '最新のフロントエンド技術スタックを採用し、最速の読み込み速度とスムーズなユーザー体験を実現。',
+      design: '細部にこだわった設計で、視覚的に完璧な体験を提供。',
+      features: '複数の先進技術機能を統合し、様々な複雑なビジネス要件に対応。',
+      compatibility: 'あらゆるデバイス・ブラウザに完全対応し、一貫した体験を提供。'
+    },
+    faq: {
+      title: 'よくある質問',
+      description: 'Nexus Studio の製品・技術・利用に関するよくある回答',
+      items: [
+        { question: 'Nexus Studio はどのような動画生成シーンに対応していますか？', answer: 'テキストから動画への高速生成、ストーリーボードによる精密生成、絵コンテ・脚本作成、AI 支援編集などに対応しています。ダッシュボードで「テキスト→動画・迅速生成」または「ストーリーボード・精密生成」を選択してワークフローを開始できます。' },
+        { question: '生成コンテンツの安全・コンプライアンスはどう担保していますか？', answer: '権限・監査、キー管理、共有制御を採用し、ACPs プロトコルに準拠しています。生成コンテンツはすべて追跡可能で、チームの権限管理にも対応しています。' },
+        { question: 'オンプレミス展開や API 連携は可能ですか？', answer: '可能です。Nexus Studio はアーキテクチャドキュメントと統合ガイドを提供し、既存の CI/CD や素材庫と連携できます。オンプレミスやカスタム API については、営業またはドキュメントの「カスタムソリューション」をご参照ください。' },
+        { question: '対応しているエクスポート形式は？', answer: '一般的な動画プロジェクト形式および絵コンテ・脚本のエクスポートに対応し、専門の編集ソフトで続きの編集が可能です。エクスポートセンターで所要時間の目安とワンクリックエクスポートを提供しています。' },
+        { question: '問題が発生した場合のサポートは？', answer: '利用ガイド、技術展示、ドキュメントをご確認ください。人的サポートが必要な場合は、フッターの連絡先または「技術サポート」からお問い合わせください。営業日以内にご返答します。' }
+      ]
+    },
+    testimonials: {
+      title: 'ユーザーの声',
+      description: 'クリエイターとチームからの実際のフィードバック',
+      items: [
+        { quote: 'Nexus Studio で絵コンテや素材整理の手間から解放されました。テキストから動画の高速モードはアイデアの検証に最適です。', authorName: '張明', authorRole: 'ショート動画チームリーダー', avatarUrl: 'https://i.pravatar.cc/300?img=11' },
+        { quote: 'ストーリーボードモードはカットとリズムの細かい調整に便利で、エクスポート形式も編集ソフトにそのまま取り込め、時間の節約になっています。', authorName: '李思', authorRole: '独立クリエイター', avatarUrl: 'https://i.pravatar.cc/300?img=23' },
+        { quote: 'マルチエージェント連携と ACPs でワークフローが明確になり、権限・監査もコンプライアンスを満たし、チーム協働の体験が良くなりました。', authorName: '王磊', authorRole: 'コンテンツ制作会社 技術責任者', avatarUrl: 'https://i.pravatar.cc/300?img=33' }
+      ]
+    },
+    teamIntroduction: {
+      headline: 'Nexus を支えるチーム',
+      headlineHighlight: 'Nexus Intelligence',
+      subtitle: '学術研究と産業イノベーションの架け橋\n私たちは北京郵電大学のビルダーです',
+      photoCaption: '私たちのチーム @ 北京郵電大学 2026',
+      affiliations: [
+        '北京郵電大学コンピュータ学院（国家示範性ソフトウェア学院）',
+        '北京郵電大学国際学院',
+        '北京郵電大学人工知能学院'
+      ],
+      roles: {
+        hengji: 'プロジェクトリーダー & コアアーキテクト',
+        zixuan: '研究エンジニア',
+        haocheng: 'フロントエンドエンジニア',
+        zhengyang: 'AI 研究者'
+      },
+      tags: {
+        fullStack: 'フルスタック',
+        product: '製品',
+        vision: 'ビジョン',
+        algorithms: 'アルゴリズム',
+        systemDesign: 'システム設計',
+        uiux: 'UI/UX',
+        interaction: 'インタラクション',
+        deepLearning: '深層学習',
+        modelOpt: 'モデル最適化'
+      }
     }
   }
 };
