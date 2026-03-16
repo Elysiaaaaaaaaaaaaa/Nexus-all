@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useMemo, useState, useEffect } from 'react';
 import { messages } from '../i18n/messages';
-import { getAuthToken } from '../services/api';
 
 const AppContext = createContext();
 
@@ -46,9 +45,8 @@ export const AppProvider = ({ children }) => {
     localStorage.setItem('app-user-info', JSON.stringify(info));
   };
 
-  // 检查用户是否已登录（需要同时有用户信息和有效的认证token）
-  // 使用 getAuthToken() 会自动检查token是否过期，如果过期会清除并返回null
-  const isAuthenticated = userId && userInfo && getAuthToken();
+  // 检查用户是否已登录
+  const isAuthenticated = userId && userInfo;
 
   // 登出函数
   const logout = () => {
@@ -66,23 +64,6 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('app-theme', theme);
   }, [theme]);
-
-  // 开发环境自动登录
-  useEffect(() => {
-    if (import.meta.env.DEV && !isAuthenticated) {
-      // 在开发环境中自动设置测试用户
-      const testUserId = 'test_user';
-      const testUserInfo = {
-        username: 'test_user',
-        email: 'test@example.com'
-      };
-
-      updateUserId(testUserId);
-      updateUserInfo(testUserInfo);
-      // 设置一个假的token（开发环境不需要真正的JWT）
-      localStorage.setItem('auth_token', 'dev_token');
-    }
-  }, []);
 
   useEffect(() => {
     const root = document.documentElement;

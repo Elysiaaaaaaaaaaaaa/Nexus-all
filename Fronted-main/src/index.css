@@ -14,7 +14,7 @@
   -moz-osx-font-smoothing: grayscale;
   
   /* 默认点阵变量（浅色模式） */
-  --dot-color: #e5e7eb;
+  --dot-color: #d1d5db;
   --bg-color: #ffffff;
 }
 
@@ -28,7 +28,7 @@
   --border-light: rgb(241, 245, 249);
   --shadow: rgba(0, 0, 0, 0.08);
   --shadow-light: rgba(0, 0, 0, 0.05);
-  --dot-color: #e5e7eb;
+  --dot-color: #d1d5db;
   --bg-color: #ffffff;
 }
 
@@ -42,12 +42,16 @@
   --border-light: rgb(30, 41, 59);
   --shadow: rgba(0, 0, 0, 0.3);
   --shadow-light: rgba(0, 0, 0, 0.2);
-  --dot-color: #262626;
+  --dot-color: #404040;
   --bg-color: #0a0a0a;
 }
 
+:root.dark body {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
+}
+
 [data-theme='dark'], .dark, :root.dark {
-  --dot-color: #262626;
+  --dot-color: #404040;
   --bg-color: #0a0a0a;
 }
 
@@ -60,15 +64,26 @@
 body {
   background-color: var(--bg-primary);
   /* 用主题变量渲染点阵，dark 才会明显变化 */
-  background-image: radial-gradient(circle, var(--dot-color) 1px, transparent 1px);
+  background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
   background-size: 30px 30px;
   background-position: 0 0;
+  animation: body-drift 60s linear infinite;
   color: var(--text-primary);
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.03));
+}
+
+@keyframes body-drift {
+  from { background-position: 0 0; }
+  to { background-position: 30px 30px; }
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
+  display: block;
+  position: relative;
 }
 
 h1 {
