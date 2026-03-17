@@ -175,3 +175,8 @@
 2026-02-01 21:04:13+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-689c6c84-02b7-4008-869f-f57a75ed7620 user=czx
 2026-02-01 21:05:51+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-60c17b35-cd49-4230-95ca-079809d3cf19 user=czx
 2026-02-01 22:17:13+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-94448ecd-8ba0-4852-9827-2dd7cb05041d user=czx
+2026-03-16 21:19:56+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-3fbb27c4-0bd3-4162-83b3-10542b9ad4b1 user=czx
+2026-03-16 21:27:33+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-3fbb27c4-0bd3-4162-83b3-10542b9ad4b1 project=做饭 screen_id=0
+2026-03-16 21:30:55+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-3fbb27c4-0bd3-4162-83b3-10542b9ad4b1 user=czx
+2026-03-16 21:31:42+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-3fbb27c4-0bd3-4162-83b3-10542b9ad4b1 project=做饭 screen_id=1
+2026-03-16 21:34:55+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-3fbb27c4-0bd3-4162-83b3-10542b9ad4b1 project=做饭 screen_id=2

@@ -1927,3 +1927,271 @@ During task with name 'assistant' and id '72f84e03-b27e-6fb4-f1ca-d5baaa225c3d'
 2026-02-01 23:24:32+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-02-01 23:24:32+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-02-01 23:24:32+0800 | INFO | app.backend | Initializing database...
+2026-03-16 21:45:54+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-16 21:45:54+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-16 21:45:54+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:10:07+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:10:07+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:10:07+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:10:07+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:10:07+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-17 20:10:24+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:10:24+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:10:24+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:10:24+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:10:25+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:10:25+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:10:25+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:10:25+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:12:23+0800 | ERROR | app.backend | Error in user registration: 400: 用户名或邮箱已被注册
+Traceback (most recent call last):
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 825, in _read_query_result
+    result.read()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.IntegrityError: (1062, "Duplicate entry 'czx' for key 'users.ix_users_username'")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\auth.py", line 64, in create_user
+    db.commit()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 825, in _read_query_result
+    result.read()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+sqlalchemy.exc.IntegrityError: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'czx' for key 'users.ix_users_username'")
+[SQL: INSERT INTO users (username, email, password_hash) VALUES (%(username)s, %(email)s, %(password_hash)s)]
+[parameters: {'username': 'czx', 'email': 'czx_0000@qq.com', 'password_hash': '$2b$12$16gx4Qnip287mOd6rE7Y.elvQwAIPugko/mWkXqRlBP1lHMupvvHu'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 199, in register_user
+    user = create_user(db, request.username, request.email, request.password)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\auth.py", line 71, in create_user
+    raise ValueError("用户名或邮箱已被注册")
+ValueError: 用户名或邮箱已被注册
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 213, in register_user
+    raise HTTPException(status_code=400, detail=str(e))
+fastapi.exceptions.HTTPException: 400: 用户名或邮箱已被注册
+2026-03-17 20:23:43+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:23:43+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:23:43+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:23:43+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:23:43+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-17 20:23:59+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:23:59+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:23:59+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:23:59+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:23:59+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:23:59+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:23:59+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:23:59+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:26:57+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:26:57+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:26:57+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:26:57+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:26:58+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:26:58+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:26:58+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:26:58+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:27:15+0800 | ERROR | app.backend | Error in user registration: 400: 用户名或邮箱已被注册
+Traceback (most recent call last):
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 825, in _read_query_result
+    result.read()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+pymysql.err.IntegrityError: (1062, "Duplicate entry 'czxx' for key 'users.ix_users_username'")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\auth.py", line 64, in create_user
+    db.commit()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+  File "<string>", line 2, in _prepare_impl
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\sql\elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 2355, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\sqlalchemy\engine\default.py", line 951, in do_execute
+    cursor.execute(statement, parameters)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 153, in execute
+    result = self._query(query)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\cursors.py", line 322, in _query
+    conn.query(q)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 563, in query
+    self._affected_rows = self._read_query_result(unbuffered=unbuffered)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 825, in _read_query_result
+    result.read()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 1199, in read
+    first_packet = self.connection._read_packet()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\connections.py", line 775, in _read_packet
+    packet.raise_for_error()
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\pymysql\err.py", line 150, in raise_mysql_exception
+    raise errorclass(errno, errval)
+sqlalchemy.exc.IntegrityError: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'czxx' for key 'users.ix_users_username'")
+[SQL: INSERT INTO users (username, email, password_hash) VALUES (%(username)s, %(email)s, %(password_hash)s)]
+[parameters: {'username': 'czxx', 'email': 'cz@qq.com', 'password_hash': '$2b$12$k.VJ7334YrKxPYGMs58A3OJuEVax9fQoaK32g.MlG3Pe07nfSvwBq'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 199, in register_user
+    user = create_user(db, request.username, request.email, request.password)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\auth.py", line 71, in create_user
+    raise ValueError("用户名或邮箱已被注册")
+ValueError: 用户名或邮箱已被注册
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 215, in register_user
+    raise HTTPException(status_code=400, detail=str(e))
+fastapi.exceptions.HTTPException: 400: 用户名或邮箱已被注册
+2026-03-17 20:32:21+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:32:21+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:32:21+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:32:21+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:32:21+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-17 20:32:37+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:32:37+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:32:37+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:32:37+0800 | INFO | app.backend | Initializing database...
+2026-03-17 20:32:37+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-17 20:32:37+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-17 20:32:37+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-17 20:32:37+0800 | INFO | app.backend | Initializing database...

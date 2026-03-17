@@ -28,7 +28,7 @@ from acps_aip.discovery_client import DiscoveryError, discover_agent_endpoints
 from acps_aip.mtls_config import load_mtls_config_from_json
 
 import json
-
+import sys
 from file_manage import UserFile
 from agents.writers.screenwriter import ScreenWriter
 from agents.assistant.director_assistant import Assistant

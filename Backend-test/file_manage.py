@@ -120,8 +120,14 @@ class UserFile:
             photo_path = os.path.join(base_dir, f'photos{ext}')
             if os.path.exists(photo_path):
                 return photo_path
+        # 如果找不到对应文件夹，尝试寻找project_name文件夹下的photos文件夹里的图片
+        photos_dir = os.path.join(self.project_path, project_name, 'photos')
+        for ext in supported_exts:
+            photo_path = os.path.join(photos_dir, f'{figure_name}{ext}')
+            if os.path.exists(photo_path):
+                return photo_path
         # 如果都不存在，抛出异常
         raise FileNotFoundError(
-            f"人物 {figure_name} 的照片不存在，若你在后端测试，请将人物的参考图片（jpg、png或webp格式）放到 {base_dir} 下，并命名为 photos.jpg、photos.png 或 photos.webp，若你在前端测试，请先上传角色的参考图片"
+            f"人物 {figure_name} 的照片不存在，若你在后端测试，请将人物的参考图片（jpg、png或webp格式）放到 {base_dir} 下，并命名为 photos.jpg、photos.png 或 photos.webp，或放到 {photos_dir} 下，并命名为 {figure_name}.jpg、{figure_name}.png 或 {figure_name}.webp，若你在前端测试，请先上传角色的参考图片"
         )
         
