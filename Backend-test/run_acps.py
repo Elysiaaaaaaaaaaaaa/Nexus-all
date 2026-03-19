@@ -913,6 +913,27 @@ class Image2VideoWorkflow:
             state['session_data']['now_task'] = 'outline'
             state['session_data']['now_state'] = 'create'
             return Command(update = {'session_data':state['session_data']},goto = 'outline')
+        state['session_data']['now_state'] = 'create'
+        ##路由至下一个任务
+        if now_task == 'outline':
+            state['session_data']['now_task'] = 'figure_design'
+        if now_task == 'figure_design':
+            state['session_data']['now_task'] = 'story_board_prompting'
+        if now_task == 'story_board_prompting':
+            state['session_data']['now_task'] = 'story_board'
+        if now_task == 'story_board':
+            state['session_data']['now_task'] = 'script'
+        if now_task == 'script':
+            state['session_data']['story_board_generating']+=1
+            state['session_data']['now_task'] = 'animator'
+        if now_task == 'animator':
+            state['session_data']['video_generating']+=1
+            if state['session_data']['video_generating']>=len(session_data['material']['outline']):
+                state['session_data']['chat_with_assistant'] = False
+                return Command(goto = END)
+            else:
+                state['session_data']['now_task'] = 'figure_design'
+        return Command(update = {'session_data':state['session_data']},goto = state['session_data']['now_task'])
     
     def confirm_state(self,state:ChatGraphState):
         session_id = state["session_id"]
@@ -959,6 +980,7 @@ class Image2VideoWorkflow:
         now_state = session_data["now_state"]
         if self.mode == 'test':
             ans = '这里是assistant'
+            idea = '这里是idea'
             last_id = None
         else:
             result, last_id = self.assistant.call(user_text,session_data)
@@ -1152,7 +1174,7 @@ class Image2VideoWorkflow:
             if self.mode == 'test':
                 ans = '这里是figure_design'
             else:
-                if user_text == '不需要' or user_text == '不需要修改':
+                if user_text == '不需要' or user_text == '不需要修改' or user_text == '确认':
                     ans = '请输入出镜的角色名字，若此前未上传过角色图片，请一并上传角色参考图片。若该画面中没有需要出现的主要人物，输入"default"。'
                     state['reply'] = AssistantReply(ans)
                     return state

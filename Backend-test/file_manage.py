@@ -123,7 +123,7 @@ class UserFile:
         # 如果找不到对应文件夹，尝试寻找project_name文件夹下的photos文件夹里的图片
         photos_dir = os.path.join(self.project_path, project_name, 'photos')
         for ext in supported_exts:
-            photo_path = os.path.join(photos_dir, f'{figure_name}{ext}')
+            photo_path = os.path.join(photos_dir, f'photos{ext}')
             if os.path.exists(photo_path):
                 return photo_path
         # 如果都不存在，抛出异常
