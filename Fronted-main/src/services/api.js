@@ -5,7 +5,7 @@
  */
 import { http } from './http';
 import { AppError } from '../types/api';
-import { validateProjectName, validateInput, sanitizeInput } from '../utils/security';
+import { validateProjectName, sanitizeInput } from '../utils/security';
 
 /**
  * 获取用户ID（从localStorage）
@@ -291,4 +291,92 @@ export const logout = () => {
  */
 export const healthCheck = async () => {
   return http.get('/api/v1/health');
+};
+
+/** 与 http.js 一致的后端根地址，用于拼接上传返回的相对路径 */
+const getApiBaseUrl = () =>
+  import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? '' : 'http://localhost:8003');
+
+/**
+ * 将上传接口返回的相对路径转为可访问 URL
+ * @param {string} filePath
+ * @returns {string}
+ */
+export const buildUploadFilePublicUrl = (filePath) => {
+  if (!filePath || typeof filePath !== 'string') return '';
+  const trimmed = filePath.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  const base = getApiBaseUrl().replace(/\/$/, '');
+  const path = trimmed.replace(/^\/+/, '');
+  return `${base}/${path}`;
+};
+
+const UPLOAD_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
+const UPLOAD_IMAGE_MIME = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']);
+
+/**
+ * 上传图片（multipart/form-data）
+ * POST /api/v1/upload_image
+ * @param {Object} params
+ * @param {File} params.file - 图片文件
+ * @param {string} params.figure_name - 图像名称（测试阶段字段）
+ * @param {string} params.project_name - 项目名称
+ * @param {string} [params.user_id] - 用户 ID，默认 localStorage
+ * @returns {Promise<{ success?: boolean, message?: string, data?: { filePath?: string, size?: number } }>}
+ */
+export const uploadImage = async (params) => {
+  const { file, figure_name, project_name, user_id = null } = params;
+
+  if (!file || !(file instanceof File)) {
+    throw new AppError({
+      message: '请选择有效的图片文件',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  if (!figure_name || !project_name) {
+    throw new AppError({
+      message: 'figure_name 和 project_name 为必填',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  const mime = (file.type || '').toLowerCase();
+  if (!UPLOAD_IMAGE_MIME.has(mime)) {
+    throw new AppError({
+      message: '仅支持 jpeg、jpg、png、gif、webp 图片',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  if (file.size > UPLOAD_IMAGE_MAX_BYTES) {
+    throw new AppError({
+      message: '图片大小不能超过 10MB',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  const userId = user_id || getUserId();
+  const safeFigure = sanitizeInput(String(figure_name), 200);
+  const projectNameValidation = validateProjectName(project_name);
+  if (!projectNameValidation.valid) {
+    throw new AppError({
+      message: projectNameValidation.message || '项目名称无效',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+  const safeProject = sanitizeInput(project_name, 100);
+
+  const formData = new FormData();
+  formData.append('user_id', userId);
+  formData.append('figure_name', safeFigure);
+  formData.append('project_name', safeProject);
+  formData.append('file', file);
+
+  return http.upload('/api/v1/upload_image', formData, 'file');
 };

@@ -4,6 +4,7 @@ import { X, Camera, Check } from '@phosphor-icons/react';
 import './Profile.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
+import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -41,19 +42,20 @@ const Profile = () => {
     const localUrl = URL.createObjectURL(file);
     setAvatarUrl(localUrl);
 
-    // 尝试上传到后端（若后端未实现/不可用，不影响本地预览）
+    // 上传到后端 POST /api/v1/upload_image（失败则仅保留本地预览）
     try {
-      const formData = new FormData();
-      formData.append('avatar', file);
-      const res = await fetch('/api/user/avatar', {
-        method: 'POST',
-        body: formData
+      const projectName = localStorage.getItem('app-current-project') || 'profile';
+      const figureName = `avatar_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'img'}`;
+      const res = await uploadImage({
+        file,
+        figure_name: figureName,
+        project_name: projectName,
       });
-      const json = await res.json().catch(() => null);
-      if (!res.ok) throw new Error(json?.message || `上传失败(${res.status})`);
-      const nextUrl = json?.data?.avatarUrl || json?.data?.url;
-      if (nextUrl) setAvatarUrl(nextUrl);
-    } catch (err) {
+      const path = res?.data?.filePath;
+      if (path) {
+        setAvatarUrl(buildUploadFilePublicUrl(path));
+      }
+    } catch {
       // 头像上传失败，已使用本地预览
     }
   };

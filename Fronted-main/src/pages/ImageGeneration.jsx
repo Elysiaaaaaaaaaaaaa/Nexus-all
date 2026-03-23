@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, X, Download, Gear, Sparkle, GridFour, Upload } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import './ImageGeneration.css';
+import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
 
 const ImageGeneration = () => {
   const navigate = useNavigate();
@@ -9,16 +10,30 @@ const ImageGeneration = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImages, setGeneratedImages] = useState([]);
   const [uploadedImage, setUploadedImage] = useState(null);
+  /** 上传成功后后端返回路径对应的可访问 URL（可选） */
+  const [uploadedImageUrl, setUploadedImageUrl] = useState('');
   const imageInputRef = React.useRef(null);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setUploadedImage(file);
+    if (!file) return;
+    setUploadedImage(file);
+    setUploadedImageUrl('');
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'reference';
+    try {
+      const res = await uploadImage({
+        file,
+        figure_name: `ref_${Date.now()}_${safeName}`,
+        project_name: 'image_generation',
+      });
+      const path = res?.data?.filePath;
+      if (path) setUploadedImageUrl(buildUploadFilePublicUrl(path));
+    } catch {
+      // 仅本地参考图，不阻塞生成流程
     }
   };
 
@@ -77,6 +92,12 @@ const ImageGeneration = () => {
                 {uploadedImage ? uploadedImage.name : '上传图片'}
               </button>
             </div>
+            {uploadedImageUrl ? (
+              <div className="upload-reference-preview" style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <img src={uploadedImageUrl} alt="" style={{ maxHeight: 72, borderRadius: 8, objectFit: 'cover' }} />
+                <span style={{ fontSize: 12, color: 'var(--color-text-secondary, #666)' }}>参考图已上传至服务器</span>
+              </div>
+            ) : null}
             <textarea
               className="prompt-textarea"
               placeholder="描述您想要生成的图像...&#10;&#10;例如：&#10;一只可爱的猫咪坐在窗台上，阳光透过窗户洒在它身上，背景是温馨的客厅，风格为水彩画"

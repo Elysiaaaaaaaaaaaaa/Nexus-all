@@ -7,8 +7,6 @@ import { Play, BookOpen, CaretLeft, CaretRight, CaretDown, SpeakerHigh, SpeakerS
   MagnifyingGlassPlus, MagnifyingGlassMinus, CaretLeft as CaretLeftIcon, CaretRight as CaretRightIcon, FilePdf, CodeBlock,
   Phone, MapPin, ArrowUp, Gift, Calculator, ShoppingCart, WechatLogo, FacebookLogo, TwitterLogo, LinkedinLogo, InstagramLogo, Quotes } from '@phosphor-icons/react';
 import logoTransparent from '../assets/logo_transparent.png';
-import test1Video from '../assets/test1.mp4';
-import test2Video from '../assets/test2.mp4';
 import teamPhoto from '../assets/team.png';
 import zhjPhoto from '../assets/zhj.png';
 import czxPhoto from '../assets/czx.png';
@@ -20,6 +18,9 @@ import '../pages/TechShowcase.css';
 import { useApp } from '../contexts/AppContext';
 import { isProduction } from '../utils/security';
 import LoginModal from '../components/LoginModal';
+
+// 大视频勿用 import（会拖慢 Vite dev），放到 public/videos/ 下用绝对路径引用
+const HERO_VIDEOS = ['/videos/test1.mp4', '/videos/test2.mp4'];
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Homepage = () => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [faqOpenIndex, setFaqOpenIndex] = useState(null);
   
-  const videos = [test1Video, test2Video];
+  const videos = HERO_VIDEOS;
   
   // 团队成员数据
   const affiliationsList = t('teamIntroduction.affiliations');

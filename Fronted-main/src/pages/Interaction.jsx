@@ -9,6 +9,7 @@ import logoCircle from '../assets/logo_circle.png';
 import './Interaction.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
+import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
 
 const Interaction = () => {
   const location = useLocation();
@@ -283,16 +284,39 @@ const Interaction = () => {
     imageInputRef.current?.click();
   };
 
-  const handleImagesSelected = (e) => {
+  const handleImagesSelected = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const attachments = files.map((file) => ({
-      type: 'image',
-      name: file.name,
-      size: file.size,
-      url: URL.createObjectURL(file)
-    }));
+    const projectName = localStorage.getItem('app-current-project') || 'default';
+
+    /** @type {{ type: string, name: string, size: number, url: string }[]} */
+    const attachments = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'image';
+      try {
+        const res = await uploadImage({
+          file,
+          figure_name: `chat_${Date.now()}_${i}_${safeName}`,
+          project_name: projectName,
+        });
+        const path = res?.data?.filePath;
+        attachments.push({
+          type: 'image',
+          name: file.name,
+          size: file.size,
+          url: path ? buildUploadFilePublicUrl(path) : URL.createObjectURL(file),
+        });
+      } catch {
+        attachments.push({
+          type: 'image',
+          name: file.name,
+          size: file.size,
+          url: URL.createObjectURL(file),
+        });
+      }
+    }
 
     setMessages((prev) => [
       ...prev,
@@ -301,8 +325,8 @@ const Interaction = () => {
         type: 'user',
         content: files.length === 1 ? `上传图片：${files[0].name}` : `上传图片：${files.length}张`,
         attachments,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     ]);
 
     // 清空 input，允许重复选择同一张图

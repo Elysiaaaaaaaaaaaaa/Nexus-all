@@ -206,11 +206,10 @@ export const http = {
       formData.append(fieldName, file);
     }
 
-    return instance.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }).then((response) => response.data);
+    // FormData 必须由浏览器/axios 自动带 boundary，勿手写 multipart Content-Type
+    return instance
+      .post(url, formData, {})
+      .then((response) => response.data);
   },
 };
 
