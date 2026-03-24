@@ -15,7 +15,7 @@ from db_user import DatabaseUserFile
 from base import get_agent_logger
 from database import SessionLocal, init_database
 from auth import create_user, authenticate_user, create_access_token, get_current_user
-
+from file_manage import UserFile
 # 加载环境变量
 load_dotenv()
 
@@ -147,6 +147,7 @@ class WorkRequest(BaseModel):
     mode: str = "production"
     video_duration: int = None  # 视频时长（秒），可选，默认使用后端配置
     modify_num: Optional[List[int]] = None  # 需要修改的内容序号
+    workflow_type: str = "text2video"  # 工作流类型，默认text2video
 
 class UserIdRequest(BaseModel):
     user_id: str
@@ -172,6 +173,11 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: Dict[str, Any]
+
+class UploadImageRequest(BaseModel):
+    project_name: str
+    image: UploadFile = File(...)  # 上传的图片文件
+    figure_name: str = None  # 可选，指定图片的名称，默认使用文件名
 
 # 健康检查路由
 @app.get("/")
@@ -342,8 +348,10 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         userfile = DatabaseUserFile(user_id)
         print(f"User ID: {user_id}, Project: {project_name}")
         # 创建Text2VideoWorkflow实例
-        orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode='use')
-        
+        if request.workflow_type == "text2video":
+            orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode='use')
+        else:
+            orchestrator = Image2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode='use')
         # 如果请求中包含video_duration，设置到session_data中
         if request.video_duration is not None:
             session_data = orchestrator._get_session_state(orchestrator.main_session_id)
@@ -400,89 +408,89 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         
         return get_error_response(detail=error_detail, status_code=500)
 
-        workflow_type = "text2video"
-        try:
-            project_content = userfile.load_content(project_name)
-            workflow_type = project_content.get("workflow_type", "text2video")
-        except FileNotFoundError:
-            workflow_type = "text2video"
+    #     workflow_type = "text2video"
+    #     try:
+    #         project_content = userfile.load_content(project_name)
+    #         workflow_type = project_content.get("workflow_type", "text2video")
+    #     except FileNotFoundError:
+    #         workflow_type = "text2video"
 
-        logger.info(
-            "event=work_start user_id=%s project=%s mode=%s workflow_type=%s",
-            user_id,
-            project_name,
-            mode,
-            workflow_type,
-        )
+    #     logger.info(
+    #         "event=work_start user_id=%s project=%s mode=%s workflow_type=%s",
+    #         user_id,
+    #         project_name,
+    #         mode,
+    #         workflow_type,
+    #     )
 
-        if workflow_type == "image2video":
-            orchestrator = Image2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
-        else:
-            orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
+    #     if workflow_type == "image2video":
+    #         orchestrator = Image2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
+    #     else:
+    #         orchestrator = Text2VideoWorkflow(clients=None, userfile=userfile, project_name=project_name, mode=mode)
         
-        # 如果请求中包含video_duration，设置到session_data中
-        if request.video_duration is not None and workflow_type == "text2video":
-            session_data = orchestrator._get_session_state(orchestrator.main_session_id)
-            session_data['video_duration'] = request.video_duration
-            orchestrator._sessions[orchestrator.main_session_id] = session_data
+    #     # 如果请求中包含video_duration，设置到session_data中
+    #     if request.video_duration is not None and workflow_type == "text2video":
+    #         session_data = orchestrator._get_session_state(orchestrator.main_session_id)
+    #         session_data['video_duration'] = request.video_duration
+    #         orchestrator._sessions[orchestrator.main_session_id] = session_data
         
-        # 调用handle_user_input方法处理用户输入
-        if workflow_type == "image2video":
-            result_state = await orchestrator.handle_user_input(orchestrator.main_session_id, user_input)
-        else:
-            modify_num = request.modify_num or []
-            result_state = await orchestrator.handle_user_input(
-                orchestrator.main_session_id,
-                user_input,
-                modify_num=modify_num,
-            )
+    #     # 调用handle_user_input方法处理用户输入
+    #     if workflow_type == "image2video":
+    #         result_state = await orchestrator.handle_user_input(orchestrator.main_session_id, user_input)
+    #     else:
+    #         modify_num = request.modify_num or []
+    #         result_state = await orchestrator.handle_user_input(
+    #             orchestrator.main_session_id,
+    #             user_input,
+    #             modify_num=modify_num,
+    #         )
         
-        # 从结果状态中提取回复
-        reply = result_state.get('reply')
-        if not isinstance(reply, AssistantReply):
-            fallback_text = result_state.get("response", "抱歉，我暂时无法处理该请求。")
-            reply = AssistantReply(str(fallback_text))
+    #     # 从结果状态中提取回复
+    #     reply = result_state.get('reply')
+    #     if not isinstance(reply, AssistantReply):
+    #         fallback_text = result_state.get("response", "抱歉，我暂时无法处理该请求。")
+    #         reply = AssistantReply(str(fallback_text))
         
-        # 返回结果
-        return {
-            "success": True,
-            "message": reply.text,
-            "end_session": reply.end_session,
-            "project_name": orchestrator.project_name,
-            "session_id": orchestrator.main_session_id,
-            "session_data": result_state['session_data']
-        }
-    except Exception as e:
-        logger.error(f"Error in /api/v1/work: {e}", exc_info=True)
+    #     # 返回结果
+    #     return {
+    #         "success": True,
+    #         "message": reply.text,
+    #         "end_session": reply.end_session,
+    #         "project_name": orchestrator.project_name,
+    #         "session_id": orchestrator.main_session_id,
+    #         "session_data": result_state['session_data']
+    #     }
+    # except Exception as e:
+    #     logger.error(f"Error in /api/v1/work: {e}", exc_info=True)
         
-        # 检查是否是连接错误
-        error_str = str(e)
-        error_type = type(e).__name__
+    #     # 检查是否是连接错误
+    #     error_str = str(e)
+    #     error_type = type(e).__name__
         
-        # 识别不同类型的错误并提供友好的错误消息
-        if "Connection error" in error_str or "连接错误" in error_str or "ArkAPIConnectionError" in error_type:
-            error_detail = (
-                "AI服务连接失败，可能是网络问题或服务暂时不可用。"
-                "建议：1. 检查网络连接 2. 稍后重试 3. 联系管理员检查AI服务配置"
-            )
-        elif "timeout" in error_str.lower() or "超时" in error_str:
-            error_detail = (
-                "AI服务响应超时，请稍后重试。"
-                "如果问题持续存在，请联系管理员。"
-            )
-        elif "401" in error_str or "403" in error_str or "认证" in error_str or "授权" in error_str:
-            error_detail = (
-                "AI服务认证失败，请检查API密钥配置。"
-                "建议：联系管理员检查AI服务配置"
-            )
-        elif os.getenv("ENV") == "development":
-            # 开发环境显示详细错误信息
-            error_detail = f"{error_type}: {error_str}"
-        else:
-            # 生产环境显示通用错误信息
-            error_detail = "服务器内部错误，请稍后重试"
+    #     # 识别不同类型的错误并提供友好的错误消息
+    #     if "Connection error" in error_str or "连接错误" in error_str or "ArkAPIConnectionError" in error_type:
+    #         error_detail = (
+    #             "AI服务连接失败，可能是网络问题或服务暂时不可用。"
+    #             "建议：1. 检查网络连接 2. 稍后重试 3. 联系管理员检查AI服务配置"
+    #         )
+    #     elif "timeout" in error_str.lower() or "超时" in error_str:
+    #         error_detail = (
+    #             "AI服务响应超时，请稍后重试。"
+    #             "如果问题持续存在，请联系管理员。"
+    #         )
+    #     elif "401" in error_str or "403" in error_str or "认证" in error_str or "授权" in error_str:
+    #         error_detail = (
+    #             "AI服务认证失败，请检查API密钥配置。"
+    #             "建议：联系管理员检查AI服务配置"
+    #         )
+    #     elif os.getenv("ENV") == "development":
+    #         # 开发环境显示详细错误信息
+    #         error_detail = f"{error_type}: {error_str}"
+    #     else:
+    #         # 生产环境显示通用错误信息
+    #         error_detail = "服务器内部错误，请稍后重试"
         
-        return get_error_response(detail=error_detail, status_code=500)
+    #     return get_error_response(detail=error_detail, status_code=500)
 
 # 获取用户项目列表
 @app.post("/api/v1/projects/list")

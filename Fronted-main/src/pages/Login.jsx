@@ -118,10 +118,12 @@ const Login = () => {
 
       if (isLogin) {
         // 登录
+        console.log('[Login] 开始登录请求');
         const response = await login({
           username,
           password
         });
+        console.log('[Login] 登录响应:', response);
 
         // 登录成功，清除尝试记录
         rateLimiter.clearAttempts(rateLimitKey);
@@ -151,6 +153,7 @@ const Login = () => {
           email,
           password
         });
+        console.log('[Register] 注册响应:', response);
 
         // 注册成功，清除尝试记录
         rateLimiter.clearAttempts(rateLimitKey);
@@ -170,6 +173,7 @@ const Login = () => {
       }
     } catch (error) {
       // 安全记录错误（不泄露敏感信息）
+      console.error('[Login] 错误详情:', error);
 
       // 显示用户友好的错误信息（不泄露系统细节）
       let errorMessage = isLogin ? '登录失败，请检查用户名和密码' : '注册失败，请检查输入信息';
