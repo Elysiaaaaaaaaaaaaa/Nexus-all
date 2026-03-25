@@ -21,7 +21,7 @@ from base import CONTEXT_CACHE_TIME
 
 client = Ark(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
-    api_key='c96dbd1f-aeab-461c-90d6-8096b0baeecd',
+    api_key='',
 )
 
 
