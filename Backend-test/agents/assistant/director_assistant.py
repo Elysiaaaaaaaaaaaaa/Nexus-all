@@ -104,7 +104,7 @@ def retry_on_connection_error(max_retries=3, base_delay=1.0):
     return decorator
 
 # 从环境变量读取配置
-ARK_API_KEY = os.getenv("ARK_API_KEY", "c96dbd1f-aeab-461c-90d6-8096b0baeecd")
+ARK_API_KEY = os.getenv("ARK_API_KEY", "")
 ARK_API_TIMEOUT = float(os.getenv("ARK_API_TIMEOUT", "60.0"))  # 默认60秒超时
 ARK_BASE_URL = os.getenv("ARK_BASE_URL", "https://ark.cn-beijing.volces.com/api/v3")
 
