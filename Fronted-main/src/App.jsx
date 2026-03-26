@@ -30,6 +30,7 @@ import ExportCenter from './pages/ExportCenter.jsx';
 import SecurityCenter from './pages/SecurityCenter.jsx';
 import TechShowcase from './pages/TechShowcase.jsx';
 import TeamIntroduction from './pages/TeamIntroduction.jsx';
+import AcpsBoard from './pages/AcpsBoard.jsx';
 import { isProduction } from './utils/security';
 
 // 简单的测试组件（仅开发环境）
@@ -67,12 +68,6 @@ function TestPage() {
 }
 
 function App() {
-  // 生产环境不输出调试信息
-  if (!isProduction()) {
-    console.log('📱 App 组件开始渲染...');
-    console.log('📍 当前路径:', window.location.pathname);
-  }
-  
   // 错误边界包装器
   class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -148,6 +143,7 @@ function App() {
             <Route path="/history/:id" element={<ProtectedRoute><Layout><HistoryDetail /></Layout></ProtectedRoute>} />
             <Route path="/tech-showcase" element={<ProtectedRoute><Layout><TechShowcase /></Layout></ProtectedRoute>} />
             <Route path="/team" element={<ProtectedRoute><Layout><TeamIntroduction /></Layout></ProtectedRoute>} />
+            <Route path="/acps-board" element={<ProtectedRoute><Layout><AcpsBoard /></Layout></ProtectedRoute>} />
             </Routes>
           </Router>
           </ErrorBoundary>
