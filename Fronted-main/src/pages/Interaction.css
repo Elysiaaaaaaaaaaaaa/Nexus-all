@@ -898,7 +898,7 @@
   top: 0;
   bottom: 0;
   width: 384px;
-  background: rgb(15, 23, 42);
+  background: #0b1220;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 40;
   transition: transform 500ms ease-in-out;
@@ -941,6 +941,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   background: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(4px);
 }
@@ -962,7 +963,7 @@
 }
 
 .preview-header-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: bold;
   color: rgb(226, 232, 240);
   text-transform: uppercase;
@@ -972,27 +973,38 @@
 .preview-close-button {
   color: rgba(255, 255, 255, 0.4);
   transition: all 200ms;
-  border: none;
-  background: transparent;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .preview-close-button:hover {
   color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .preview-board-entry {
-  height: 30px;
-  padding: 0 12px;
+  height: 34px;
+  padding: 0 14px;
   border-radius: 9999px;
   border: 1px solid rgba(16, 185, 129, 0.35);
   background: rgba(16, 185, 129, 0.1);
   color: rgb(167, 243, 208);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
   cursor: pointer;
   transition: all 200ms;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .preview-board-entry:hover {
@@ -1004,23 +1016,24 @@
 .preview-content {
   padding: 24px;
   font-family: monospace;
-  font-size: 11px;
+  font-size: 12px;
   color: rgb(16, 185, 129);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   height: calc(100% - 64px);
   overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .preview-board-banner {
   width: 100%;
-  min-height: 44px;
+  min-height: 48px;
   border-radius: 12px;
   border: 1px solid rgba(16, 185, 129, 0.45);
   background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.18));
   color: rgb(220, 252, 231);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -1042,7 +1055,8 @@
 }
 
 .preview-line {
-  color: rgb(100, 116, 139);
+  color: rgb(148, 163, 184);
+  line-height: 1.55;
 }
 
 .preview-line-active {
@@ -1070,7 +1084,7 @@
   margin-top: 32px;
   padding: 16px;
   border: 1px solid rgba(16, 185, 129, 0.2);
-  background: rgba(16, 185, 129, 0.05);
+  background: rgba(16, 185, 129, 0.08);
   border-radius: 12px;
   position: relative;
   overflow: hidden;
@@ -1097,7 +1111,7 @@
 }
 
 .preview-simulation-text {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.92);
   line-height: 1.6;
   font-style: italic;
   position: relative;
@@ -1113,7 +1127,7 @@
 }
 
 .preview-metrics-title {
-  font-size: 10px;
+  font-size: 11px;
   color: rgb(100, 116, 139);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1124,6 +1138,8 @@
 .preview-metric {
   display: flex;
   justify-content: space-between;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.88);
 }
 
 /* Preview tabs + richer realtime execution UI */
@@ -1136,13 +1152,13 @@
 }
 
 .preview-tab {
-  height: 28px;
-  padding: 0 10px;
+  height: 32px;
+  padding: 0 12px;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.06);
   color: rgba(255, 255, 255, 0.75);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   cursor: pointer;
 }
@@ -1154,8 +1170,8 @@
 }
 
 .exec-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
   padding: 14px;
 }
@@ -1167,7 +1183,7 @@
 }
 
 .exec-card-title {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.7);
   letter-spacing: 0.12em;
@@ -1223,21 +1239,27 @@
 }
 
 .exec-log-text {
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(255, 255, 255, 0.86);
   line-height: 1.5;
+  word-break: break-word;
+}
+
+.exec-log-main {
+  min-width: 0;
+  flex: 1;
 }
 
 .exec-log-time {
   margin-top: 2px;
-  font-size: 10px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.45);
 }
 
 .exec-quote {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.6;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.75;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 12px;
@@ -1251,14 +1273,14 @@
 }
 
 .exec-metric-card {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 12px;
   padding: 12px;
 }
 
 .exec-metric-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.55);
   letter-spacing: 0.12em;
@@ -1267,9 +1289,32 @@
 
 .exec-metric-value {
   margin-top: 6px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.92);
+}
+
+@media (max-width: 520px) {
+  .preview-header {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+  }
+
+  .preview-tabs {
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .preview-board-entry {
+    order: 2;
+  }
+
+  .exec-metrics-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @keyframes spin {
