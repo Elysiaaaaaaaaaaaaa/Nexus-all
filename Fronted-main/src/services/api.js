@@ -237,12 +237,6 @@ export const register = async (params) => {
     password,
   });
 
-  // 调试日志
-  if (import.meta.env.DEV) {
-    console.log('[API Register] 响应数据:', response);
-    console.log('[API Register] 是否有 access_token:', !!response?.access_token);
-  }
-
   // 保存token到localStorage
   if (response.access_token) {
     localStorage.setItem('auth_token', response.access_token);
@@ -273,12 +267,6 @@ export const login = async (params) => {
     username,
     password,
   });
-
-  // 调试日志
-  if (import.meta.env.DEV) {
-    console.log('[API Login] 响应数据:', response);
-    console.log('[API Login] 是否有 access_token:', !!response?.access_token);
-  }
 
   // 保存token到localStorage
   if (response.access_token) {
@@ -391,4 +379,47 @@ export const uploadImage = async (params) => {
   formData.append('file', file);
 
   return http.upload('/api/v1/upload_image', formData, 'file');
+};
+
+/**
+ * 右侧「任务与素材 / 实时执行」面板数据（预置接口，待后端实现）
+ * POST /api/v1/interaction/panel
+ * @param {Object} params
+ * @param {string} params.project_name - 项目名称
+ * @param {string} [params.session_id] - 会话 ID（可选）
+ * @param {string} [params.workflow] - 前端工作流标识（可选）
+ * @param {string} [params.user_id] - 用户 ID（可选，默认 localStorage）
+ * @returns {Promise<{
+ *   success?: boolean,
+ *   data?: {
+ *     execution?: { logs?: Array<{ time?: string, level?: string, message?: string }>, simulation_quote?: string, metrics?: { vram?: string, frameTime?: string, fps?: string, latency?: string } },
+ *     task_assets?: { now_task?: { name?: string, stage?: string, progress?: number|string }, materials?: unknown[] }
+ *   }
+ * }>}
+ */
+export const getInteractionPanelData = async (params) => {
+  const {
+    project_name,
+    session_id = '',
+    workflow = '',
+    user_id = null,
+  } = params || {};
+
+  if (!project_name) {
+    throw new AppError({
+      message: 'project_name 是必填参数',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  const userId = user_id || getUserId();
+  const safeProject = sanitizeInput(project_name, 100);
+
+  return http.post('/api/v1/interaction/panel', {
+    user_id: userId,
+    project_name: safeProject,
+    session_id,
+    workflow,
+  });
 };
