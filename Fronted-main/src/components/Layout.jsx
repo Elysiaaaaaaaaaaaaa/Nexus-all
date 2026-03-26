@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Folder, FlowArrow, Flask, DownloadSimple, ShieldCheck, FilePdf, Users } from '@phosphor-icons/react';
+import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Folder, FlowArrow, Flask, DownloadSimple, ShieldCheck, FilePdf, Users, FlagBanner } from '@phosphor-icons/react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import logoTransparent from '../assets/logo_transparent.png';
 import { useApp } from '../contexts/AppContext';
@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
   const [opacity, setOpacity] = useState(0);
   const location = useLocation();
   const navigate = useNavigate();
-  const { t, isAuthenticated, userInfo } = useApp();
+  const { t, userInfo } = useApp();
 
   // 生成用户头像 URL
   const userAvatarUrl = useMemo(() => {
@@ -38,6 +38,7 @@ const Layout = ({ children }) => {
     { icon: <ClockCounterClockwise />, label: t('nav.history'), path: '/history' },
     { icon: <BookOpen />, label: t('nav.manual'), path: '/manual' },
     { icon: <FilePdf />, label: t('nav.techShowcase') || '技术展示', path: '/tech-showcase' },
+    { icon: <FlagBanner />, label: t('nav.competitionShowcase') || '大赛展示', path: '/competition-showcase' },
     { icon: <Users />, label: t('nav.team') || '团队介绍', path: '/team' },
   ];
 

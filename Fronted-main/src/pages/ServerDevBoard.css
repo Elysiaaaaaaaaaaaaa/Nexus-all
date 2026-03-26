@@ -1,0 +1,42 @@
+.sdb-page{width:100%;max-width:none;margin:0;padding:20px 24px 36px;display:flex;flex-direction:column;gap:14px;color:#0f172a;box-sizing:border-box}
+.sdb-hero,.sdb-panel{background:#fff;border:1px solid #dbe3ef;border-radius:14px}
+.sdb-hero{padding:18px;display:grid;grid-template-columns:minmax(520px,1.2fr) minmax(420px,1fr);gap:14px}
+.sdb-tag{display:inline-block;font-size:12px;color:#0c4a6e;background:#e0f2fe;border:1px solid #bae6fd;border-radius:999px;padding:3px 10px;font-weight:700}
+.sdb-hero h1{margin:10px 0 4px;font-size:28px}.sdb-hero p{margin:0;color:#475569}
+.sdb-kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sdb-kpi{display:flex;gap:10px;align-items:center;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:10px}
+.sdb-kpi-icon{width:34px;height:34px;border-radius:8px;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center}
+.sdb-kpi.warn .sdb-kpi-icon{background:#fef3c7;color:#b45309}
+.sdb-kpi-value{font-size:18px;font-weight:700;line-height:1}.sdb-kpi-label{font-size:12px;color:#64748b}
+.sdb-panel{padding:14px}.sdb-panel h2{margin:0;display:inline-flex;align-items:center;gap:7px;font-size:18px}
+.sdb-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+.sdb-pill{font-size:11px;font-weight:700;color:#b91c1c;background:#fee2e2;border:1px solid #fecaca;border-radius:999px;padding:3px 9px}
+.sdb-grid2{display:grid;grid-template-columns:minmax(420px,1fr) minmax(420px,1fr);gap:10px}
+.sdb-steps{display:flex;flex-direction:column;gap:7px}
+.sdb-step{display:flex;gap:10px;align-items:center;border:1px solid #e2e8f0;border-radius:9px;background:#f8fafc;padding:8px}
+.sdb-step.active{border-color:#93c5fd;background:#eff6ff}
+.sdb-no{width:22px;height:22px;border-radius:50%;background:#cbd5e1;display:grid;place-items:center;font-size:12px;font-weight:700}
+.sdb-step strong{font-size:14px}.sdb-step p{margin:1px 0 0;font-size:12px;color:#64748b}
+.sdb-terminal{border:1px solid #1e293b;border-radius:10px;overflow:hidden;background:#0f172a}
+.sdb-terminal-head{background:#1e293b;color:#cbd5e1;display:inline-flex;gap:6px;align-items:center;width:100%;padding:8px 10px;font-size:12px}
+.sdb-terminal pre{margin:0;color:#c7d2fe;padding:10px;font-size:12px;white-space:pre-wrap;font-family:Consolas,"Courier New",monospace;min-height:145px}
+.sdb-tabs{display:flex;gap:8px}
+.sdb-tab{border:1px solid #cbd5e1;background:#f8fafc;border-radius:8px;padding:7px 10px;color:#334155;cursor:pointer}
+.sdb-tab.active{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}
+.sdb-flow{display:flex;gap:8px;overflow-x:auto}
+.sdb-flow-card{min-width:150px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;padding:9px;position:relative}
+.sdb-flow-icon{width:34px;height:34px;border-radius:8px;background:#dbeafe;color:#1d4ed8;display:grid;place-items:center;margin-bottom:7px}
+.sdb-flow-card h3{margin:0;font-size:14px}.sdb-flow-card p{margin:4px 0 0;font-size:12px;color:#64748b}
+.sdb-flow-arrow{position:absolute;right:-12px;top:16px;color:#94a3b8}
+.sdb-api-grid{display:grid;grid-template-columns:240px 1fr;gap:9px}
+.sdb-api-list{display:flex;flex-direction:column;gap:7px}
+.sdb-api-item{border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;text-align:left;padding:8px;cursor:pointer}
+.sdb-api-item.active{border-color:#93c5fd;background:#eff6ff}
+.sdb-api-detail{border:1px solid #e2e8f0;border-radius:8px;padding:9px}
+.sdb-api-title{font-size:13px;font-weight:700;margin-bottom:7px}
+.sdb-api-detail pre{margin:0;border-radius:8px;background:#0f172a;color:#e2e8f0;padding:9px;font-size:12px;white-space:pre-wrap}
+.sdb-check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.sdb-check li{border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;padding:8px;display:flex;align-items:flex-start;gap:8px}
+.sdb-check strong{font-size:14px}.sdb-check p{margin:2px 0 0;font-size:12px;color:#64748b}
+@media (max-width:1100px){.sdb-hero,.sdb-grid2{grid-template-columns:1fr}.sdb-api-grid{grid-template-columns:1fr}}
+@media (max-width:720px){.sdb-page{padding:14px}.sdb-hero h1{font-size:22px}.sdb-kpis{grid-template-columns:1fr}}

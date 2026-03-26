@@ -31,6 +31,7 @@ import SecurityCenter from './pages/SecurityCenter.jsx';
 import TechShowcase from './pages/TechShowcase.jsx';
 import TeamIntroduction from './pages/TeamIntroduction.jsx';
 import AcpsBoard from './pages/AcpsBoard.jsx';
+import ServerDevBoard from './pages/ServerDevBoard.jsx';
 import { isProduction } from './utils/security';
 
 // 简单的测试组件（仅开发环境）
@@ -79,7 +80,7 @@ function App() {
       return { hasError: true, error };
     }
 
-    componentDidCatch(error, errorInfo) {
+    componentDidCatch() {
       // 错误已由 ErrorBoundary 处理
     }
 
@@ -142,6 +143,7 @@ function App() {
             <Route path="/project/:id" element={<ProtectedRoute><Layout><ProjectDetail /></Layout></ProtectedRoute>} />
             <Route path="/history/:id" element={<ProtectedRoute><Layout><HistoryDetail /></Layout></ProtectedRoute>} />
             <Route path="/tech-showcase" element={<ProtectedRoute><Layout><TechShowcase /></Layout></ProtectedRoute>} />
+            <Route path="/competition-showcase" element={<ProtectedRoute><Layout><ServerDevBoard /></Layout></ProtectedRoute>} />
             <Route path="/team" element={<ProtectedRoute><Layout><TeamIntroduction /></Layout></ProtectedRoute>} />
             <Route path="/acps-board" element={<ProtectedRoute><Layout><AcpsBoard /></Layout></ProtectedRoute>} />
             </Routes>
