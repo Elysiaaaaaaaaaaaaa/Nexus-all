@@ -140,7 +140,7 @@ const Projects = () => {
         </div>
         <button 
           className="projects-filter-button"
-          onClick={() => console.log('打开筛选')}
+          onClick={() => {}}
         >
           <Faders size={16} /> 筛选
         </button>
