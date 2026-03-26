@@ -20,6 +20,10 @@
   margin-right: 384px;
 }
 
+.interaction-main.with-preview-expanded {
+  margin-right: min(72vw, 980px);
+}
+
 .interaction-header {
   height: 64px;
   display: flex;
@@ -900,6 +904,20 @@
   transition: transform 500ms ease-in-out;
 }
 
+.preview-panel.expanded {
+  width: min(72vw, 980px);
+}
+
+@media (max-width: 1024px) {
+  .interaction-main.with-preview-expanded {
+    margin-right: 0;
+  }
+
+  .preview-panel.expanded {
+    width: 100vw;
+  }
+}
+
 /* Light mode: keep current dark terminal look for contrast */
 :root.light .preview-panel {
   background: rgb(15, 23, 42);
@@ -963,6 +981,26 @@
   color: white;
 }
 
+.preview-board-entry {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.1);
+  color: rgb(167, 243, 208);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: all 200ms;
+}
+
+.preview-board-entry:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: rgba(16, 185, 129, 0.55);
+  color: rgb(220, 252, 231);
+}
+
 .preview-content {
   padding: 24px;
   font-family: monospace;
@@ -973,6 +1011,25 @@
   gap: 12px;
   height: calc(100% - 64px);
   overflow-y: auto;
+}
+
+.preview-board-banner {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.18));
+  color: rgb(220, 252, 231);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  margin-bottom: 14px;
+}
+
+.preview-board-banner:hover {
+  border-color: rgba(16, 185, 129, 0.7);
+  background: linear-gradient(90deg, rgba(16, 185, 129, 0.28), rgba(59, 130, 246, 0.28));
 }
 
 .preview-content::-webkit-scrollbar {
