@@ -237,6 +237,12 @@ export const register = async (params) => {
     password,
   });
 
+  // 调试日志
+  if (import.meta.env.DEV) {
+    console.log('[API Register] 响应数据:', response);
+    console.log('[API Register] 是否有 access_token:', !!response?.access_token);
+  }
+
   // 保存token到localStorage
   if (response.access_token) {
     localStorage.setItem('auth_token', response.access_token);
@@ -267,6 +273,12 @@ export const login = async (params) => {
     username,
     password,
   });
+
+  // 调试日志
+  if (import.meta.env.DEV) {
+    console.log('[API Login] 响应数据:', response);
+    console.log('[API Login] 是否有 access_token:', !!response?.access_token);
+  }
 
   // 保存token到localStorage
   if (response.access_token) {

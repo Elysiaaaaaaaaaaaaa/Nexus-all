@@ -14,7 +14,9 @@ class UserFile:
         self.user_project = [i for i in os.listdir(self.project_path) if os.path.isdir(os.path.join(self.project_path,i))]
         self.project_content = {}
         for i in self.user_project:
-            self.project_content[i] = self.load_content(i)
+            content = self.load_content(i)
+            if content is not None:
+                self.project_content[i] = content
         self.session_path = os.path.join(self.file_path,'session_history.json')
         if not os.path.exists(self.session_path):
             with open(self.session_path,'w',encoding = 'utf-8') as file:
@@ -71,15 +73,19 @@ class UserFile:
     def load_content(self,project_name):
         if project_name not in self.user_project:
             raise FileNotFoundError(f"项目 {project_name} 不存在")
-        with open(os.path.join(self.project_path,project_name, 'project.json'), 'r', encoding='utf-8') as file:
-            content = json.load(file)
-            # 确保workflow_type字段存在
-            if 'workflow_type' not in content:
-                content['workflow_type'] = 'text2video'
-                # 保存更新后的内容
-                with open(os.path.join(self.project_path,project_name, 'project.json'), 'w', encoding='utf-8') as f:
-                    json.dump(content, f, ensure_ascii=False, indent=4)
-            self.project_content[project_name] = content
+        project_file_path = os.path.join(self.project_path,project_name, 'project.json')
+        if not os.path.exists(project_file_path):
+            return None
+        try:
+            with open(project_file_path, 'r', encoding='utf-8') as file:
+                content = json.load(file)
+                if 'workflow_type' not in content:
+                    content['workflow_type'] = 'text2video'
+                    with open(os.path.join(self.project_path,project_name, 'project.json'), 'w', encoding='utf-8') as f:
+                        json.dump(content, f, ensure_ascii=False, indent=4)
+                self.project_content[project_name] = content
+        except (FileNotFoundError, json.JSONDecodeError, OSError):
+            return None
         return self.project_content[project_name]
     
     def save_content(self,project_name,material,session_id,workflow):

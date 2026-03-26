@@ -8,6 +8,7 @@ from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from database import SessionLocal, User, Project, ChatHistory, Session as DBSession
+from file_manage import UserFile as OriginalUserFile
 
 
 class DatabaseUserFile:
@@ -26,6 +27,9 @@ class DatabaseUserFile:
             raise ValueError(f"无效的用户ID格式: {user_id}。用户ID必须是数字。")
         self._user_name = None  # 延迟加载用户名
 
+        # 初始化原始UserFile实例，用于同步调用
+        self.original_user_file = OriginalUserFile(user_id)
+
         # 为向后兼容，提供project_path属性
         self.project_path = f"./user_files/{self.user_id}/projects/"
 
@@ -43,6 +47,12 @@ class DatabaseUserFile:
         Returns:
             对话历史列表，每个元素包含user、assistant、material字段
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.load_chat_history(project_name)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             # 查找项目
             project = db.query(Project).filter(
@@ -76,6 +86,12 @@ class DatabaseUserFile:
             project_name: 项目名称
             state: 包含user_input、reply、session_data的状态对象
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.save_chat_history(project_name, state)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             # 查找项目
             project = db.query(Project).filter(
@@ -122,6 +138,13 @@ class DatabaseUserFile:
         Returns:
             实际创建的项目名称（可能添加了后缀以避免重复）
         """
+        # 同步调用原始UserFile的方法
+        original_project_name = None
+        try:
+            original_project_name = self.original_user_file.init_project(project_name, session_id, workflow_type)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             # 检查项目名是否已存在
             i = 1
@@ -188,6 +211,12 @@ class DatabaseUserFile:
         Returns:
             项目内容字典
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.load_content(project_name)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             project = db.query(Project).filter(
                 and_(Project.user_id == self.user_id, Project.project_name == project_name)
@@ -215,6 +244,12 @@ class DatabaseUserFile:
             session_id: 会话ID
             workflow: 工作流类型
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.save_content(project_name, material, session_id, workflow)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             project = db.query(Project).filter(
                 and_(Project.user_id == self.user_id, Project.project_name == project_name)
@@ -240,6 +275,12 @@ class DatabaseUserFile:
             session_id: 会话ID
             session_data: 会话数据
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.save_session(session_id, session_data)
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             # 查找现有会话
             session_record = db.query(DBSession).filter(
@@ -267,6 +308,12 @@ class DatabaseUserFile:
         Returns:
             会话ID到会话数据的映射字典
         """
+        # 同步调用原始UserFile的方法
+        try:
+            self.original_user_file.load_session()
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             sessions = db.query(DBSession).filter(DBSession.user_id == self.user_id).all()
 
@@ -284,6 +331,12 @@ class DatabaseUserFile:
         Returns:
             项目名称列表
         """
+        # 同步调用原始UserFile的方法
+        try:
+            _ = self.original_user_file.user_project
+        except Exception:
+            pass
+            
         with self._get_db() as db:
             projects = db.query(Project).filter(Project.user_id == self.user_id).all()
             return [project.project_name for project in projects]
@@ -300,6 +353,14 @@ class DatabaseUserFile:
         Returns:
             照片文件路径，如果不存在则返回None
         """
+        # 同步调用原始UserFile的方法
+        try:
+            original_path = self.original_user_file.get_figure_photo(project_name, figure_name)
+            if original_path:
+                return original_path
+        except Exception:
+            pass
+            
         # 这里暂时保持原有逻辑，后续可以考虑将照片也存储在数据库中
         if figure_name == 'default':
             return None
