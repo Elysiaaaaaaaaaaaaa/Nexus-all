@@ -24,7 +24,6 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log('保存用户信息');
   };
 
   const handlePickAvatar = () => {
