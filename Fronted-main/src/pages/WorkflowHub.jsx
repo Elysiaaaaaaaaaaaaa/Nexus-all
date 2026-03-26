@@ -2,25 +2,52 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FlowArrow, Rocket, SlidersHorizontal, PencilSimpleLine } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
+import { createProject } from '../services/api';
 import './WorkflowHub.css';
 
 const WorkflowHub = () => {
   const navigate = useNavigate();
   const { t } = useApp();
 
+  const resolveWorkflowType = (workflow) => (
+    workflow === 'storyboard_precise' ? 'image2video' : 'text2video'
+  );
+
+  const startWorkflow = async (workflow) => {
+    const workflowType = resolveWorkflowType(workflow);
+    const projectName = `${workflowType === 'image2video' ? '图生视频' : '文生视频'}_${Date.now()}`;
+
+    try {
+      const created = await createProject({
+        project_name: projectName,
+        workflow_type: workflowType,
+      });
+      localStorage.setItem('app-current-project', created?.project_name || projectName);
+      localStorage.setItem('app-current-workflow-type', workflowType);
+      if (created?.session_id) {
+        localStorage.setItem('app-current-session-id', created.session_id);
+      }
+      navigate('/interaction', { state: { workflow, projectName: created?.project_name || projectName } });
+    } catch {
+      localStorage.setItem('app-current-project', projectName);
+      localStorage.setItem('app-current-workflow-type', workflowType);
+      navigate('/interaction', { state: { workflow, projectName } });
+    }
+  };
+
   const cards = [
     {
       title: t('workflows.fastTitle'),
       desc: t('workflows.fastDesc'),
       icon: <Rocket weight="fill" />,
-      onClick: () => navigate('/interaction', { state: { workflow: 'text_to_video_fast' } }),
+      onClick: () => startWorkflow('text_to_video_fast'),
       accent: 'fast'
     },
     {
       title: t('workflows.storyTitle'),
       desc: t('workflows.storyDesc'),
       icon: <PencilSimpleLine weight="fill" />,
-      onClick: () => navigate('/interaction', { state: { workflow: 'storyboard_precise' } }),
+      onClick: () => startWorkflow('storyboard_precise'),
       accent: 'story'
     },
     {
