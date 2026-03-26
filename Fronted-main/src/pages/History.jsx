@@ -56,7 +56,7 @@ const History = () => {
           </button>
           <button 
             className="notification-button"
-            onClick={() => console.log('打开通知')}
+            onClick={() => {}}
           >
             <Bell size={18} />
           </button>
