@@ -1,11 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Brain, Check, Play, Plus, ArrowUp, 
   Share, Sidebar, Copy, Aperture, Lightning,
-  TerminalWindow, X, Paperclip, Microphone
+  TerminalWindow, X, Paperclip, Microphone, ArrowsOutSimple, ArrowsInSimple
 } from '@phosphor-icons/react';
-import logoCircle from '../assets/logo_circle.png';
+import logoCircleTransparent from '../assets/logo_circle_transparent.png';
 import './Interaction.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
@@ -13,6 +13,7 @@ import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
 
 const Interaction = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const scrollRef = useRef(null);
   const imageInputRef = useRef(null);
   const [showPreview, setShowPreview] = useState(true);
@@ -26,6 +27,7 @@ const Interaction = () => {
   const [modifyNums, setModifyNums] = useState([]);
   const { t } = useApp();
   const [rightPanelTab, setRightPanelTab] = useState('execution');
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
 
   const { userInfo } = useApp();
   const workflow = useMemo(() => location.state?.workflow || 'text_to_video_fast', [location.state]);
@@ -265,7 +267,6 @@ const Interaction = () => {
         
         mediaRecorder.onstop = () => {
           const blob = new Blob(chunks, { type: 'audio/wav' });
-          console.log('录音完成，音频大小:', blob.size);
           // 这里可以处理录音文件，比如转换为文本
           // 暂时显示一个提示
           alert('录音完成！音频已保存。');
@@ -382,17 +383,118 @@ const Interaction = () => {
     };
   }, [sessionData]);
 
+  const renderRightPanelContent = () => {
+    if (rightPanelTab === 'execution') {
+      return (
+        <>
+          <div className="exec-card">
+            <div className="exec-card-title">实时执行</div>
+            <div className="exec-log-list">
+              {executionLogs.map((log) => (
+                <div key={log.id} className={`exec-log-item ${String(log.level).toLowerCase()}`}>
+                  <span className="exec-log-dot" />
+                  <div className="exec-log-main">
+                    <div className="exec-log-text">{log.message}</div>
+                    {log.time && <div className="exec-log-time">{String(log.time)}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="exec-card">
+            <div className="exec-card-title">活动模拟</div>
+            <div className="exec-quote">
+              “雨滴在霓虹灯闪烁中闪闪发光，24fps。湿路面上的反射实时更新。”
+            </div>
+          </div>
+
+          <div className="exec-card">
+            <div className="exec-card-title">系统指标</div>
+            <div className="exec-metrics-grid">
+              <div className="exec-metric-card">
+                <div className="exec-metric-label">显存使用</div>
+                <div className="exec-metric-value">{systemMetrics.vram}</div>
+              </div>
+              <div className="exec-metric-card">
+                <div className="exec-metric-label">帧时间</div>
+                <div className="exec-metric-value">{systemMetrics.frameTime}</div>
+              </div>
+              <div className="exec-metric-card">
+                <div className="exec-metric-label">FPS</div>
+                <div className="exec-metric-value">{systemMetrics.fps}</div>
+              </div>
+              <div className="exec-metric-card">
+                <div className="exec-metric-label">延迟</div>
+                <div className="exec-metric-value">{systemMetrics.latency}</div>
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <div className="preview-metrics">
+          <p className="preview-metrics-title">{t('interaction.progressTitle')}</p>
+          {sessionData?.now_task ? (
+            <>
+              <div className="preview-metric">
+                <span>任务</span>
+                <span>{sessionData.now_task?.name || sessionData.now_task?.title || sessionData.now_task?.task_type || '进行中'}</span>
+              </div>
+              <div className="preview-metric">
+                <span>阶段</span>
+                <span>{sessionData.now_task?.step || sessionData.now_task?.stage || sessionData.now_task?.status || sessionData?.now_state || '-'}</span>
+              </div>
+              <div className="preview-metric">
+                <span>进度</span>
+                <span>{typeof sessionData.now_task?.progress === 'number' ? `${sessionData.now_task.progress}%` : (sessionData.now_task?.progress || '-')}</span>
+              </div>
+            </>
+          ) : (
+            <p className="preview-line">{'>'} {t('interaction.noProgress')}</p>
+          )}
+        </div>
+        
+        <div className="preview-simulation">
+          <div className="preview-simulation-bg">
+            <Lightning size={40} weight="fill" />
+          </div>
+          <div className="preview-simulation-header">
+            <Lightning weight="fill" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} size={16} /> {t('interaction.materialsTitle')}
+          </div>
+          {Array.isArray(sessionData?.material) && sessionData.material.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {sessionData.material.map((m, idx) => (
+                <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
+                  <span style={{ minWidth: 24 }}>{idx + 1}</span>
+                  <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(m)}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="preview-simulation-text">
+              {t('interaction.noMaterials')}
+            </p>
+          )}
+        </div>
+      </>
+    );
+  };
+
   return (
     <div className="interaction-container">
       {/* 左侧主要交互区 */}
-      <div className={`interaction-main ${showPreview ? 'with-preview' : ''}`}>
+      <div className={`interaction-main ${showPreview ? 'with-preview' : ''} ${showPreview && isPreviewExpanded ? 'with-preview-expanded' : ''}`}>
         {/* Header */}
         <header className="interaction-header">
           <div className="header-left">
             <h1 className="header-title">交互编排 · {workflowLabel}</h1>
             <span className="status-badge">
               {isSending ? (
-                <img src={logoCircle} alt="loading" className="spin-logo" />
+                <Brain size={14} weight="fill" className="spin" />
               ) : (
                 <span className="status-dot"></span>
               )}
@@ -448,7 +550,7 @@ const Interaction = () => {
               {/* AI 响应卡片 */}
               <div className="message-ai">
                 <div className="message-avatar message-avatar-ai">
-                  <img src={logoCircle} alt="AI" className="ai-avatar-image" />
+                  <img src={logoCircleTransparent} alt="AI" className="ai-avatar-image" />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="ai-planning">
@@ -536,7 +638,7 @@ const Interaction = () => {
               ) : (
                 <div key={msg.id} className="message-ai">
                   <div className="message-avatar message-avatar-ai">
-                    <img src={logoCircle} alt="AI" className="ai-avatar-image" />
+                    <img src={logoCircleTransparent} alt="AI" className="ai-avatar-image" />
                   </div>
                   <div className="message-bubble">
                     {msg.content}
@@ -605,7 +707,7 @@ const Interaction = () => {
       </div>
 
       {/* 右侧实时预览面板 */}
-      <aside className={`preview-panel ${showPreview ? '' : 'hidden'}`}>
+      <aside className={`preview-panel ${showPreview ? '' : 'hidden'} ${isPreviewExpanded ? 'expanded' : ''}`}>
         <div className="preview-header">
           <div className="preview-header-left">
             <TerminalWindow size={18} className="preview-header-icon" weight="fill" />
@@ -627,6 +729,31 @@ const Interaction = () => {
               任务/素材
             </button>
           </div>
+          <button
+            onClick={() => navigate('/acps-board')}
+            className="preview-board-entry"
+            title="进入 ACPS 协议调用看板（整页）"
+            aria-label="进入 ACPS 协议调用看板（整页）"
+            type="button"
+          >
+            进入调用看板
+          </button>
+          <button
+            onClick={() => navigate('/acps-board')}
+            className="preview-close-button"
+            title="打开调用看板"
+            aria-label="打开调用看板"
+          >
+            <TerminalWindow size={18} weight="bold" />
+          </button>
+          <button
+            onClick={() => setIsPreviewExpanded((prev) => !prev)}
+            className="preview-close-button"
+            title={isPreviewExpanded ? '还原面板' : '放大面板'}
+            aria-label={isPreviewExpanded ? '还原面板' : '放大面板'}
+          >
+            {isPreviewExpanded ? <ArrowsInSimple size={18} weight="bold" /> : <ArrowsOutSimple size={18} weight="bold" />}
+          </button>
           <button 
             onClick={() => setShowPreview(false)} 
             className="preview-close-button"
@@ -636,100 +763,14 @@ const Interaction = () => {
         </div>
         
         <div className="preview-content">
-          {rightPanelTab === 'execution' ? (
-            <>
-              <div className="exec-card">
-                <div className="exec-card-title">实时执行</div>
-                <div className="exec-log-list">
-                  {executionLogs.map((log) => (
-                    <div key={log.id} className={`exec-log-item ${String(log.level).toLowerCase()}`}>
-                      <span className="exec-log-dot" />
-                      <div className="exec-log-main">
-                        <div className="exec-log-text">{log.message}</div>
-                        {log.time && <div className="exec-log-time">{String(log.time)}</div>}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="exec-card">
-                <div className="exec-card-title">活动模拟</div>
-                <div className="exec-quote">
-                  “雨滴在霓虹灯闪烁中闪闪发光，24fps。湿路面上的反射实时更新。”
-                </div>
-              </div>
-
-              <div className="exec-card">
-                <div className="exec-card-title">系统指标</div>
-                <div className="exec-metrics-grid">
-                  <div className="exec-metric-card">
-                    <div className="exec-metric-label">显存使用</div>
-                    <div className="exec-metric-value">{systemMetrics.vram}</div>
-                  </div>
-                  <div className="exec-metric-card">
-                    <div className="exec-metric-label">帧时间</div>
-                    <div className="exec-metric-value">{systemMetrics.frameTime}</div>
-                  </div>
-                  <div className="exec-metric-card">
-                    <div className="exec-metric-label">FPS</div>
-                    <div className="exec-metric-value">{systemMetrics.fps}</div>
-                  </div>
-                  <div className="exec-metric-card">
-                    <div className="exec-metric-label">延迟</div>
-                    <div className="exec-metric-value">{systemMetrics.latency}</div>
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="preview-metrics">
-                <p className="preview-metrics-title">{t('interaction.progressTitle')}</p>
-                {sessionData?.now_task ? (
-                  <>
-                    <div className="preview-metric">
-                      <span>任务</span>
-                      <span>{sessionData.now_task?.name || sessionData.now_task?.title || sessionData.now_task?.task_type || '进行中'}</span>
-                    </div>
-                    <div className="preview-metric">
-                      <span>阶段</span>
-                      <span>{sessionData.now_task?.step || sessionData.now_task?.stage || sessionData.now_task?.status || sessionData?.now_state || '-'}</span>
-                    </div>
-                    <div className="preview-metric">
-                      <span>进度</span>
-                      <span>{typeof sessionData.now_task?.progress === 'number' ? `${sessionData.now_task.progress}%` : (sessionData.now_task?.progress || '-')}</span>
-                    </div>
-                  </>
-                ) : (
-                  <p className="preview-line">{'>'} {t('interaction.noProgress')}</p>
-                )}
-              </div>
-              
-              <div className="preview-simulation">
-                <div className="preview-simulation-bg">
-                  <Lightning size={40} weight="fill" />
-                </div>
-                <div className="preview-simulation-header">
-                  <Lightning weight="fill" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} size={16} /> {t('interaction.materialsTitle')}
-                </div>
-                {Array.isArray(sessionData?.material) && sessionData.material.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {sessionData.material.map((m, idx) => (
-                      <div key={idx} className="preview-metric" style={{ alignItems: 'flex-start' }}>
-                        <span style={{ minWidth: 24 }}>{idx + 1}</span>
-                        <span style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>{normalizeAiContent(m)}</span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="preview-simulation-text">
-                    {t('interaction.noMaterials')}
-                  </p>
-                )}
-              </div>
-            </>
-          )}
+          <button
+            onClick={() => navigate('/acps-board')}
+            className="preview-board-banner"
+            type="button"
+          >
+            打开 ACPS 协议调用看板（整页）
+          </button>
+          {renderRightPanelContent()}
         </div>
       </aside>
 
