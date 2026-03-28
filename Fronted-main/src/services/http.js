@@ -3,9 +3,14 @@ import { AppError } from '../types/api';
 import { isProduction } from '../utils/security';
 
 // --- 1. 配置基础实例 ---
+/** 线上/打包默认后端（与部署一致）；本地 dev 优先走 Vite 代理，见 vite.config.js */
+const DEFAULT_API_ORIGIN = 'http://101.200.1.56';
+
 const instance = axios.create({
-  // 优先取环境变量，否则使用代理（开发环境）或默认后端地址
-  baseURL: import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? '' : 'http://localhost:8003'),
+  // 优先 VITE_API_BASE_URL；开发且未配置时用空串走 Vite /api 代理；生产构建默认 DEFAULT_API_ORIGIN
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL ||
+    (import.meta.env.DEV ? '' : DEFAULT_API_ORIGIN),
   timeout: 150000, // 5分钟超时（与原来的fetch一致）
   headers: { 'Content-Type': 'application/json' },
 });
