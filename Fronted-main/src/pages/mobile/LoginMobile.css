@@ -1,0 +1,51 @@
+.login-mobile-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 18px;
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(28px, env(safe-area-inset-bottom, 0px));
+}
+
+.login-mobile-page .login-container {
+  min-height: auto;
+  padding: 0;
+  align-items: stretch;
+}
+
+.login-mobile-page .login-card {
+  width: 100%;
+  max-width: 100%;
+  padding: 28px 22px;
+  border-radius: var(--nx-radius-xl, 28px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--nx-card-shadow, 0 8px 40px rgba(0, 0, 0, 0.06));
+  background: var(--bg-secondary);
+}
+
+:root.dark .login-mobile-page .login-card {
+  box-shadow: var(--nx-card-shadow);
+}
+
+.login-mobile-page .form-input {
+  min-height: 50px;
+  font-size: 16px;
+  border-radius: var(--nx-radius-sm, 12px);
+}
+
+.login-mobile-page .login-submit-button {
+  min-height: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 10px;
+  border-radius: var(--nx-radius-md, 16px);
+  background: linear-gradient(135deg, var(--nx-accent-mid, rgb(99, 102, 241)) 0%, var(--nx-accent, rgb(79, 70, 229)) 100%);
+  box-shadow: 0 4px 14px -2px rgba(79, 70, 229, 0.4);
+}
+
+.login-mobile-page .form-input-toggle {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--nx-radius-sm, 12px);
+}

@@ -1,0 +1,55 @@
+/**
+ * 尚未单独重写移动端的页面：先桥接 Web 组件，便于逐页替换为 *Mobile.jsx
+ */
+import { withMobileBridge } from './withMobileBridge.jsx';
+import Example from '../Example.jsx';
+import Manual from '../Manual.jsx';
+import Interaction from '../Interaction.jsx';
+import History from '../History.jsx';
+import Settings from '../Settings.jsx';
+import Agents from '../Agents.jsx';
+import Projects from '../Projects.jsx';
+import Analytics from '../Analytics.jsx';
+import VideoGeneration from '../VideoGeneration.jsx';
+import UIDesign from '../UIDesign.jsx';
+import ImageGeneration from '../ImageGeneration.jsx';
+import AudioProcessing from '../AudioProcessing.jsx';
+import Profile from '../Profile.jsx';
+import AgentDetail from '../AgentDetail.jsx';
+import ProjectDetail from '../ProjectDetail.jsx';
+import HistoryDetail from '../HistoryDetail.jsx';
+import AssetsLibrary from '../AssetsLibrary.jsx';
+import WorkflowHub from '../WorkflowHub.jsx';
+import PlatformLab from '../PlatformLab.jsx';
+import ExportCenter from '../ExportCenter.jsx';
+import SecurityCenter from '../SecurityCenter.jsx';
+import TechShowcase from '../TechShowcase.jsx';
+import TeamIntroduction from '../TeamIntroduction.jsx';
+import AcpsBoard from '../AcpsBoard.jsx';
+import ServerDevBoard from '../ServerDevBoard.jsx';
+
+export const ExampleMobile = withMobileBridge(Example);
+export const ManualMobile = withMobileBridge(Manual);
+export const InteractionMobile = withMobileBridge(Interaction);
+export const HistoryMobile = withMobileBridge(History);
+export const SettingsMobile = withMobileBridge(Settings);
+export const AgentsMobile = withMobileBridge(Agents);
+export const ProjectsMobile = withMobileBridge(Projects);
+export const AnalyticsMobile = withMobileBridge(Analytics);
+export const VideoGenerationMobile = withMobileBridge(VideoGeneration);
+export const UIDesignMobile = withMobileBridge(UIDesign);
+export const ImageGenerationMobile = withMobileBridge(ImageGeneration);
+export const AudioProcessingMobile = withMobileBridge(AudioProcessing);
+export const ProfileMobile = withMobileBridge(Profile);
+export const AgentDetailMobile = withMobileBridge(AgentDetail);
+export const ProjectDetailMobile = withMobileBridge(ProjectDetail);
+export const HistoryDetailMobile = withMobileBridge(HistoryDetail);
+export const AssetsLibraryMobile = withMobileBridge(AssetsLibrary);
+export const WorkflowHubMobile = withMobileBridge(WorkflowHub);
+export const PlatformLabMobile = withMobileBridge(PlatformLab);
+export const ExportCenterMobile = withMobileBridge(ExportCenter);
+export const SecurityCenterMobile = withMobileBridge(SecurityCenter);
+export const TechShowcaseMobile = withMobileBridge(TechShowcase);
+export const TeamIntroductionMobile = withMobileBridge(TeamIntroduction);
+export const AcpsBoardMobile = withMobileBridge(AcpsBoard);
+export const ServerDevBoardMobile = withMobileBridge(ServerDevBoard);

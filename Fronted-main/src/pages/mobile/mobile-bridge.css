@@ -1,0 +1,13 @@
+/* 桥接层：原生壳内 Web 页的滚动与安全区 */
+.mobile-native-bridge {
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 4px 4px 6px;
+  padding-bottom: var(--mobile-bridge-pad-bottom, 0px);
+  transition: opacity var(--nx-motion-duration, 0.2s) var(--nx-motion-ease-out, ease);
+}

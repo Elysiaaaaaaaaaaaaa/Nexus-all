@@ -1,0 +1,90 @@
+/**
+ * 全局：仅在 Capacitor 壳内 html.layout-native-mobile 生效
+ * 与浏览器 Web 布局分离，避免桌面样式污染 App 内 WebView
+ */
+html.layout-native-mobile {
+  /* 安全区变量，供子组件使用 */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  /* 原生壳内字体：系统栈，更接近 iOS / Material 质感 */
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    'SF Pro Text',
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    'Noto Sans SC',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 轻量静态氛围光（无动画，兼顾发热） */
+html.layout-native-mobile .mobile-shell {
+  background-color: var(--bg-primary);
+  background-image:
+    radial-gradient(ellipse 130% 90% at 100% -25%, rgba(99, 102, 241, 0.11), transparent 52%),
+    radial-gradient(ellipse 85% 65% at -20% 105%, rgba(168, 85, 247, 0.07), transparent 48%);
+}
+
+html.dark.layout-native-mobile .mobile-shell {
+  background-image:
+    radial-gradient(ellipse 130% 90% at 100% -25%, rgba(129, 140, 248, 0.16), transparent 52%),
+    radial-gradient(ellipse 85% 65% at -20% 105%, rgba(192, 132, 252, 0.09), transparent 48%);
+}
+
+html.layout-native-mobile body {
+  /* 减轻大屏点阵动画在 WebView 的开销 */
+  animation: none;
+}
+
+html.layout-native-mobile #root {
+  min-height: 100dvh;
+  filter: none;
+}
+
+/* 装饰性无限动画在 WebView 里持续跑 GPU，交互页等场景易发热 */
+html.layout-native-mobile .status-dot,
+html.layout-native-mobile .preview-ping {
+  animation: none !important;
+}
+
+html.layout-native-mobile .nx-toast {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* 原生壳内页面进入：轻微上浮 + 淡入，避免「硬切」 */
+@keyframes nx-native-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.layout-native-mobile .dashboard-mobile,
+  html.layout-native-mobile .more-hub,
+  html.layout-native-mobile .homepage-mobile,
+  html.layout-native-mobile [data-mobile-bridge] {
+    animation: nx-native-page-in var(--nx-motion-duration-slow, 0.38s) var(--nx-motion-ease, cubic-bezier(0.22, 1, 0.36, 1)) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.layout-native-mobile .dashboard-mobile,
+  html.layout-native-mobile .more-hub,
+  html.layout-native-mobile .homepage-mobile,
+  html.layout-native-mobile [data-mobile-bridge] {
+    animation: none;
+  }
+}
