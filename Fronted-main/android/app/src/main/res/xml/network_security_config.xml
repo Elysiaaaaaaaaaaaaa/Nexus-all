@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  云端 API：http://101.200.1.56（与前端 VITE_API_BASE_URL / http.js 一致）
+  WebView 内 axios 请求走应用网络安全策略，须允许该主机明文 HTTP。
+-->
+<network-security-config>
+    <!-- 云端 API + /videos 静态资源（与 VITE_API_BASE_URL 一致） -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">101.200.1.56</domain>
+    </domain-config>
+    <!-- 本机 / 模拟器调试后端（可选） -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

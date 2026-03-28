@@ -25,6 +25,7 @@
         "connect-src": "ipc: http://ipc.localhost http://101.200.1.56 https://101.200.1.56 http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*",
         "font-src": "'self' data:",
         "img-src": "'self' asset: http://asset.localhost blob: data: http: https:",
+        "media-src": "'self' asset: http://asset.localhost blob: data: http: https:",
         "style-src": "'unsafe-inline' 'self'"
       },
       "devCsp": {
@@ -32,6 +33,7 @@
         "connect-src": "ipc: http://ipc.localhost http://101.200.1.56 https://101.200.1.56 http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*",
         "font-src": "'self' data:",
         "img-src": "'self' asset: http://asset.localhost blob: data: http: https:",
+        "media-src": "'self' asset: http://asset.localhost blob: data: http: https:",
         "style-src": "'unsafe-inline' 'self'"
       }
     }

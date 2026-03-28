@@ -1,5 +1,8 @@
 {
   "appId": "com.nexus.app",
   "appName": "Nexus",
-  "webDir": "dist"
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": true
+  }
 }
