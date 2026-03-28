@@ -3,6 +3,12 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* 动效：统一曲线与时长，提升「产品级」手感 */
+  --nx-motion-duration: 0.2s;
+  --nx-motion-duration-slow: 0.38s;
+  --nx-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --nx-motion-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+
   color-scheme: light dark;
   /* 由主题变量控制前景/背景，避免 dark 下仍然发白 */
   color: var(--text-primary);
@@ -30,6 +36,19 @@
   --shadow-light: rgba(0, 0, 0, 0.05);
   --dot-color: #d1d5db;
   --bg-color: #ffffff;
+  /* 现代主色：靛蓝体系，Web / Mobile 共用 */
+  --nx-accent: rgb(79, 70, 229);
+  --nx-accent-hover: rgb(67, 56, 202);
+  --nx-accent-mid: rgb(99, 102, 241);
+  --nx-accent-soft: rgba(79, 70, 229, 0.1);
+  --nx-accent-softer: rgba(79, 70, 229, 0.06);
+  --nx-accent-ring: rgba(79, 70, 229, 0.28);
+  --nx-card-shadow: 0 4px 24px -6px rgba(15, 23, 42, 0.07), 0 0 0 1px rgba(15, 23, 42, 0.04);
+  --nx-card-shadow-hover: 0 12px 40px -12px rgba(79, 70, 229, 0.18), 0 0 0 1px rgba(79, 70, 229, 0.08);
+  --nx-radius-sm: 12px;
+  --nx-radius-md: 16px;
+  --nx-radius-lg: 22px;
+  --nx-radius-xl: 28px;
 }
 
 :root.dark {
@@ -44,6 +63,25 @@
   --shadow-light: rgba(0, 0, 0, 0.2);
   --dot-color: #404040;
   --bg-color: #0a0a0a;
+  --nx-accent: rgb(165, 180, 252);
+  --nx-accent-hover: rgb(199, 210, 254);
+  --nx-accent-mid: rgb(129, 140, 248);
+  --nx-accent-soft: rgba(129, 140, 248, 0.16);
+  --nx-accent-softer: rgba(129, 140, 248, 0.09);
+  --nx-accent-ring: rgba(165, 180, 252, 0.35);
+  --nx-card-shadow: 0 4px 28px -8px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --nx-card-shadow-hover: 0 16px 48px -16px rgba(99, 102, 241, 0.35), 0 0 0 1px rgba(165, 180, 252, 0.12);
+  --nx-radius-sm: 12px;
+  --nx-radius-md: 16px;
+  --nx-radius-lg: 22px;
+  --nx-radius-xl: 28px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --nx-motion-duration: 0.01ms;
+    --nx-motion-duration-slow: 0.01ms;
+  }
 }
 
 [data-theme='dark'], .dark, :root.dark {
@@ -63,11 +101,24 @@ body {
   background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
   background-size: 30px 30px;
   background-position: 0 0;
+  /* 全屏背景位移动画会持续触发合成/重绘，手机 WebView 易发热；触控设备默认静态背景 */
   animation: body-drift 60s linear infinite;
   color: var(--text-primary);
   opacity: 1 !important;
   visibility: visible !important;
   /* filter 不要加在 body：会与 Portal 到 body 的全屏 fixed 层（登录框、顶栏）冲突，Edge/WebView 下常导致遮罩不可见 */
+}
+
+@media (pointer: coarse) {
+  body {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
 }
 
 @keyframes body-drift {
@@ -80,11 +131,8 @@ body {
   min-height: 100vh;
   display: block;
   position: relative;
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.03));
-}
-
-:root.dark #root {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
+  /* 勿对整棵 React 树做 drop-shadow：会迫使大面积离屏合成，移动端/WebView 极易发热 */
+  filter: none;
 }
 
 h1 {

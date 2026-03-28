@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Folder, FlowArrow, Flask, DownloadSimple, ShieldCheck, FilePdf, Users, FlagBanner } from '@phosphor-icons/react';
+import { PlusCircle, SquaresFour, ClockCounterClockwise, Gear, BookOpen, Folder, FlowArrow, Flask, DownloadSimple, ShieldCheck, FilePdf, Users, FlagBanner, DotsThreeOutline } from '@phosphor-icons/react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import logoTransparent from '../assets/logo_transparent.png';
 import { useApp } from '../contexts/AppContext';
@@ -20,6 +20,8 @@ const Layout = ({ children }) => {
   }, [userInfo?.username]);
 
   useEffect(() => {
+    const finePointer = window.matchMedia('(pointer: fine)');
+    if (!finePointer.matches) return undefined;
     const handleMouseMove = (e) => {
       setMousePos({ x: e.clientX, y: e.clientY });
       setOpacity(1);
@@ -40,6 +42,7 @@ const Layout = ({ children }) => {
     { icon: <FilePdf />, label: t('nav.techShowcase') || '技术展示', path: '/tech-showcase' },
     { icon: <FlagBanner />, label: t('nav.competitionShowcase') || '大赛展示', path: '/competition-showcase' },
     { icon: <Users />, label: t('nav.team') || '团队介绍', path: '/team' },
+    { icon: <DotsThreeOutline />, label: t('nav.mobileMore'), path: '/more' },
   ];
 
   return (

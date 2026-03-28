@@ -2,12 +2,15 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FlowArrow, Rocket, SlidersHorizontal, PencilSimpleLine } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext.jsx';
 import { createProject } from '../services/api';
+import { isNativeMobileLayout } from '../utils/runtimePlatform';
 import './WorkflowHub.css';
 
 const WorkflowHub = () => {
   const navigate = useNavigate();
   const { t } = useApp();
+  const { showToast } = useToast();
 
   const resolveWorkflowType = (workflow) => (
     workflow === 'storyboard_precise' ? 'image2video' : 'text2video'
@@ -54,7 +57,7 @@ const WorkflowHub = () => {
       title: t('workflows.customTitle'),
       desc: t('workflows.customDesc'),
       icon: <SlidersHorizontal weight="fill" />,
-      onClick: () => alert(t('workflows.customComingSoon')),
+      onClick: () => showToast({ message: t('workflows.customComingSoon'), variant: 'info', duration: 3200 }),
       accent: 'custom'
     }
   ];
@@ -67,6 +70,11 @@ const WorkflowHub = () => {
           <span>{t('workflows.title')}</span>
         </div>
         <div className="workflow-hub-subtitle">{t('workflows.subtitle')}</div>
+        {isNativeMobileLayout() && (
+          <p className="workflow-hub-mobile-orchestration-hint" role="note">
+            {t('workflows.mobileOrchestrationHint')}
+          </p>
+        )}
       </header>
 
       <div className="workflow-grid">
