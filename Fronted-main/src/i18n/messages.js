@@ -52,7 +52,8 @@ export const messages = {
       username: '用户名',
       email: '邮箱',
       workspace: '工作区',
-      uploadAvatar: '上传头像'
+      uploadAvatar: '上传头像',
+      logout: '退出登录'
     },
     history: {
       title: '归档',
@@ -354,7 +355,8 @@ export const messages = {
       username: 'Username',
       email: 'Email',
       workspace: 'Workspace',
-      uploadAvatar: 'Upload avatar'
+      uploadAvatar: 'Upload avatar',
+      logout: 'Log out'
     },
     history: {
       title: 'Archive',
@@ -654,7 +656,8 @@ export const messages = {
       username: 'ユーザー名',
       email: 'メール',
       workspace: 'ワークスペース',
-      uploadAvatar: 'アバターをアップロード'
+      uploadAvatar: 'アバターをアップロード',
+      logout: 'ログアウト'
     },
     history: {
       title: 'アーカイブ',
