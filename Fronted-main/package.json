@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:android": "node scripts/build-capacitor-android.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:tauri": "vite build --mode tauri",
     "tauri:build": "tauri build",
-    "tauri:dev": "tauri dev"
+    "tauri:dev": "tauri dev",
+    "copy:installer": "node scripts/copy-installer.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.1",
