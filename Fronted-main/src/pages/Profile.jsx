@@ -1,6 +1,6 @@
 import React, { useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Camera, Check } from '@phosphor-icons/react';
+import { X, Camera, SignOut } from '@phosphor-icons/react';
 import './Profile.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
@@ -8,8 +8,7 @@ import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { t } = useApp();
-  const { userInfo } = useApp();
+  const { t, userInfo, logout } = useApp();
   const [userName, setUserName] = useState(userInfo?.username || '张恒基');
   const [userEmail, setUserEmail] = useState(userInfo?.email || 'zhanghengji@example.com');
   const [userWorkspace, setUserWorkspace] = useState('专业工作区');
@@ -24,6 +23,11 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
   };
 
   const handlePickAvatar = () => {
@@ -168,11 +172,23 @@ const Profile = () => {
           {!isEditing && (
             <button 
               className="profile-edit-button"
+              type="button"
               onClick={() => setIsEditing(true)}
             >
               {t('profile.edit')}
             </button>
           )}
+
+          <div className="profile-logout-wrap">
+            <button
+              type="button"
+              className="profile-logout-button"
+              onClick={handleLogout}
+            >
+              <SignOut size={18} weight="bold" aria-hidden />
+              {t('profile.logout')}
+            </button>
+          </div>
         </div>
       </div>
     </div>
