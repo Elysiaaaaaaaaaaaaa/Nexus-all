@@ -11,7 +11,13 @@ export const messages = {
       settings: '设置',
       createProject: '创建项目',
       techShowcase: '技术展示',
-      team: '团队介绍'
+      team: '团队介绍',
+      /** 仅 MobileLayout 底栏：指向工作流中心（选类型后进入交互页） */
+      mobileTabWorkflows: '工作流',
+      mobileTabWorkflowsA11y: '工作流与交互编排',
+      mobileMore: '更多',
+      competitionShowcase: '大赛展示',
+      back: '返回'
     },
     dashboard: {
       headlineMain: '重塑',
@@ -25,7 +31,11 @@ export const messages = {
       askPlaceholder: '有问题，尽管问',
       send: '发送',
       startRecording: '开始录音',
-      stopRecording: '停止录音'
+      stopRecording: '停止录音',
+      mobileEnterInteraction: '进入交互编排',
+      mobileEnterInteractionHint:
+        '若本地已有项目则直接进入对话；否则先打开工作流中心选择类型（与底部第二项相同）。',
+      mobileEnterInteractionShortHint: '与底部「工作流」相同入口，可在此一键进入。'
     },
     interaction: {
       header: '交互编排',
@@ -43,7 +53,17 @@ export const messages = {
       needModify: '需要修改',
       noNeedModify: '不需要修改',
       modifyPickTitle: '需要修改的内容序号（可多选）',
-      modifyPlaceholder: '例如：1,2,4（英文逗号分隔）'
+      modifyPlaceholder: '例如：1,2,4（英文逗号分隔）',
+      backToDashboard: '返回仪表盘',
+      toastRecordingDone: '录音已结束，片段已暂存',
+      toastMicDenied: '无法使用麦克风，请在系统设置中开启权限',
+      toastCopiedSession: '已复制对话 ID：{id}',
+      toastCopiedLinkNoSession: '已复制链接（暂无对话 ID）',
+      toastCopyFailed: '无法写入剪贴板',
+      copyFallbackPrompt: '请复制以下内容：',
+      openFeBePanelA11y: '打开实时执行与任务素材面板，查看前后端交互',
+      generatedVideos: '生成视频',
+      videoPlaybackError: '视频无法加载，请检查网络或稍后重试'
     },
     profile: {
       title: '用户信息',
@@ -57,10 +77,31 @@ export const messages = {
     },
     history: {
       title: '归档',
-      searchPlaceholder: '搜索提示词、脚本...',
+      searchPlaceholder: '搜索项目名称、任务阶段...',
       filter: '筛选',
       recent: '最近活动',
-      loadMore: '加载更早的历史记录'
+      loadMore: '加载更早的历史记录',
+      emptyProjects: '暂无项目。请先在仪表盘创建工作流并运行，记录会出现在此处。',
+      loadFailed: '加载失败',
+      loadingList: '加载中…',
+      retry: '重试',
+      workflowText: '文生视频',
+      workflowImage: '图生视频',
+      detailTitle: '项目详情',
+      conversation: '对话记录',
+      sessionState: '会话状态',
+      noChatYet: '暂无对话记录',
+      continueChat: '继续对话',
+      taskLabel: '当前任务',
+      summaryTitle: '摘要',
+      noSummary: '暂无最近一条用户输入。',
+      turns: '共 {count} 轮',
+      progressTitle: '进度',
+      roleUser: '用户',
+      roleAssistant: '助手',
+      roleMaterial: '素材',
+      sessionJsonTitle: '会话数据（原始）',
+      invalidProject: '无效的项目路径'
     },
     settings: {
       title: '配置',
@@ -100,14 +141,25 @@ export const messages = {
       confirmClear: '确定要删除所有聊天历史吗？此操作无法撤销。'
     },
     homepage: {
+      runtimeChannelAndroid: 'Android 应用',
+      runtimeChannelAndroidHint: '当前为 Capacitor 打包的 Android 客户端',
+      runtimeChannelWeb: 'Web 站点',
+      runtimeChannelWebHint: '当前为浏览器访问的网页版（可下载 Windows 桌面安装包）',
+      runtimeChannelDesktop: 'Windows 桌面端',
+      runtimeChannelDesktopHint: '当前为 Tauri 打包的桌面客户端',
+      runtimeChannelIos: 'iOS 应用',
+      runtimeChannelIosHint: '当前为 Capacitor 打包的 iOS 客户端',
       statusReady: '系统就绪',
       startCreate: '开始创作',
       tryFree: '免费试用',
       docs: '技术文档',
+      downloadDesktop: '下载 Windows 桌面版',
       demo: 'Nexus Studio 实时生成演示',
       heroSubtitle: 'Nexus Studio V4.0.2: 专业的 AIGC 视频全流程辅助系统。基于 LangGraph 与 ACPs 协议，将创意构思秒级转化为高质量视频。',
       heroTagline: '专业的 AIGC 视频全流程辅助系统',
       heroDescription: '基于 LangGraph 与 ACPs 协议，将创意构思秒级转化为高质量视频',
+      mobileWhereInteraction:
+        '交互编排：登录后点底部「工作流」选文生/图生视频，或在「仪表盘」用卡片或「进入交互编排」。',
       navTeam: '团队',
       navTech: '技术',
       partnersTitle: '合作伙伴',
@@ -155,7 +207,8 @@ export const messages = {
       title: '素材库',
       search: '搜索 session_id / 标题 / 标签...',
       copyId: '复制对话ID',
-      updatedAt: '更新于 {time}'
+      updatedAt: '更新于 {time}',
+      toastCopiedId: '已复制：{id}'
     },
     workflows: {
       title: '工作流中心',
@@ -166,7 +219,26 @@ export const messages = {
       storyDesc: '分镜驱动，适合精细控制、镜头一致性更好。',
       customTitle: '自定义工作流 · 组合编排',
       customDesc: '像搭积木一样组合步骤与智能体（即将上线）。',
-      customComingSoon: '自定义工作流：敬请期待'
+      customComingSoon: '自定义工作流：敬请期待',
+      mobileOrchestrationHint: '点下方卡片将创建项目并进入「交互编排」对话页。'
+    },
+    moreHub: {
+      pageTitle: '全部功能',
+      pageSubtitle: '与网页版相同的入口，可在此进入各业务页面。',
+      sectionMain: '主导航（底部栏亦有）',
+      sectionCreate: '创作与工具',
+      sectionData: '项目与智能体',
+      sectionPlatform: '平台与系统',
+      sectionShowcase: '展示与示例',
+      linkVideoGen: '视频生成',
+      linkImageGen: '图像生成',
+      linkAudio: '音频处理',
+      linkUiDesign: 'UI 设计',
+      linkProjects: '项目列表',
+      linkAgents: '智能体广场',
+      linkAnalytics: '数据分析',
+      linkAcpsBoard: 'ACPS 调用看板',
+      linkExample: '组件示例'
     },
     lab: {
       title: '平台拓展',
@@ -314,7 +386,12 @@ export const messages = {
       settings: 'Settings',
       createProject: 'Create Project',
       techShowcase: 'Tech Showcase',
-      team: 'Team'
+      team: 'Team',
+      mobileTabWorkflows: 'Flows',
+      mobileTabWorkflowsA11y: 'Workflows and orchestration',
+      mobileMore: 'More',
+      competitionShowcase: 'Competition',
+      back: 'Back'
     },
     dashboard: {
       headlineMain: 'Redefine',
@@ -328,7 +405,11 @@ export const messages = {
       askPlaceholder: 'Ask anything',
       send: 'Send',
       startRecording: 'Start recording',
-      stopRecording: 'Stop recording'
+      stopRecording: 'Stop recording',
+      mobileEnterInteraction: 'Open orchestration',
+      mobileEnterInteractionHint:
+        'Opens chat if a project exists; otherwise opens the workflow hub (same as the second tab).',
+      mobileEnterInteractionShortHint: 'Same as the bottom “Flows” tab — quick entry here.'
     },
     interaction: {
       header: 'Orchestration',
@@ -346,7 +427,17 @@ export const messages = {
       needModify: 'Yes, modify',
       noNeedModify: 'No, keep it',
       modifyPickTitle: 'Select item numbers to modify (multi-select)',
-      modifyPlaceholder: 'e.g. 1,2,4 (comma-separated)'
+      modifyPlaceholder: 'e.g. 1,2,4 (comma-separated)',
+      backToDashboard: 'Back to dashboard',
+      toastRecordingDone: 'Recording saved locally',
+      toastMicDenied: 'Microphone access denied. Enable it in system settings.',
+      toastCopiedSession: 'Copied session ID: {id}',
+      toastCopiedLinkNoSession: 'Link copied (no session ID yet)',
+      toastCopyFailed: 'Could not copy to clipboard',
+      copyFallbackPrompt: 'Copy the following:',
+      openFeBePanelA11y: 'Open live execution and task panel to inspect frontend–backend interaction',
+      generatedVideos: 'Generated video',
+      videoPlaybackError: 'Video failed to load. Check your network and try again.'
     },
     profile: {
       title: 'Profile',
@@ -360,10 +451,31 @@ export const messages = {
     },
     history: {
       title: 'Archive',
-      searchPlaceholder: 'Search prompts, scripts...',
+      searchPlaceholder: 'Search project name or task...',
       filter: 'Filter',
       recent: 'Recent activity',
-      loadMore: 'Load earlier history'
+      loadMore: 'Load earlier history',
+      emptyProjects: 'No projects yet. Create a workflow from the dashboard to see it here.',
+      loadFailed: 'Failed to load',
+      loadingList: 'Loading…',
+      retry: 'Retry',
+      workflowText: 'Text to video',
+      workflowImage: 'Image to video',
+      detailTitle: 'Project detail',
+      conversation: 'Conversation',
+      sessionState: 'Session state',
+      noChatYet: 'No conversation yet',
+      continueChat: 'Continue chat',
+      taskLabel: 'Current task',
+      summaryTitle: 'Summary',
+      noSummary: 'No recent user message.',
+      turns: '{count} turn(s)',
+      progressTitle: 'Progress',
+      roleUser: 'User',
+      roleAssistant: 'Assistant',
+      roleMaterial: 'Materials',
+      sessionJsonTitle: 'Session data (raw)',
+      invalidProject: 'Invalid project path'
     },
     settings: {
       title: 'Settings',
@@ -403,14 +515,25 @@ export const messages = {
       confirmClear: 'Are you sure you want to clear all chat history? This cannot be undone.'
     },
     homepage: {
+      runtimeChannelAndroid: 'Android app',
+      runtimeChannelAndroidHint: 'Capacitor Android build',
+      runtimeChannelWeb: 'Web',
+      runtimeChannelWebHint: 'Browser site; Windows desktop installer available below',
+      runtimeChannelDesktop: 'Windows desktop',
+      runtimeChannelDesktopHint: 'Tauri desktop client',
+      runtimeChannelIos: 'iOS app',
+      runtimeChannelIosHint: 'Capacitor iOS build',
       statusReady: 'Ready',
       startCreate: 'Start',
       tryFree: 'Try for free',
       docs: 'Docs',
+      downloadDesktop: 'Download for Windows',
       demo: 'Nexus Studio realtime demo',
       heroSubtitle: 'Nexus Studio V4.0.2: a professional AIGC video end-to-end assistant. Built on LangGraph and ACPs to turn ideas into high-quality videos in seconds.',
       heroTagline: 'Professional AIGC Video End-to-End Assistant',
       heroDescription: 'Built on LangGraph and ACPs to turn ideas into high-quality videos in seconds',
+      mobileWhereInteraction:
+        'Orchestration: after sign-in, use the bottom “Flows” tab to pick a workflow, or use Dashboard cards / “Open orchestration”.',
       navTeam: 'Team',
       navTech: 'Tech',
       partnersTitle: 'Partners',
@@ -458,7 +581,8 @@ export const messages = {
       title: 'Assets',
       search: 'Search session_id / title / tags...',
       copyId: 'Copy session id',
-      updatedAt: 'Updated {time}'
+      updatedAt: 'Updated {time}',
+      toastCopiedId: 'Copied: {id}'
     },
     workflows: {
       title: 'Workflow Hub',
@@ -469,7 +593,26 @@ export const messages = {
       storyDesc: 'Shot-by-shot control for better consistency.',
       customTitle: 'Custom Workflow · Composer',
       customDesc: 'Compose steps and agents like building blocks (coming soon).',
-      customComingSoon: 'Custom workflow: coming soon'
+      customComingSoon: 'Custom workflow: coming soon',
+      mobileOrchestrationHint: 'Tap a card below to create a project and open the orchestration chat.'
+    },
+    moreHub: {
+      pageTitle: 'All features',
+      pageSubtitle: 'Same destinations as the web app—open any page from here.',
+      sectionMain: 'Main (also in bottom bar)',
+      sectionCreate: 'Creation & tools',
+      sectionData: 'Projects & agents',
+      sectionPlatform: 'Platform & system',
+      sectionShowcase: 'Showcase & samples',
+      linkVideoGen: 'Video generation',
+      linkImageGen: 'Image generation',
+      linkAudio: 'Audio processing',
+      linkUiDesign: 'UI design',
+      linkProjects: 'Projects',
+      linkAgents: 'Agents',
+      linkAnalytics: 'Analytics',
+      linkAcpsBoard: 'ACPS board',
+      linkExample: 'UI examples'
     },
     lab: {
       title: 'Platform Lab',
@@ -615,7 +758,12 @@ export const messages = {
       lab: '拡張',
       export: 'エクスポート',
       settings: '設定',
-      createProject: 'プロジェクト作成'
+      createProject: 'プロジェクト作成',
+      mobileTabWorkflows: 'フロー',
+      mobileTabWorkflowsA11y: 'ワークフローと対話編成',
+      mobileMore: 'その他',
+      competitionShowcase: 'コンペ展示',
+      back: '戻る'
     },
     dashboard: {
       headlineMain: '創造の',
@@ -629,7 +777,11 @@ export const messages = {
       askPlaceholder: '何でも聞いてください',
       send: '送信',
       startRecording: '録音開始',
-      stopRecording: '録音停止'
+      stopRecording: '録音停止',
+      mobileEnterInteraction: '対話編成を開く',
+      mobileEnterInteractionHint:
+        'ローカルにプロジェクトがあればチャットへ。なければワークフロー選択（下タブ2番目と同じ）へ。',
+      mobileEnterInteractionShortHint: '下の「フロー」タブと同じ入口をここから開けます。'
     },
     interaction: {
       header: '対話編成',
@@ -647,7 +799,17 @@ export const messages = {
       needModify: '修正する',
       noNeedModify: '修正しない',
       modifyPickTitle: '修正する番号を選択（複数可）',
-      modifyPlaceholder: '例：1,2,4（カンマ区切り）'
+      modifyPlaceholder: '例：1,2,4（カンマ区切り）',
+      backToDashboard: 'ダッシュボードへ戻る',
+      toastRecordingDone: '録音を終了し、データを保持しました',
+      toastMicDenied: 'マイクを使用できません。設定で許可してください。',
+      toastCopiedSession: 'セッション ID をコピーしました：{id}',
+      toastCopiedLinkNoSession: 'リンクをコピーしました（セッション ID なし）',
+      toastCopyFailed: 'クリップボードにコピーできませんでした',
+      copyFallbackPrompt: '以下をコピーしてください：',
+      openFeBePanelA11y: 'リアルタイム実行とタスク・素材パネルを開き、フロントとバックエンドのやり取りを確認',
+      generatedVideos: '生成動画',
+      videoPlaybackError: '動画を読み込めませんでした。通信状況を確認してください。'
     },
     profile: {
       title: 'プロフィール',
@@ -661,10 +823,31 @@ export const messages = {
     },
     history: {
       title: 'アーカイブ',
-      searchPlaceholder: 'プロンプト、スクリプトを検索...',
+      searchPlaceholder: 'プロジェクト名・タスクで検索...',
       filter: 'フィルター',
       recent: '最近のアクティビティ',
-      loadMore: 'さらに読み込む'
+      loadMore: 'さらに読み込む',
+      emptyProjects: 'プロジェクトがありません。ダッシュボードで作成・実行するとここに表示されます。',
+      loadFailed: '読み込みに失敗しました',
+      loadingList: '読み込み中…',
+      retry: '再試行',
+      workflowText: 'テキスト→動画',
+      workflowImage: '画像→動画',
+      detailTitle: 'プロジェクト詳細',
+      conversation: '会話',
+      sessionState: 'セッション状態',
+      noChatYet: '会話履歴はまだありません',
+      continueChat: '会話を続ける',
+      taskLabel: '現在のタスク',
+      summaryTitle: '要約',
+      noSummary: '直近のユーザー入力がありません。',
+      turns: '全 {count} ターン',
+      progressTitle: '進捗',
+      roleUser: 'ユーザー',
+      roleAssistant: 'アシスタント',
+      roleMaterial: '素材',
+      sessionJsonTitle: 'セッションデータ（生）',
+      invalidProject: '無効なプロジェクトパスです'
     },
     settings: {
       title: '設定',
@@ -704,14 +887,25 @@ export const messages = {
       confirmClear: 'チャット履歴を全て削除しますか？取り消せません。'
     },
     homepage: {
+      runtimeChannelAndroid: 'Android アプリ',
+      runtimeChannelAndroidHint: 'Capacitor 製 Android クライアント',
+      runtimeChannelWeb: 'Web サイト',
+      runtimeChannelWebHint: 'ブラウザ版（Windows デスクトップ版のダウンロードあり）',
+      runtimeChannelDesktop: 'Windows デスクトップ',
+      runtimeChannelDesktopHint: 'Tauri デスクトップクライアント',
+      runtimeChannelIos: 'iOS アプリ',
+      runtimeChannelIosHint: 'Capacitor 製 iOS クライアント',
       statusReady: '準備完了',
       startCreate: '開始',
       tryFree: '無料で試す',
       docs: 'ドキュメント',
+      downloadDesktop: 'Windows版をダウンロード',
       demo: 'Nexus Studio リアルタイムデモ',
       heroSubtitle: 'Nexus Studio V4.0.2：LangGraph と ACPs を基盤に、アイデアを秒単位で高品質な動画へ変換する AIGC 制作支援システム。',
       heroTagline: 'プロフェッショナルな AIGC 動画エンドツーエンド支援システム',
       heroDescription: 'LangGraph と ACPs を基盤に、アイデアを秒単位で高品質な動画へ変換',
+      mobileWhereInteraction:
+        '対話編成：ログイン後、下の「フロー」でタイプを選ぶか、「ダッシュボード」のカード／「対話編成を開く」から入れます。',
       navTeam: 'チーム',
       navTech: '技術',
       partnersTitle: 'パートナー',
@@ -759,7 +953,8 @@ export const messages = {
       title: '素材ライブラリ',
       search: 'session_id / タイトル / タグを検索...',
       copyId: 'セッションIDをコピー',
-      updatedAt: '{time} に更新'
+      updatedAt: '{time} に更新',
+      toastCopiedId: 'コピーしました：{id}'
     },
     workflows: {
       title: 'ワークフロー',
@@ -770,7 +965,26 @@ export const messages = {
       storyDesc: 'カット単位で精密にコントロール。',
       customTitle: 'カスタム · 合成ワークフロー',
       customDesc: '手順とエージェントを組み合わせ（近日公開）。',
-      customComingSoon: 'カスタムワークフロー：近日公開'
+      customComingSoon: 'カスタムワークフロー：近日公開',
+      mobileOrchestrationHint: '下のカードでプロジェクトを作成し「対話編成」ページへ進みます。'
+    },
+    moreHub: {
+      pageTitle: 'すべての機能',
+      pageSubtitle: 'Web版と同じページへすぐ移動できます。',
+      sectionMain: 'メイン（下タブにもあり）',
+      sectionCreate: '制作・ツール',
+      sectionData: 'プロジェクト・エージェント',
+      sectionPlatform: 'プラットフォーム・設定',
+      sectionShowcase: '展示・サンプル',
+      linkVideoGen: '動画生成',
+      linkImageGen: '画像生成',
+      linkAudio: '音声処理',
+      linkUiDesign: 'UIデザイン',
+      linkProjects: 'プロジェクト',
+      linkAgents: 'エージェント',
+      linkAnalytics: '分析',
+      linkAcpsBoard: 'ACPSボード',
+      linkExample: 'コンポーネント例'
     },
     lab: {
       title: 'プラットフォーム拡張',
