@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
 import { DownloadSimple, Copy, FileText } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext.jsx';
 import './ExportCenter.css';
 
 const ExportCenter = () => {
   const { t } = useApp();
+  const { showToast } = useToast();
   const [sessionId, setSessionId] = useState('');
 
   const exportText = () => {
     const text = sessionId
       ? `session_id: ${sessionId}\nexport: chat transcript (placeholder)`
       : t('export.empty');
-    navigator.clipboard.writeText(text).then(() => alert(t('export.copied'))).catch(() => prompt(t('export.copyFallback'), text));
+    navigator.clipboard.writeText(text).then(() => {
+      showToast({ message: t('export.copied'), variant: 'success' });
+    }).catch(() => {
+      showToast({ message: t('interaction.toastCopyFailed'), variant: 'error' });
+      prompt(t('export.copyFallback'), text);
+    });
   };
 
   return (
@@ -33,7 +40,7 @@ const ExportCenter = () => {
           <button type="button" onClick={exportText} className="export-btn">
             <Copy size={16} /> {t('export.copy')}
           </button>
-          <button type="button" onClick={() => alert(t('export.downloadSoon'))} className="export-btn secondary">
+          <button type="button" onClick={() => showToast({ message: t('export.downloadSoon'), variant: 'info', duration: 3000 })} className="export-btn secondary">
             <FileText size={16} /> {t('export.download')}
           </button>
         </div>

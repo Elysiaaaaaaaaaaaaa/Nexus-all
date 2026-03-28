@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   // LinkedinLogo, // 已注释：去掉领英
   GithubLogo, EnvelopeSimple, 
@@ -120,7 +120,7 @@ const TeamIntroduction = () => {
 
       {/* 核心成员网格 */}
       <div className="members-grid">
-        {members.map((member, index) => (
+        {members.map((member) => (
           <div 
             key={member.id} 
             className="member-card"

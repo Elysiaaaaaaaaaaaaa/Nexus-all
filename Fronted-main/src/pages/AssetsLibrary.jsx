@@ -2,11 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Folder, ArrowLeft, Copy, MagnifyingGlass } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext.jsx';
 import './AssetsLibrary.css';
 
 const AssetsLibrary = () => {
   const navigate = useNavigate();
   const { t } = useApp();
+  const { showToast } = useToast();
   const [query, setQuery] = useState('');
 
   // 目前前端没有全局 session store：先用本地 mock，让页面“更丰满”
@@ -30,9 +32,10 @@ const AssetsLibrary = () => {
   const copyId = async (id) => {
     try {
       await navigator.clipboard.writeText(id);
-      alert(`已复制：${id}`);
+      showToast({ message: t('assets.toastCopiedId', { id }), variant: 'success' });
     } catch {
-      prompt('请复制以下内容:', id);
+      showToast({ message: t('interaction.toastCopyFailed'), variant: 'error' });
+      prompt(t('interaction.copyFallbackPrompt'), id);
     }
   };
 

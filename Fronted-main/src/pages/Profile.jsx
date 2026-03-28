@@ -4,7 +4,7 @@ import { X, Camera, SignOut } from '@phosphor-icons/react';
 import './Profile.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
-import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
+import { uploadUserAvatar, buildUploadFilePublicUrl } from '../services/api';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -45,16 +45,10 @@ const Profile = () => {
     const localUrl = URL.createObjectURL(file);
     setAvatarUrl(localUrl);
 
-    // 上传到后端 POST /api/v1/upload_image（失败则仅保留本地预览）
+    // 上传到后端 POST /api/user/avatar（与接口文档一致；失败则仅保留本地预览）
     try {
-      const projectName = localStorage.getItem('app-current-project') || 'profile';
-      const figureName = `avatar_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_') || 'img'}`;
-      const res = await uploadImage({
-        file,
-        figure_name: figureName,
-        project_name: projectName,
-      });
-      const path = res?.data?.filePath;
+      const res = await uploadUserAvatar(file);
+      const path = res?.data?.avatarUrl || res?.data?.url;
       if (path) {
         setAvatarUrl(buildUploadFilePublicUrl(path));
       }

@@ -48,26 +48,26 @@ const Manual = () => {
           <div className="manual-markdown">
             <ReactMarkdown
             components={{
-              h1: ({ node, ...props }) => <h1 className="manual-md-h1" {...props} />,
-              h2: ({ node, ...props }) => <h2 className="manual-md-h2" {...props} />,
-              h3: ({ node, ...props }) => <h3 className="manual-md-h3" {...props} />,
-              h4: ({ node, ...props }) => <h4 className="manual-md-h4" {...props} />,
-              p: ({ node, ...props }) => <p className="manual-md-p" {...props} />,
-              ul: ({ node, ...props }) => <ul className="manual-md-ul" {...props} />,
-              ol: ({ node, ...props }) => <ol className="manual-md-ol" {...props} />,
-              li: ({ node, ...props }) => <li className="manual-md-li" {...props} />,
-              hr: ({ node, ...props }) => <hr className="manual-md-hr" {...props} />,
-              code: ({ node, inline, ...props }) => 
+              h1: ({ node: _n, ...props }) => <h1 className="manual-md-h1" {...props} />,
+              h2: ({ node: _n, ...props }) => <h2 className="manual-md-h2" {...props} />,
+              h3: ({ node: _n, ...props }) => <h3 className="manual-md-h3" {...props} />,
+              h4: ({ node: _n, ...props }) => <h4 className="manual-md-h4" {...props} />,
+              p: ({ node: _n, ...props }) => <p className="manual-md-p" {...props} />,
+              ul: ({ node: _n, ...props }) => <ul className="manual-md-ul" {...props} />,
+              ol: ({ node: _n, ...props }) => <ol className="manual-md-ol" {...props} />,
+              li: ({ node: _n, ...props }) => <li className="manual-md-li" {...props} />,
+              hr: ({ node: _n, ...props }) => <hr className="manual-md-hr" {...props} />,
+              code: ({ node: _n, inline, ...props }) =>
                 inline ? (
                   <code className="manual-md-code-inline" {...props} />
                 ) : (
                   <code className="manual-md-code-block" {...props} />
                 ),
-              pre: ({ node, ...props }) => <pre className="manual-md-pre" {...props} />,
-              blockquote: ({ node, ...props }) => <blockquote className="manual-md-blockquote" {...props} />,
-              a: ({ node, ...props }) => <a className="manual-md-link" target="_blank" rel="noopener noreferrer" {...props} />,
-              strong: ({ node, ...props }) => <strong className="manual-md-strong" {...props} />,
-              em: ({ node, ...props }) => <em className="manual-md-em" {...props} />,
+              pre: ({ node: _n, ...props }) => <pre className="manual-md-pre" {...props} />,
+              blockquote: ({ node: _n, ...props }) => <blockquote className="manual-md-blockquote" {...props} />,
+              a: ({ node: _n, ...props }) => <a className="manual-md-link" target="_blank" rel="noopener noreferrer" {...props} />,
+              strong: ({ node: _n, ...props }) => <strong className="manual-md-strong" {...props} />,
+              em: ({ node: _n, ...props }) => <em className="manual-md-em" {...props} />,
             }}
           >
             {markdown}
