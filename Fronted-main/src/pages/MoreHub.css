@@ -1,0 +1,110 @@
+.more-hub {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 18px 28px;
+  color: var(--text-primary);
+}
+
+.more-hub-header {
+  margin-bottom: 26px;
+  padding-bottom: 4px;
+}
+
+.more-hub-title {
+  margin: 0 0 8px;
+  font-size: clamp(1.35rem, 4vw, 1.55rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.more-hub-sub {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-weight: 500;
+  max-width: 36em;
+}
+
+.more-hub-section {
+  margin-bottom: 26px;
+}
+
+.more-hub-section-title {
+  margin: 0 0 12px 10px;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  opacity: 0.95;
+}
+
+.more-hub-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-radius: var(--nx-radius-lg, 22px);
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  box-shadow: var(--nx-card-shadow, 0 4px 24px rgba(0, 0, 0, 0.05));
+}
+
+.more-hub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 54px;
+  padding: 15px 18px;
+  border: none;
+  border-bottom: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background var(--nx-motion-duration, 0.2s) ease,
+    transform 0.1s ease;
+}
+
+.more-hub-list li:last-child .more-hub-row {
+  border-bottom: none;
+}
+
+.more-hub-row:active {
+  transform: scale(0.995);
+  background: var(--nx-accent-softer, rgba(79, 70, 229, 0.06));
+}
+
+.more-hub-row-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.more-hub-row-chevron {
+  flex-shrink: 0;
+  margin-left: 14px;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  opacity: 0.65;
+  transition: transform var(--nx-motion-duration, 0.2s) var(--nx-motion-ease-out, ease);
+}
+
+.more-hub-row:active .more-hub-row-chevron {
+  transform: translateX(4px);
+  color: var(--nx-accent, rgb(79, 70, 229));
+  opacity: 1;
+}
+
+:root.dark .more-hub-list {
+  box-shadow: var(--nx-card-shadow);
+}
