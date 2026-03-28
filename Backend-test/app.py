@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends
+from fastapi import FastAPI, HTTPException, Request, UploadFile, File, Form, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
@@ -358,8 +358,13 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
             session_data['video_duration'] = request.video_duration
             orchestrator._sessions[orchestrator.main_session_id] = session_data
         
-        # 调用handle_user_input方法处理用户输入
-        result_state = await orchestrator.handle_user_input(orchestrator.main_session_id, user_input)
+        # 调用 handle_user_input；modify_num 与前端「需要修改」多选一致
+        modify_list = request.modify_num if request.modify_num is not None else []
+        result_state = await orchestrator.handle_user_input(
+            orchestrator.main_session_id,
+            user_input,
+            modify_list,
+        )
         
         # 从结果状态中提取回复
         reply = result_state.get('reply')
@@ -695,6 +700,68 @@ async def upload_image(
         logger.error(f"Error in /api/v1/upload/image: {e}", exc_info=True)
         error_detail = str(e) if os.getenv("ENV") == "development" else "图片上传失败，请稍后重试"
         return get_error_response(detail=error_detail, status_code=500)
+
+
+@app.post("/api/v1/interaction/message")
+async def interaction_message(
+    body: Dict[str, Any] = Body(...),
+    current_user: Dict[str, Any] = Depends(get_current_user),
+):
+    """
+    交互页会话消息（当前为占位实现，返回与前端约定字段；后续可接真实 Agent）。
+    """
+    try:
+        content_raw = body.get("content")
+        content = content_raw if isinstance(content_raw, str) else ("" if content_raw is None else str(content_raw))
+        session_id = body.get("session_id")
+        sid = session_id if isinstance(session_id, str) and session_id else f"session-{current_user.get('user_id', 'user')}"
+        preview = content.strip()[:500] if content else ""
+        reply = f"（演示）已收到：{preview}" if preview else "（演示）已收到空消息"
+        return {
+            "success": True,
+            "data": {
+                "response": reply,
+                "session_data": {"session_id": sid},
+            },
+        }
+    except Exception as e:
+        logger.error(f"Error in /api/v1/interaction/message: {e}", exc_info=True)
+        error_detail = str(e) if os.getenv("ENV") == "development" else "处理失败，请稍后重试"
+        return get_error_response(detail=error_detail, status_code=500)
+
+
+class InteractionPanelRequest(BaseModel):
+    user_id: str
+    project_name: str
+    session_id: str = ""
+    workflow: str = ""
+
+
+@app.post("/api/v1/interaction/panel")
+async def interaction_panel(
+    request: InteractionPanelRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user),
+):
+    """右侧任务/执行面板数据（占位，结构与 INTERACTION_PANEL_API 一致）。"""
+    try:
+        jwt_uid = str(current_user.get("user_id", ""))
+        if jwt_uid and request.user_id and request.user_id != jwt_uid:
+            return get_error_response(detail="user_id 与登录用户不一致", status_code=403)
+        return {
+            "success": True,
+            "data": {
+                "execution": {"logs": [], "simulation_quote": "", "metrics": {}},
+                "task_assets": {
+                    "now_task": {"name": "", "stage": "", "progress": 0},
+                    "materials": [],
+                },
+            },
+        }
+    except Exception as e:
+        logger.error(f"Error in /api/v1/interaction/panel: {e}", exc_info=True)
+        error_detail = str(e) if os.getenv("ENV") == "development" else "获取面板数据失败"
+        return get_error_response(detail=error_detail, status_code=500)
+
 
 # 新建项目
 @app.post("/api/v1/projects/new")
