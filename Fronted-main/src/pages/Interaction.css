@@ -24,6 +24,24 @@
   margin-right: min(72vw, 980px);
 }
 
+/* 手机/窄屏：侧栏为叠在主内容之上，禁止 margin-right 把主栏宽度挤成 0；否则全屏遮罩 + 底栏被盖住 = 无法退出 */
+@media (max-width: 767px) {
+  .interaction-main.with-preview,
+  .interaction-main.with-preview-expanded {
+    margin-right: 0;
+  }
+
+  .preview-panel {
+    width: 100vw;
+    max-width: 100%;
+    border-left: none;
+  }
+
+  .preview-panel.expanded {
+    width: 100vw;
+  }
+}
+
 .interaction-header {
   height: 64px;
   display: flex;
@@ -41,12 +59,52 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+}
+
+.interaction-back-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-right: 4px;
+  margin-left: -8px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: rgb(51, 65, 85);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.interaction-back-button:active {
+  background: rgba(148, 163, 184, 0.2);
+}
+
+:root.dark .interaction-back-button {
+  color: rgb(226, 232, 240);
 }
 
 .header-title {
   font-size: 14px;
   font-weight: bold;
   color: rgb(30, 41, 59);
+}
+
+@media (max-width: 767px) {
+  .interaction-header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header-title {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .status-badge {
@@ -60,6 +118,28 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* 移动端：「运行中」可点开右侧执行/素材面板 */
+button.status-badge.status-badge--tap {
+  margin: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+button.status-badge.status-badge--tap:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button.status-badge.status-badge--tap:active {
+    transform: none;
+  }
 }
 
 .status-dot {
@@ -122,6 +202,17 @@
   scrollbar-width: none;
 }
 
+.interaction-chat-videos {
+  max-width: 1024px;
+  margin: -24px auto 0;
+  width: 100%;
+  padding: 0 8px 8px;
+}
+
+.interaction-chat-videos .nx-session-video {
+  max-height: min(42vh, 320px);
+}
+
 .message-user {
   display: flex;
   flex-direction: row-reverse;
@@ -168,8 +259,9 @@
 }
 
 .message-avatar-ai {
-  background: rgb(15, 23, 42);
-  color: white;
+  /* 与 logo_circle_chat（白底圆标）配套，避免裁切渐变图形 */
+  background: rgb(255, 255, 255);
+  color: rgb(15, 23, 42);
 }
 
 .message-avatar-text {
@@ -803,7 +895,7 @@
 .ai-avatar-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
 }
 

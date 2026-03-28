@@ -1,22 +1,56 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Brain, Check, Play, Plus, ArrowUp, 
+import {
+  Brain, Check, Play, Plus, ArrowUp,
   Share, Sidebar, Copy, Aperture, Lightning,
-  TerminalWindow, X, Paperclip, Microphone, ArrowsOutSimple, ArrowsInSimple
+  TerminalWindow, X, Paperclip, Microphone, ArrowsOutSimple, ArrowsInSimple,
+  CaretLeft,
 } from '@phosphor-icons/react';
-import logoCircleTransparent from '../assets/logo_circle_transparent.png';
+import logoCircleAiChat from '../assets/logo_circle_chat.png';
 import './Interaction.css';
 import { useApp } from '../contexts/AppContext';
+import { useToast } from '../contexts/ToastContext.jsx';
 import { getUserAvatarUrl } from '../utils/avatar';
 import { uploadImage, buildUploadFilePublicUrl, work } from '../services/api';
+import { isNativeMobileLayout } from '../utils/runtimePlatform';
+import { extractResolvedVideoUrlsFromSessionData } from '../utils/backendVideoUrl';
+import { SessionVideoPlayers } from '../components/SessionVideoPlayers.jsx';
+
+function normalizeAiContent(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        if (Array.isArray(parsed)) {
+          return parsed.map((x, i) => `${i + 1}. ${normalizeAiContent(x)}`).join('\n');
+        }
+        return JSON.stringify(parsed, null, 2);
+      } catch {
+        return value;
+      }
+    }
+    return value;
+  }
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+}
 
 const Interaction = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const scrollRef = useRef(null);
   const imageInputRef = useRef(null);
-  const [showPreview, setShowPreview] = useState(true);
+  const [isWideViewport, setIsWideViewport] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches,
+  );
+  const [showPreview, setShowPreview] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches,
+  );
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState([]);
   const [sessionData, setSessionData] = useState(null);
@@ -25,12 +59,19 @@ const Interaction = () => {
   const mediaRecorderRef = useRef(null);
   const [isModifyDialogOpen, setIsModifyDialogOpen] = useState(false);
   const [modifyNums, setModifyNums] = useState([]);
-  const { t } = useApp();
+  const { t, userInfo } = useApp();
+  const { showToast } = useToast();
   const [rightPanelTab, setRightPanelTab] = useState('execution');
   const [isPreviewExpanded, setIsPreviewExpanded] = useState(false);
-
-  const { userInfo } = useApp();
   const workflow = useMemo(() => location.state?.workflow || 'text_to_video_fast', [location.state]);
+
+  const decorativePulseStyle = useMemo(
+    () =>
+      isNativeMobileLayout()
+        ? undefined
+        : { animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
+    [],
+  );
 
   /** 与 Dashboard 创建项目后写入的 localStorage 一致，供 /api/v1/work 使用 */
   const projectName = useMemo(
@@ -85,32 +126,20 @@ const Interaction = () => {
     }
   }, [messages]);
 
-  const normalizeAiContent = (value) => {
-    if (value == null) return '';
-    if (typeof value === 'string') {
-      const trimmed = value.trim();
-      // 处理后端把 JSON/数组“序列化成字符串”返回的情况
-      if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
-        try {
-          const parsed = JSON.parse(trimmed);
-          if (Array.isArray(parsed)) {
-            // 数组里多为字符串/对象时，尽量变成可读文本
-            return parsed.map((x, i) => `${i + 1}. ${normalizeAiContent(x)}`).join('\n');
-          }
-          return JSON.stringify(parsed, null, 2);
-        } catch {
-          // 回退为原始字符串
-          return value;
-        }
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const apply = () => {
+      const wide = mq.matches;
+      setIsWideViewport(wide);
+      if (!wide) {
+        setShowPreview(false);
+        setIsPreviewExpanded(false);
       }
-      return value;
-    }
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return String(value);
-    }
-  };
+    };
+    apply();
+    mq.addEventListener?.('change', apply);
+    return () => mq.removeEventListener?.('change', apply);
+  }, []);
 
   /** 将 /api/v1/work 返回映射为交互页使用的文案与 sessionData */
   const applyWorkResponse = (resp) => {
@@ -275,17 +304,14 @@ const Interaction = () => {
         };
         
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/wav' });
-          // 这里可以处理录音文件，比如转换为文本
-          // 暂时显示一个提示
-          alert('录音完成！音频已保存。');
+          showToast({ message: t('interaction.toastRecordingDone'), variant: 'success' });
           stream.getTracks().forEach(track => track.stop());
         };
         
         mediaRecorder.start();
         setIsRecording(true);
-      } catch (error) {
-        alert('无法访问麦克风，请检查权限设置');
+      } catch {
+        showToast({ message: t('interaction.toastMicDenied'), variant: 'error' });
       }
     }
   };
@@ -351,9 +377,13 @@ const Interaction = () => {
       : `url: ${currentUrl}\n（暂无 session_id，先发送一条消息让后端返回 session_data）`;
 
     navigator.clipboard.writeText(exportText).then(() => {
-      alert(sessionId ? `已复制对话ID：${sessionId}` : '已复制链接（暂无对话ID）');
+      showToast({
+        message: sessionId ? t('interaction.toastCopiedSession', { id: sessionId }) : t('interaction.toastCopiedLinkNoSession'),
+        variant: 'success',
+      });
     }).catch(() => {
-      prompt('请复制以下内容:', exportText);
+      showToast({ message: t('interaction.toastCopyFailed'), variant: 'error' });
+      prompt(t('interaction.copyFallbackPrompt'), exportText);
     });
   };
 
@@ -378,7 +408,7 @@ const Interaction = () => {
       { id: 1, level: 'info', message: '正在初始化沙盒环境...' },
       { id: 2, level: 'info', message: '注入场景资源: [rain_texture_v2]' },
       { id: 3, level: 'info', message: '编译着色器...' },
-      { id: 4, level: 'success', message: '成功：场景 \"新东京\" 已渲染。' }
+      { id: 4, level: 'success', message: '成功：场景「新东京」已渲染。' }
     ];
   }, [sessionData]);
 
@@ -391,6 +421,11 @@ const Interaction = () => {
       latency: m?.latency || '1.2ms'
     };
   }, [sessionData]);
+
+  const sessionVideoUrls = useMemo(
+    () => extractResolvedVideoUrlsFromSessionData(sessionData),
+    [sessionData],
+  );
 
   const renderRightPanelContent = () => {
     if (rightPanelTab === 'execution') {
@@ -445,6 +480,11 @@ const Interaction = () => {
 
     return (
       <>
+        <SessionVideoPlayers
+          urls={sessionVideoUrls}
+          title={t('interaction.generatedVideos')}
+          emptyHint={t('interaction.videoPlaybackError')}
+        />
         <div className="preview-metrics">
           <p className="preview-metrics-title">{t('interaction.progressTitle')}</p>
           {sessionData?.now_task ? (
@@ -472,7 +512,7 @@ const Interaction = () => {
             <Lightning size={40} weight="fill" />
           </div>
           <div className="preview-simulation-header">
-            <Lightning weight="fill" style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} size={16} /> {t('interaction.materialsTitle')}
+            <Lightning weight="fill" style={decorativePulseStyle} size={16} /> {t('interaction.materialsTitle')}
           </div>
           {Array.isArray(sessionData?.material) && sessionData.material.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -500,15 +540,45 @@ const Interaction = () => {
         {/* Header */}
         <header className="interaction-header">
           <div className="header-left">
+            {!isWideViewport && (
+              <button
+                type="button"
+                className="interaction-back-button"
+                onClick={() => navigate('/dashboard')}
+                aria-label={t('interaction.backToDashboard')}
+              >
+                <CaretLeft size={22} weight="bold" aria-hidden />
+              </button>
+            )}
             <h1 className="header-title">交互编排 · {workflowLabel}</h1>
-            <span className="status-badge">
-              {isSending ? (
-                <Brain size={14} weight="fill" className="spin" />
-              ) : (
-                <span className="status-dot"></span>
-              )}
-              {t('interaction.statusRunning')}
-            </span>
+            {!isWideViewport ? (
+              <button
+                type="button"
+                className="status-badge status-badge--tap"
+                onClick={() => {
+                  setRightPanelTab('execution');
+                  setIsPreviewExpanded(false);
+                  setShowPreview(true);
+                }}
+                aria-label={t('interaction.openFeBePanelA11y')}
+              >
+                {isSending ? (
+                  <Brain size={14} weight="fill" className="spin" aria-hidden />
+                ) : (
+                  <span className="status-dot" aria-hidden />
+                )}
+                <span>{t('interaction.statusRunning')}</span>
+              </button>
+            ) : (
+              <span className="status-badge">
+                {isSending ? (
+                  <Brain size={14} weight="fill" className="spin" />
+                ) : (
+                  <span className="status-dot" />
+                )}
+                {t('interaction.statusRunning')}
+              </span>
+            )}
           </div>
           <div className="header-actions">
             <button 
@@ -559,12 +629,12 @@ const Interaction = () => {
               {/* AI 响应卡片 */}
               <div className="message-ai">
                 <div className="message-avatar message-avatar-ai">
-                  <img src={logoCircleTransparent} alt="AI" className="ai-avatar-image" />
+                  <img src={logoCircleAiChat} alt="AI" className="ai-avatar-image" />
                 </div>
                 <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   <div className="ai-planning">
                     <div className="planning-header">
-                      <Brain style={{ animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }} size={14} />
+                      <Brain style={decorativePulseStyle} size={14} />
                       编排器规划
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -647,7 +717,7 @@ const Interaction = () => {
               ) : (
                 <div key={msg.id} className="message-ai">
                   <div className="message-avatar message-avatar-ai">
-                    <img src={logoCircleTransparent} alt="AI" className="ai-avatar-image" />
+                    <img src={logoCircleAiChat} alt="AI" className="ai-avatar-image" />
                   </div>
                   <div className="message-bubble">
                     {msg.content}
@@ -655,6 +725,16 @@ const Interaction = () => {
                 </div>
               )
             ))
+          )}
+          {sessionVideoUrls.length > 0 && (
+            <div className="interaction-chat-videos">
+              <SessionVideoPlayers
+                urls={sessionVideoUrls}
+                title={t('interaction.generatedVideos')}
+                emptyHint={t('interaction.videoPlaybackError')}
+                variant="light"
+              />
+            </div>
           )}
         </div>
 
