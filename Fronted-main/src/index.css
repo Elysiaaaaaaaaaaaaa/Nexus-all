@@ -46,10 +46,6 @@
   --bg-color: #0a0a0a;
 }
 
-:root.dark body {
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
-}
-
 [data-theme='dark'], .dark, :root.dark {
   --dot-color: #404040;
   --bg-color: #0a0a0a;
@@ -71,7 +67,7 @@ body {
   color: var(--text-primary);
   opacity: 1 !important;
   visibility: visible !important;
-  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.03));
+  /* filter 不要加在 body：会与 Portal 到 body 的全屏 fixed 层（登录框、顶栏）冲突，Edge/WebView 下常导致遮罩不可见 */
 }
 
 @keyframes body-drift {
@@ -84,6 +80,11 @@ body {
   min-height: 100vh;
   display: block;
   position: relative;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.05)) drop-shadow(0 0 4px rgba(0, 0, 0, 0.03));
+}
+
+:root.dark #root {
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.08)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.04));
 }
 
 h1 {
