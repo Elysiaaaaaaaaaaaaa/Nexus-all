@@ -60,11 +60,33 @@
   object-fit: contain;
 }
 
+.homepage-nav-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.15;
+}
+
 .homepage-nav-title {
   font-size: 18px;
   font-weight: bold;
   letter-spacing: -0.025em;
   color: rgb(15, 23, 42);
+}
+
+/* 标明当前渠道：Android / Web / Windows 桌面（Tauri） */
+.homepage-runtime-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(100, 116, 139);
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .homepage-nav-right {
@@ -92,6 +114,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 200ms;
+  text-decoration: none;
 }
 
 .homepage-nav-link:hover {
@@ -246,7 +269,9 @@
 
 .homepage-hero-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
+  align-items: center;
 }
 
 .homepage-button-primary {
@@ -277,6 +302,27 @@
 
 .homepage-button-secondary:hover {
   background: rgb(248, 250, 252);
+}
+
+.homepage-button-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgb(239, 246, 255);
+  color: rgb(29, 78, 216);
+  padding: 16px 32px;
+  border-radius: 16px;
+  font-weight: 700;
+  border: 1px solid rgb(191, 219, 254);
+  cursor: pointer;
+  transition: all 200ms;
+  text-decoration: none;
+}
+
+.homepage-button-download:hover {
+  background: rgb(219, 234, 254);
+  border-color: rgb(96, 165, 250);
+  color: rgb(30, 64, 175);
 }
 
 /* 视频容器 */
@@ -1261,6 +1307,10 @@
   color: rgb(248, 250, 252);
 }
 
+:root.dark .homepage-runtime-badge {
+  color: rgb(148, 163, 184);
+}
+
 :root.dark .homepage-status-tag {
   background: rgba(20, 83, 45, 0.35);
   color: rgb(134, 239, 172);
@@ -1310,6 +1360,18 @@
   background: rgba(30, 41, 59, 0.85);
   border-color: rgba(51, 65, 85, 0.8);
   color: rgb(248, 250, 252);
+}
+
+:root.dark .homepage-button-download {
+  background: rgba(30, 58, 138, 0.35);
+  border-color: rgba(59, 130, 246, 0.45);
+  color: rgb(147, 197, 253);
+}
+
+:root.dark .homepage-button-download:hover {
+  background: rgba(30, 58, 138, 0.55);
+  border-color: rgb(96, 165, 250);
+  color: rgb(191, 219, 254);
 }
 
 :root.dark .homepage-nav-link {

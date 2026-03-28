@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { Play, BookOpen, CaretLeft, CaretRight, CaretDown, SpeakerHigh, SpeakerSlash, Users, Code, GraduationCap, UserCircle, 
-  GithubLogo, EnvelopeSimple, ArrowUpRight, 
+  GithubLogo, EnvelopeSimple, ArrowUpRight, DownloadSimple,
   Monitor, Cpu, Globe, ShieldCheck, ArrowsOutSimple, ArrowsInSimple, 
   MagnifyingGlassPlus, MagnifyingGlassMinus, CaretLeft as CaretLeftIcon, CaretRight as CaretRightIcon, FilePdf, CodeBlock,
   Phone, MapPin, ArrowUp, Gift, Calculator, ShoppingCart, WechatLogo, FacebookLogo, TwitterLogo, LinkedinLogo, InstagramLogo, Quotes } from '@phosphor-icons/react';
@@ -16,19 +16,29 @@ import './Homepage.css';
 import '../pages/TeamIntroduction.css';
 import '../pages/TechShowcase.css';
 import { useApp } from '../contexts/AppContext';
-import { isProduction } from '../utils/security';
 import LoginModal from '../components/LoginModal';
+import {
+  getRuntimeChannelI18nKey,
+  shouldShowWindowsInstallerDownload,
+} from '../utils/runtimePlatform';
 
 // 大视频勿用 import（会拖慢 Vite dev），放到 public/videos/ 下用绝对路径引用
 const HERO_VIDEOS = ['/videos/test1.mp4', '/videos/test2.mp4'];
 
+/** 官网：pnpm run copy:installer → public/downloads/*.exe；仅 Web 展示。Android 请 pnpm run build:android（不含 exe） */
+const DESKTOP_INSTALLER_FILENAME = 'nexus-best_0.1.0_x64-setup.exe';
+const DESKTOP_INSTALLER_HREF = `/downloads/${DESKTOP_INSTALLER_FILENAME}`;
+
 const Homepage = () => {
   const navigate = useNavigate();
   const { t, language, safeIsAuthenticated } = useApp();
+  const runtimeChannelKey = getRuntimeChannelI18nKey();
+  /** 仅浏览器站点显示「下载 Windows」；Android / Tauri 桌面 / iOS 均不显示 */
+  const showDesktopDownload = useMemo(() => shouldShowWindowsInstallerDownload(), []);
   const videoRef = useRef(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
-  const [activePdfIndex, setActivePdfIndex] = useState(0);
+  const [activePdfIndex] = useState(0);
   const [isCinemaMode, setIsCinemaMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [iframeKey, setIframeKey] = useState(0);
@@ -45,15 +55,6 @@ const Homepage = () => {
   const videos = HERO_VIDEOS;
   
   // 团队成员数据
-  const affiliationsList = t('teamIntroduction.affiliations');
-  const affiliations = Array.isArray(affiliationsList) 
-    ? affiliationsList.map((name, index) => ({ id: index + 1, name }))
-    : [
-        { id: 1, name: "School of Computer Science (National Pilot Software Engineering School), BUPT", short: "Computer Science" },
-        { id: 2, name: "International School, Beijing University of Posts and Telecommunications", short: "International School" },
-        { id: 3, name: "School of Artificial Intelligence, Beijing University of Posts and Telecommunications", short: "School of AI" }
-      ];
-
   const members = [
     {
       id: "hengji",
@@ -143,7 +144,7 @@ const Homepage = () => {
         // 重置时间（以防万一）
         video.currentTime = 0;
         await video.play();
-      } catch (error) {
+      } catch {
         // 自动播放被浏览器拦截或失败
       }
     };
@@ -202,13 +203,29 @@ const Homepage = () => {
           <div className="homepage-logo-box">
             <img src={logoTransparent} alt="Nexus" className="homepage-logo-img" />
           </div>
-          <span className="homepage-nav-title">NEXUS</span>
+          <div className="homepage-nav-brand">
+            <span className="homepage-nav-title">NEXUS</span>
+            <span className="homepage-runtime-badge" title={t(`homepage.${runtimeChannelKey}Hint`)}>
+              {t(`homepage.${runtimeChannelKey}`)}
+            </span>
+          </div>
         </div>
         <div className="homepage-nav-right">
           <span className="homepage-status-tag">
             <span className="homepage-status-dot"></span>
             {t('homepage.statusReady')}
           </span>
+          {showDesktopDownload && (
+            <a
+              className="homepage-nav-link"
+              href={DESKTOP_INSTALLER_HREF}
+              download={DESKTOP_INSTALLER_FILENAME}
+              aria-label={t('homepage.downloadDesktop')}
+            >
+              <DownloadSimple size={18} weight="bold" aria-hidden />
+              {t('homepage.downloadDesktop')}
+            </a>
+          )}
           <button
             className="homepage-start-button"
             onClick={() => {
@@ -281,6 +298,17 @@ const Homepage = () => {
               >
                 {t('homepage.docs')}
               </button>
+              {showDesktopDownload && (
+                <a
+                  className="homepage-button-download"
+                  href={DESKTOP_INSTALLER_HREF}
+                  download={DESKTOP_INSTALLER_FILENAME}
+                  aria-label={t('homepage.downloadDesktop')}
+                >
+                  <DownloadSimple size={22} weight="bold" aria-hidden />
+                  {t('homepage.downloadDesktop')}
+                </a>
+              )}
             </div>
           </div>
           
@@ -421,7 +449,7 @@ const Homepage = () => {
           </div>
 
           <div className="members-grid">
-            {members.map((member, index) => (
+            {members.map((member) => (
               <div key={member.id} className="member-card">
                 <div className="member-card-header">
                   <a href={member.link} className="member-link-icon">

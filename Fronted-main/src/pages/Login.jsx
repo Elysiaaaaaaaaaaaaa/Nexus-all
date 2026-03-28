@@ -4,7 +4,7 @@ import { Eye, EyeSlash, Key, User } from '@phosphor-icons/react';
 import './Login.css';
 import { register, login } from '../services/api';
 import { useApp } from '../contexts/AppContext';
-import { validateUsername, validateEmail, validatePassword, validateRedirectPath, sanitizeInput } from '../utils/security';
+import { validateUsername, validateLoginIdentifier, validateEmail, validatePassword, validateRedirectPath, sanitizeInput } from '../utils/security';
 import { rateLimiter } from '../utils/rateLimiter';
 import { devBypassRateLimit, devBypassAuth } from '../utils/devMode';
 
@@ -68,8 +68,10 @@ const Login = () => {
       const email = isLogin ? null : sanitizeInput(formData.email.trim().toLowerCase(), 254);
       const password = formData.password; // 密码不需要清理，但需要验证
 
-      // 验证用户名
-      const usernameValidation = validateUsername(username);
+      // 登录：用户名或邮箱；注册：仅用户名格式
+      const usernameValidation = isLogin
+        ? validateLoginIdentifier(username)
+        : validateUsername(username);
       if (!usernameValidation.valid) {
         setError(usernameValidation.message);
         setIsLoading(false);

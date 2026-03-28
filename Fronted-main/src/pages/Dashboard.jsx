@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell, Paperclip, Microphone, ArrowUp,
@@ -6,7 +6,6 @@ import {
 } from '@phosphor-icons/react';
 import './Dashboard.css';
 import { useApp } from '../contexts/AppContext';
-import { isProduction } from '../utils/security';
 import { createProject } from '../services/api';
 
 const Dashboard = () => {
@@ -16,8 +15,6 @@ const Dashboard = () => {
   const [isRecording, setIsRecording] = useState(false);
   const fileInputRef = useRef(null);
   const mediaRecorderRef = useRef(null);
-  const streamRef = useRef(null);
-  const chunksRef = useRef([]);
 
   const handleSubmit = () => {
     if (inputValue.trim()) {
@@ -59,17 +56,14 @@ const Dashboard = () => {
         };
 
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'audio/wav' });
-          
-          // 这里可以处理录音文件
-          stream.getTracks().forEach(track => {
+          stream.getTracks().forEach((track) => {
             track.stop();
           });
         };
 
         mediaRecorder.start();
         setIsRecording(true);
-      } catch (error) {
+      } catch {
         alert('无法访问麦克风，请检查权限设置');
       }
     }
