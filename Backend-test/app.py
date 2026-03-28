@@ -653,7 +653,7 @@ async def upload_image(
 ):
     """
     上传图片到指定路径
-    保存路径: ./user_files/{user_id}/{project_name}/photos/photos.png
+    保存路径: ./user_files/{user_id}/projects/{project_name}/photos/photos.png
     """
     try:
         # 获取当前用户ID
@@ -677,7 +677,7 @@ async def upload_image(
             )
         
         # 构建保存路径
-        save_dir = base_dir / "user_files" / user_id / request.project_name / "photos"
+        save_dir = base_dir / "user_files" / user_id / "projects" / request.project_name / "photos"
         save_dir.mkdir(parents=True, exist_ok=True)
         
         # 保存文件为photos/photos.png
@@ -702,39 +702,39 @@ async def upload_image(
         return get_error_response(detail=error_detail, status_code=500)
 
 
-@app.post("/api/v1/interaction/message")
-async def interaction_message(
-    body: Dict[str, Any] = Body(...),
-    current_user: Dict[str, Any] = Depends(get_current_user),
-):
-    """
-    交互页会话消息（当前为占位实现，返回与前端约定字段；后续可接真实 Agent）。
-    """
-    try:
-        content_raw = body.get("content")
-        content = content_raw if isinstance(content_raw, str) else ("" if content_raw is None else str(content_raw))
-        session_id = body.get("session_id")
-        sid = session_id if isinstance(session_id, str) and session_id else f"session-{current_user.get('user_id', 'user')}"
-        preview = content.strip()[:500] if content else ""
-        reply = f"（演示）已收到：{preview}" if preview else "（演示）已收到空消息"
-        return {
-            "success": True,
-            "data": {
-                "response": reply,
-                "session_data": {"session_id": sid},
-            },
-        }
-    except Exception as e:
-        logger.error(f"Error in /api/v1/interaction/message: {e}", exc_info=True)
-        error_detail = str(e) if os.getenv("ENV") == "development" else "处理失败，请稍后重试"
-        return get_error_response(detail=error_detail, status_code=500)
+# @app.post("/api/v1/interaction/message")
+# async def interaction_message(
+#     body: Dict[str, Any] = Body(...),
+#     current_user: Dict[str, Any] = Depends(get_current_user),
+# ):
+#     """
+#     交互页会话消息（当前为占位实现，返回与前端约定字段；后续可接真实 Agent）。
+#     """
+#     try:
+#         content_raw = body.get("content")
+#         content = content_raw if isinstance(content_raw, str) else ("" if content_raw is None else str(content_raw))
+#         session_id = body.get("session_id")
+#         sid = session_id if isinstance(session_id, str) and session_id else f"session-{current_user.get('user_id', 'user')}"
+#         preview = content.strip()[:500] if content else ""
+#         reply = f"（演示）已收到：{preview}" if preview else "（演示）已收到空消息"
+#         return {
+#             "success": True,
+#             "data": {
+#                 "response": reply,
+#                 "session_data": {"session_id": sid},
+#             },
+#         }
+#     except Exception as e:
+#         logger.error(f"Error in /api/v1/interaction/message: {e}", exc_info=True)
+#         error_detail = str(e) if os.getenv("ENV") == "development" else "处理失败，请稍后重试"
+#         return get_error_response(detail=error_detail, status_code=500)
 
 
-class InteractionPanelRequest(BaseModel):
-    user_id: str
-    project_name: str
-    session_id: str = ""
-    workflow: str = ""
+# class InteractionPanelRequest(BaseModel):
+#     user_id: str
+#     project_name: str
+#     session_id: str = ""
+#     workflow: str = ""
 
 
 @app.post("/api/v1/interaction/panel")
