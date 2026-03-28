@@ -9,7 +9,7 @@ import logoCircleTransparent from '../assets/logo_circle_transparent.png';
 import './Interaction.css';
 import { useApp } from '../contexts/AppContext';
 import { getUserAvatarUrl } from '../utils/avatar';
-import { uploadImage, buildUploadFilePublicUrl } from '../services/api';
+import { uploadImage, buildUploadFilePublicUrl, work } from '../services/api';
 
 const Interaction = () => {
   const location = useLocation();
@@ -31,7 +31,19 @@ const Interaction = () => {
 
   const { userInfo } = useApp();
   const workflow = useMemo(() => location.state?.workflow || 'text_to_video_fast', [location.state]);
-  
+
+  /** 与 Dashboard 创建项目后写入的 localStorage 一致，供 /api/v1/work 使用 */
+  const projectName = useMemo(
+    () => location.state?.projectName || localStorage.getItem('app-current-project') || 'default',
+    [location.state?.projectName],
+  );
+
+  const workWorkflowType = useMemo(() => {
+    const fromLs = localStorage.getItem('app-current-workflow-type');
+    if (fromLs === 'image2video' || fromLs === 'text2video') return fromLs;
+    return workflow === 'storyboard_precise' ? 'image2video' : 'text2video';
+  }, [workflow]);
+
   // 生成用户头像 URL
   const userAvatarUrl = useMemo(() => {
     const username = userInfo?.username || 'User';
@@ -100,25 +112,35 @@ const Interaction = () => {
     }
   };
 
-  const sendToBackend = async (payload) => {
-    const body = {
-      ...payload,
-      workflow,
-      session_id: sessionData?.session_id
-    };
-
-    const res = await fetch('/api/interaction/message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    const json = await res.json().catch(() => null);
-    if (!res.ok) {
-      const msg = json?.message || `请求失败(${res.status})`;
-      throw new Error(msg);
+  /** 将 /api/v1/work 返回映射为交互页使用的文案与 sessionData */
+  const applyWorkResponse = (resp) => {
+    const data = resp?.data ?? resp;
+    const aiText = normalizeAiContent(
+      data?.response ?? data?.message ?? data?.content ?? '',
+    );
+    const raw = data?.session_data ?? data?.sessionData ?? null;
+    const sid = data?.session_id;
+    let merged = null;
+    if (raw != null) {
+      merged = { ...raw, session_id: raw.session_id ?? sid };
+    } else if (sid != null) {
+      merged = { session_id: sid };
     }
-    return json;
+    if (merged) setSessionData(merged);
+    return aiText;
+  };
+
+  const sendToBackend = async (payload) => {
+    const user_input =
+      typeof payload.content === 'string' ? payload.content : String(payload.content ?? '');
+    const modifyNums = Array.isArray(payload.modify_num) ? payload.modify_num : [];
+    return work({
+      project_name: projectName,
+      user_input,
+      mode: 'production',
+      workflow_type: workWorkflowType,
+      ...(modifyNums.length > 0 ? { modify_nums: modifyNums } : {}),
+    });
   };
 
   const handleSend = async () => {
@@ -137,11 +159,7 @@ const Interaction = () => {
     setIsSending(true);
     try {
       const resp = await sendToBackend({ content });
-      const data = resp?.data ?? resp;
-      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
-      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
-
-      if (nextSessionData) setSessionData(nextSessionData);
+      const aiText = applyWorkResponse(resp);
 
       setMessages(prev => [
         ...prev,
@@ -178,10 +196,7 @@ const Interaction = () => {
     setIsSending(true);
     try {
       const resp = await sendToBackend({ content: '确认' });
-      const data = resp?.data ?? resp;
-      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
-      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
-      if (nextSessionData) setSessionData(nextSessionData);
+      const aiText = applyWorkResponse(resp);
 
       setMessages(prev => [
         ...prev,
@@ -207,10 +222,7 @@ const Interaction = () => {
       setIsSending(true);
       try {
         const resp = await sendToBackend({ content: '不需要', modify_num: [] });
-        const data = resp?.data ?? resp;
-        const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
-        const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
-        if (nextSessionData) setSessionData(nextSessionData);
+        const aiText = applyWorkResponse(resp);
         setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交：不需要修改。', timestamp: new Date() }]);
       } catch (e) {
         setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
@@ -234,10 +246,7 @@ const Interaction = () => {
     setIsSending(true);
     try {
       const resp = await sendToBackend({ content: '需要修改', modify_num: nums });
-      const data = resp?.data ?? resp;
-      const aiText = normalizeAiContent(data?.response ?? data?.message ?? data?.content ?? '');
-      const nextSessionData = data?.session_data ?? data?.sessionData ?? null;
-      if (nextSessionData) setSessionData(nextSessionData);
+      const aiText = applyWorkResponse(resp);
       setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交修改请求。', timestamp: new Date() }]);
     } catch (e) {
       setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
