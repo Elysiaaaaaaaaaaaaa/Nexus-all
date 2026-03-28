@@ -59,6 +59,25 @@ export function validateUsername(username) {
 }
 
 /**
+ * 登录用：允许「用户名」或「邮箱」（与后端 LoginRequest.username 一致）
+ * @param {string} value
+ * @returns {{ valid: boolean; message?: string }}
+ */
+export function validateLoginIdentifier(value) {
+  if (!value || typeof value !== 'string') {
+    return { valid: false, message: '请输入用户名或邮箱' };
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return { valid: false, message: '请输入用户名或邮箱' };
+  }
+  if (trimmed.includes('@')) {
+    return validateEmail(trimmed);
+  }
+  return validateUsername(trimmed);
+}
+
+/**
  * 验证邮箱格式
  * @param {string} email - 邮箱地址
  * @returns {{ valid: boolean; message?: string }}
@@ -231,6 +250,6 @@ export function isProduction() {
  * @param {string} message - 日志消息
  * @param {unknown} [data] - 数据
  */
-export function safeLog(message, data) {
+export function safeLog() {
   // 日志功能已禁用
 }

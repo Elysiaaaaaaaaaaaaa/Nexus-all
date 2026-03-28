@@ -15,6 +15,22 @@ const instance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+/** 解析 FastAPI HTTPException / 校验错误等响应中的可读文案 */
+function getFastApiErrorMessage(respData) {
+  if (!respData || typeof respData !== 'object') return undefined;
+  if (typeof respData.message === 'string' && respData.message) return respData.message;
+  const d = respData.detail;
+  if (typeof d === 'string' && d) return d;
+  if (Array.isArray(d)) {
+    return d
+      .map((e) => (e && typeof e.msg === 'string' ? e.msg : JSON.stringify(e)))
+      .filter(Boolean)
+      .join('; ');
+  }
+  if (d && typeof d === 'object' && typeof d.msg === 'string') return d.msg;
+  return undefined;
+}
+
 // --- 辅助函数：安全获取 TraceId ---
 function getTraceIdFromResponse(response) {
   if (!response) return undefined;
@@ -58,6 +74,25 @@ instance.interceptors.response.use(
   (response) => {
     const traceId = getTraceIdFromResponse(response);
     const envelope = response.data;
+
+    // 后端 get_error_response：HTTP 200 + { success: false, error: { code, message } }
+    if (envelope && envelope.success === false) {
+      const errObj = envelope.error;
+      const msg =
+        (errObj && typeof errObj.message === 'string' && errObj.message) ||
+        getFastApiErrorMessage(envelope) ||
+        '请求失败';
+      const code =
+        errObj && typeof errObj.code === 'number' ? errObj.code : 400;
+      return Promise.reject(
+        new AppError({
+          message: msg,
+          code,
+          isSystemError: false,
+          traceId,
+        }),
+      );
+    }
 
     // 检查响应格式
     // 如果响应有 code 字段，说明是包装格式
@@ -106,14 +141,20 @@ instance.interceptors.response.use(
 
     if (axiosError.response) {
       code = axiosError.response.status;
+      const reqUrl = axiosError.config?.url || '';
 
       if (code === 401) {
-        // 401 时清除认证信息
-        // 注意：不能在拦截器中使用 React Hook，直接清除 localStorage
-        localStorage.removeItem('auth_token');
-        localStorage.removeItem('app-user-id');
-        localStorage.removeItem('app-user-info');
-        message = '登录已过期，请重新登录';
+        const isAuthLoginOrRegister =
+          reqUrl.includes('/api/v1/auth/login') ||
+          reqUrl.includes('/api/v1/auth/register');
+        if (!isAuthLoginOrRegister) {
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('app-user-id');
+          localStorage.removeItem('app-user-info');
+        }
+        message =
+          getFastApiErrorMessage(axiosError.response.data) ||
+          (isAuthLoginOrRegister ? '用户名或密码错误' : '登录已过期，请重新登录');
       } else if (code === 403) {
         message = '您没有权限访问该资源';
       } else if (code === 404) {
@@ -124,8 +165,10 @@ instance.interceptors.response.use(
         if (isProduction()) {
           message = `系统异常 (${code})`;
         } else {
-          const serverMsg = typeof respData?.message === 'string' ? respData.message : undefined;
-          message = serverMsg || `系统异常 (${code})`;
+          message =
+            getFastApiErrorMessage(respData) ||
+            (typeof respData?.message === 'string' ? respData.message : undefined) ||
+            `系统异常 (${code})`;
         }
       }
     } else if (

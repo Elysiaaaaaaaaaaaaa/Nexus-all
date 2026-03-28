@@ -127,27 +127,21 @@ export const work = async (params) => {
 };
 
 /**
- * 获取用户项目列表
- * @param {string} user_id - 用户ID（可选，默认从localStorage获取）
+ * 获取用户项目列表（user_id 由 JWT 解析，与接口文档一致）
  * @returns {Promise<Object>} 项目列表
  */
-export const getProjectsList = async (user_id = null) => {
-  const userId = user_id || getUserId();
-  return http.post('/api/v1/projects/list', {
-    user_id: userId,
-  });
+export const getProjectsList = async () => {
+  return http.post('/api/v1/projects/list', {});
 };
 
 /**
- * 获取指定项目的对话历史
+ * 获取指定项目的对话历史（user_id 由 JWT 解析）
  * @param {Object} params - 请求参数
  * @param {string} params.project_name - 项目名称
- * @param {string} params.user_id - 用户ID（可选，默认从localStorage获取）
  * @returns {Promise<Object>} 对话历史和会话数据
  */
 export const getProjectHistory = async (params) => {
-  const { project_name, user_id = null } = params;
-  const userId = user_id || getUserId();
+  const { project_name } = params;
 
   if (!project_name) {
     throw new AppError({
@@ -170,22 +164,19 @@ export const getProjectHistory = async (params) => {
   const sanitizedProjectName = sanitizeInput(project_name, 100);
 
   return http.post('/api/v1/projects/history', {
-    user_id: userId,
     project_name: sanitizedProjectName,
   });
 };
 
 /**
- * 新建项目
+ * 新建项目（user_id 由 JWT 解析）
  * @param {Object} params - 请求参数
  * @param {string} params.project_name - 项目名称
  * @param {string} params.workflow_type - 工作流类型 ('text2video' 或 'image2video')
- * @param {string} params.user_id - 用户ID（可选，默认从localStorage获取）
  * @returns {Promise<Object>} 新建项目信息
  */
 export const createProject = async (params) => {
-  const { project_name, workflow_type = 'text2video', user_id = null } = params;
-  const userId = user_id || getUserId();
+  const { project_name, workflow_type = 'text2video' } = params;
 
   if (!project_name) {
     throw new AppError({
@@ -216,7 +207,6 @@ export const createProject = async (params) => {
   const sanitizedProjectName = sanitizeInput(project_name, 100);
 
   return http.post('/api/v1/projects/new', {
-    user_id: userId,
     project_name: sanitizedProjectName,
     workflow_type,
   });
@@ -296,11 +286,19 @@ export const logout = () => {
 };
 
 /**
- * 健康检查
+ * 健康检查 GET /api/v1/health
  * @returns {Promise<Object>} 健康状态
  */
 export const healthCheck = async () => {
   return http.get('/api/v1/health');
+};
+
+/**
+ * 根路径 GET /（与接口文档一致）
+ * @returns {Promise<Object>}
+ */
+export const rootInfo = async () => {
+  return http.get('/');
 };
 
 /** 与 http.js 一致的后端根地址，用于拼接上传返回的相对路径 */
@@ -327,16 +325,15 @@ const UPLOAD_IMAGE_MIME = new Set(['image/jpeg', 'image/jpg', 'image/png', 'imag
 
 /**
  * 上传图片（multipart/form-data）
- * POST /api/v1/upload_image
+ * POST /api/v1/upload_image（user_id 由 JWT 解析）
  * @param {Object} params
  * @param {File} params.file - 图片文件
- * @param {string} params.figure_name - 图像名称（测试阶段字段）
+ * @param {string} params.figure_name - 图像名称（可选，与后端 Form 一致）
  * @param {string} params.project_name - 项目名称
- * @param {string} [params.user_id] - 用户 ID，默认 localStorage
  * @returns {Promise<{ success?: boolean, message?: string, data?: { filePath?: string, size?: number } }>}
  */
 export const uploadImage = async (params) => {
-  const { file, figure_name, project_name, user_id = null } = params;
+  const { file, figure_name, project_name } = params;
 
   if (!file || !(file instanceof File)) {
     throw new AppError({
@@ -371,7 +368,6 @@ export const uploadImage = async (params) => {
     });
   }
 
-  const userId = user_id || getUserId();
   const safeFigure = sanitizeInput(String(figure_name), 200);
   const projectNameValidation = validateProjectName(project_name);
   if (!projectNameValidation.valid) {
@@ -384,12 +380,33 @@ export const uploadImage = async (params) => {
   const safeProject = sanitizeInput(project_name, 100);
 
   const formData = new FormData();
-  formData.append('user_id', userId);
-  formData.append('figure_name', safeFigure);
   formData.append('project_name', safeProject);
+  formData.append('figure_name', safeFigure);
   formData.append('file', file);
 
   return http.upload('/api/v1/upload_image', formData, 'file');
+};
+
+/**
+ * 用户头像 POST /api/user/avatar（multipart 字段 avatar，可选 user_id）
+ * @param {File} file
+ * @returns {Promise<{ success?: boolean, data?: { avatarUrl?: string, url?: string } }>}
+ */
+export const uploadUserAvatar = async (file) => {
+  if (!file || !(file instanceof File)) {
+    throw new AppError({
+      message: '请选择有效的图片文件',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+  const formData = new FormData();
+  formData.append('avatar', file);
+  const uid = getUserId();
+  if (uid) {
+    formData.append('user_id', uid);
+  }
+  return http.upload('/api/user/avatar', formData, 'avatar');
 };
 
 /**

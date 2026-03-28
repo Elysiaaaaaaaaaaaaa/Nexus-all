@@ -36,7 +36,7 @@ export function devQuickLogin() {
     localStorage.setItem('auth_token', testToken);
     
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
@@ -52,7 +52,7 @@ export function devClearAll() {
   try {
     localStorage.clear();
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
