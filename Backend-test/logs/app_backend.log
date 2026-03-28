@@ -2901,3 +2901,22 @@ FileNotFoundError: [Errno 2] No such file or directory: './user_files/1/projects
 2026-03-28 18:54:56+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-03-28 18:54:56+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-03-28 18:54:56+0800 | INFO | app.backend | Initializing database...
+2026-03-28 18:56:24+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-28 18:56:24+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-28 18:56:24+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-28 18:56:24+0800 | INFO | app.backend | Initializing database...
+2026-03-28 18:56:24+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-28 18:56:24+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-28 18:56:24+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-28 18:56:24+0800 | INFO | app.backend | Initializing database...
+2026-03-28 18:59:57+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-28 18:59:57+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-28 18:59:57+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-28 18:59:57+0800 | INFO | app.backend | Initializing database...
+2026-03-28 18:59:57+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-28 18:59:57+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-28 18:59:57+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-28 18:59:57+0800 | INFO | app.backend | Initializing database...
+2026-03-28 19:09:06+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-28 19:09:06+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-28 19:09:06+0800 | WARNING | app.backend |   Consider replacing it with a real video file.

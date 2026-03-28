@@ -2,7 +2,7 @@
 
 ## 1. 服务概述
 
-后端API服务是一个基于FastAPI框架开发的Web服务，用于前端与后端代理系统的交互。该服务提供了健康检查和主要的工作处理接口，支持多用户、多项目的会话管理。
+后端API服务是一个基于FastAPI框架开发的Web服务，用于前端与后端代理系统的交互。
 
 ### 1.1 基本信息
 
@@ -10,7 +10,6 @@
 - **版本**: 1.0.0
 - **技术栈**: Python 3.10+, FastAPI, Uvicorn
 - **默认端口**: 8003
-- **当前开发进度**: 正在调试中，仅支持在localhost:8003上运行。
 
 ## 2. API端点列表
 
@@ -18,43 +17,96 @@
 |------|------|----------|
 | GET | `/` | 根路径健康检查 |
 | GET | `/api/v1/health` | API版本化健康检查 |
+| POST | `/api/v1/auth/register` | 用户注册 |
+| POST | `/api/v1/auth/login` | 用户登录 |
 | POST | `/api/v1/work` | 主要工作处理接口 |
 | POST | `/api/v1/projects/list` | 获取用户项目列表 |
 | POST | `/api/v1/projects/history` | 获取指定项目的对话历史 |
 | POST | `/api/v1/projects/new` | 新建项目 |
 | POST | `/api/v1/upload_image` | 上传图片到指定路径 |
+| POST | `/api/v1/interaction/panel` | 获取交互面板数据 |
+| POST | `/api/user/avatar` | 上传用户头像 |
+| GET | `/api/v1/test-video-placeholder` | 获取测试视频占位符 |
 
 ## 3. 详细API说明
 
+### 3.1 用户注册接口
+
+**功能**: 用户注册并获取访问令牌
+
+**请求**:
+- **方法**: POST
+- **路径**: `/api/v1/auth/register`
+- **请求体**:
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+**响应**:
+```json
+{
+  "access_token": "string",
+  "token_type": "bearer",
+  "user": {
+    "id": "integer",
+    "username": "string",
+    "email": "string"
+  }
+}
+```
+
+### 3.2 用户登录接口
+
+**功能**: 用户登录并获取访问令牌
+
+**请求**:
+- **方法**: POST
+- **路径**: `/api/v1/auth/login`
+- **请求体**:
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+**响应**:
+```json
+{
+  "access_token": "string",
+  "token_type": "bearer",
+  "user": {
+    "id": "integer",
+    "username": "string",
+    "email": "string"
+  }
+}
+```
 
 ### 3.3 工作处理接口
 
-#### 请求
+**功能**: 处理用户输入并执行相应的工作流任务
+
+**请求**:
 - **方法**: POST
 - **路径**: `/api/v1/work`
-- **请求体**: `WorkRequest` 对象
-
-##### 请求模型 (WorkRequest)
+- **请求体**:
 ```json
 {
   "project_name": "string",
   "user_input": "string",
-  "user_id": "string",
   "mode": "string",
-  "modify_nums":[]
+  "video_duration": "integer",
+  "modify_num": [],
+  "workflow_type": "string"
 }
 ```
 
-| 字段名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| project_name | string | 是 | 项目名称，用于标识不同的项目会话 |
-| user_input | string | 是 | 用户输入文本，包含具体的任务需求 |
-| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
-| mode | string | 是 | 运行模式，如'test'表示测试模式 |
-| modify_nums | list | 否 | 用户认为需要修改的内容的编号 |
-| last_id | dict | 是 | 各个文本生成智能体的最后一条消息的ID，用于使用上下文缓存功能。 |
-
-#### 响应
+**响应**:
 ```json
 {
   "success": true,
@@ -84,81 +136,16 @@
 }
 ```
 
-```json
-now_task{
-  "imagination": "正在与助手构建影片相关的细节，如角色、场景、动作等。最终结果将被添加到session_data.material.idea中。",
-  "outline": "正在与助手构建影片的大纲。最终结果将被添加到session_data.material.outline中。",
-  "screen": "正在与助手构建影片的剧本。最终结果将被添加到session_data.material.screen中。",
-  "video": "正在生成视频。最终结果将被添加到session_data.material.video_address中。"
-}
-```
-
-```json
-now_state{
-  "None": "初始状态，等待用户输入。",
-  "modify_confirm": "询问用户是否需要修改当前任务的结果。特别的，当now_task为animation时，询问用户是否需要修改当前分镜对应的提示词（即screen）。用户确认修改后需要选择修改的内容索引。",
-  "modify": "用户正在与assistant对话，确认修改的具体内容。",
-  "create": "用户通过与assistant的对话，确认了idea、modify_request中的内容，即将把这些内容交给各种agent进行生成任务"
-}
-```
-
-
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| success | boolean | 请求处理是否成功 |
-| message | string | 助手的回复文本 |
-| end_session | boolean | 会话是否结束 |
-| project_name | string | 项目名称 |
-| session_id | string | 会话唯一标识符 |
-| session_data | object | 会话详细数据 |
-| session_data.material | object | 项目材料数据 |
-| session_data.material.idea | array | 创意想法列表 |
-| session_data.material.outline | array | 大纲内容 |
-| session_data.material.screen | array | 剧本内容 |
-| session_data.material.video_address | array | 生成的视频地址列表 |
-| session_data.chat_with_assistant | boolean | 是否继续与助手对话 |
-| session_data.modify_request | object | 修改请求数据 |
-| session_data.video_generating | number | 正在生成的视频索引 |
-| session_data.now_task | string | 当前任务类型 |
-| session_data.now_state | string | 当前状态 |
-| session_data.last_id | dict | 各个文本生成智能体的最后一条消息的ID，用于使用上下文缓存功能 |
-
-
-前端需要特别处理的响应：
-- session_data的now_state为modify_confirm时，前端需要显示修改确认弹窗，需要用户确认是否修改。其中，若用户选择需要修改，向工作流返回的user_input为”需要修改“，并弹出窗口，让用户选择需要修改的内容（例如弹窗出多选按钮，每个按钮上展示outline(或screen)中对应编号的内容）。并在选择完成后立即在请求的modify_nums字段向工作流返回用户选择的内容索引列表，索引从1开始。
-若用户选择不需要修改，向工作流返回的user_input为”不需要修改“。并在选择后立即向后端发送请求。
-
-
-#### 错误响应
-```json
-{
-  "success": false,
-  "error": {
-    "code": 500,
-    "message": "错误描述"
-  }
-}
-```
-
 ### 3.4 获取用户项目列表
 
-#### 请求
+**功能**: 获取当前用户的所有项目列表
+
+**请求**:
 - **方法**: POST
 - **路径**: `/api/v1/projects/list`
-- **请求体**: `UserIdRequest` 对象
+- **请求体**: 无（从JWT获取用户ID）
 
-##### 请求模型 (UserIdRequest)
-```json
-{
-  "user_id": "string"
-}
-```
-
-| 字段名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
-
-#### 响应
+**响应**:
 ```json
 {
   "success": true,
@@ -172,35 +159,21 @@ now_state{
 }
 ```
 
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| success | boolean | 请求处理是否成功 |
-| projects | array | 项目列表 |
-| projects[].project_name | string | 项目名称 |
-| projects[].workflow_type | string | 工作流类型，如'text2video'表示文本到视频工作流 |
-| projects[].now_task | string | 当前任务类型，如'imagination'、'outline'、'screen'、'video' |
-
 ### 3.5 获取指定项目的对话历史
 
-#### 请求
+**功能**: 获取指定项目的完整对话历史和会话数据
+
+**请求**:
 - **方法**: POST
 - **路径**: `/api/v1/projects/history`
-- **请求体**: `ProjectHistoryRequest` 对象
-
-##### 请求模型 (ProjectHistoryRequest)
+- **请求体**:
 ```json
 {
-  "user_id": "string",
   "project_name": "string"
 }
 ```
 
-| 字段名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
-| project_name | string | 是 | 项目名称，用于标识不同的项目会话 |
-
-#### 响应
+**响应**:
 ```json
 {
   "success": true,
@@ -233,63 +206,27 @@ now_state{
     "video_generating": 0,
     "message_count": 0,
     "now_task": "string",
-    "now_state": "string",
-    "last_id": {
-      "assistant": "string",
-      "outline": "string",
-      "screen": "string"
-    }
+    "now_state": "string"
   }
 }
 ```
 
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| success | boolean | 请求处理是否成功 |
-| chat_history | array | 对话历史列表，包含每次对话的完整记录 |
-| chat_history[].user | string | 用户输入内容 |
-| chat_history[].assistant | string | 助手回复内容 |
-| chat_history[].material | object | 对话时的项目材料数据 |
-| chat_history[].material.idea | array | 创意想法列表 |
-| chat_history[].material.outline | array | 大纲内容 |
-| chat_history[].material.screen | array | 剧本内容 |
-| chat_history[].material.video_address | array | 生成的视频地址列表 |
-| session_data | object | 最新的会话数据，包含当前任务状态和项目材料 |
-| session_data.material | object | 项目材料数据 |
-| session_data.material.idea | array | 创意想法列表 |
-| session_data.material.outline | array | 大纲内容 |
-| session_data.material.screen | array | 剧本内容 |
-| session_data.material.video_address | array | 生成的视频地址列表 |
-| session_data.chat_with_assistant | boolean | 是否继续与助手对话 |
-| session_data.modify_request | object | 修改请求数据 |
-| session_data.video_generating | number | 正在生成的视频索引 |
-| session_data.now_task | string | 当前任务类型 |
-| session_data.now_state | string | 当前状态 |
-| session_data.last_id | dict | 各个文本生成智能体的最后一条消息的ID，用于使用上下文缓存功能。 |
-
 ### 3.6 新建项目
 
-#### 请求
+**功能**: 创建新的项目并生成会话ID
+
+**请求**:
 - **方法**: POST
 - **路径**: `/api/v1/projects/new`
-- **请求体**: `NewProjectRequest` 对象
-
-##### 请求模型 (NewProjectRequest)
+- **请求体**:
 ```json
 {
-  "user_id": "string",
   "project_name": "string",
   "workflow_type": "string"
 }
 ```
 
-| 字段名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
-| project_name | string | 是 | 项目名称，用于标识不同的项目会话 |
-| workflow_type | string | 是 | 工作流类型，支持'text2video'和'image2video' |
-
-#### 响应
+**响应**:
 ```json
 {
   "success": true,
@@ -299,40 +236,20 @@ now_state{
 }
 ```
 
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| success | boolean | 请求处理是否成功 |
-| project_name | string | 创建的项目名称 |
-| session_id | string | 新生成的会话ID |
-| workflow_type | string | 工作流类型 |
-
-#### 错误响应
-```json
-{
-  "success": false,
-  "error": {
-    "code": 400,
-    "message": "无效的工作流类型: xxx，只允许: text2video, image2video"
-  }
-}
-```
-
 ### 3.7 上传图片接口
 
-#### 请求
+**功能**: 上传图片到指定项目路径
+
+**请求**:
 - **方法**: POST
 - **路径**: `/api/v1/upload_image`
 - **请求体**: `multipart/form-data` 格式
+- **参数**:
+  - `project_name`: 项目名称
+  - `file`: 图片文件
+  - `figure_name`: 图像名称（可选）
 
-##### 请求参数
-| 字段名 | 类型 | 必填 | 描述 |
-|--------|------|------|------|
-| user_id | string | 是 | 用户唯一标识符，用于区分不同用户 |
-| figure_name | string | 是 | 图像名称，该字段处于测试阶段，暂时填写None即可 |
-| project_name | string | 是 | 项目名称，用于标识不同的项目会话 |
-| file | file | 是 | 图片文件，支持格式：image/jpeg, image/jpg, image/png, image/gif, image/webp |
-
-#### 响应
+**响应**:
 ```json
 {
   "success": true,
@@ -344,145 +261,97 @@ now_state{
 }
 ```
 
-| 字段名 | 类型 | 描述 |
-|--------|------|------|
-| success | boolean | 请求处理是否成功 |
-| message | string | 操作结果消息 |
-| data | object | 上传结果数据 |
-| data.filePath | string | 上传文件的相对路径 |
-| data.size | number | 上传文件的大小（字节） |
+### 3.8 交互面板数据接口
 
-#### 错误响应
+**功能**: 获取交互面板数据
+
+**请求**:
+- **方法**: POST
+- **路径**: `/api/v1/interaction/panel`
+- **请求体**:
 ```json
 {
-  "error": "不支持的文件类型: application/pdf，仅支持: image/jpeg, image/jpg, image/png, image/gif, image/webp"
+  "user_id": "string",
+  "project_name": "string",
+  "session_id": "string",
+  "workflow": "string"
 }
 ```
 
-```json
-{
-  "error": "文件大小超过限制（最大10MB），当前文件大小: 15.23MB"
-}
-```
-
-```json
-{
-  "error": "图片上传失败，请稍后重试"
-}
-```
-
-## 4. 服务架构与工作流程
-
-### 4.1 核心组件
-
-1. **FastAPI应用**: 处理HTTP请求和响应
-2. **PersonalAssistantOrchestrator**: 协调各种代理完成任务
-3. **UserFile**: 管理用户文件和会话数据
-4. **各种代理(Agents)**: 处理具体的业务逻辑
-   - Assistant: 助手代理，处理用户对话
-   - OutlineWriter: 大纲编写器
-   - ScreenWriter: 剧本编写器
-   - Animator: 动画生成器
-
-### 4.2 工作流程
-
-1. 客户端发送POST请求到`/api/v1/work`端点
-2. API验证请求参数并创建WorkRequest对象
-3. 初始化PersonalAssistantOrchestrator实例
-4. 调用handle_user_input方法处理用户输入
-5. 根据用户输入和当前会话状态，路由到相应的处理节点
-6. 调用相应的代理完成具体任务
-7. 保存会话数据和项目内容
-8. 返回处理结果给客户端
-
-## 5. 会话管理
-
-- 每个用户可以创建多个项目
-- 每个项目有独立的会话ID
-- 会话数据包括任务状态、材料内容和进度信息
-- 会话数据会自动保存到用户文件系统
-
-## 6. 错误处理
-
-- API使用HTTP状态码表示错误类型
-- 500: 服务器内部错误
-- 400: 请求参数错误
-- 所有错误都会返回包含错误描述的JSON响应
-
-## 7. 开发与测试
-
-### 7.1 启动服务
-
-```bash
-python app.py
-```
-
-### 7.2 测试模式
-
-在请求中设置`mode=test`可以启用测试模式，跳过实际的代理调用，返回模拟结果。
-
-## 8. 接口示例
-
-### 8.1 健康检查示例
-
-```bash
-curl http://localhost:8003/
-```
-
-响应：
-```json
-{
-  "message": "后端服务运行正常",
-  "version": "1.0.0"
-}
-```
-
-### 8.2 工作处理示例
-
-```bash
-curl -X POST "http://localhost:8003/api/v1/work" \
-  -H "Content-Type: application/json" \
-  -d '{"project_name": "test_project", "user_input": "帮我写一个关于太空探索的故事大纲", "user_id": "user_123", "mode": "test"}'
-```
-
-响应：
+**响应**:
 ```json
 {
   "success": true,
-  "message": "call outline",
-  "end_session": false,
-  "project_name": "test_project",
-  "session_id": "session-12345678-1234-5678-1234-567812345678",
-  "session_data": {
-    "material": {
-      "idea": [],
-      "outline": [],
-      "screen": [],
-      "video_address": []
+  "data": {
+    "execution": {
+      "logs": [],
+      "simulation_quote": "",
+      "metrics": {}
     },
-    "chat_with_assistant": true,
-    "modify_request": {
-      "outline": null,
-      "screen": null
-    },
-    "modify_num": null,
-    "video_generating": 0,
-    "editing_screen": null,
-    "message_count": 0,
-    "now_task": "imagination",
-    "now_state": "None"
+    "task_assets": {
+      "now_task": {
+        "name": "",
+        "stage": "",
+        "progress": 0
+      },
+      "materials": []
+    }
   }
 }
 ```
 
-## 9. 版本历史
+### 3.9 上传用户头像接口
+
+**功能**: 上传用户头像
+
+**请求**:
+- **方法**: POST
+- **路径**: `/api/user/avatar`
+- **请求体**: `multipart/form-data` 格式
+- **参数**:
+  - `avatar`: 头像文件
+  - `user_id`: 用户ID（可选）
+
+**响应**:
+```json
+{
+  "success": true,
+  "data": {
+    "avatarUrl": "string",
+    "url": "string",
+    "filename": "string"
+  }
+}
+```
+
+### 3.10 测试视频占位符接口
+
+**功能**: 获取测试视频占位符
+
+**请求**:
+- **方法**: GET
+- **路径**: `/api/v1/test-video-placeholder`
+
+**响应**:
+- 返回静态视频文件 `placeholder.mp4`
+
+## 4. 错误处理
+
+所有错误都会返回包含错误描述的JSON响应：
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": 500,
+    "message": "错误描述"
+  }
+}
+```
+
+## 5. 版本历史
 
 - **1.0.0** (初始版本)
-  - 实现了根路径健康检查
-  - 实现了API版本化健康检查
-  - 实现了主要工作处理接口
+  - 实现了所有API端点
   - 支持多用户、多项目会话管理
   - 支持测试模式
-  - 新增获取用户项目列表API
-  - 新增获取指定项目的对话历史API
-  - 新增新建项目API
