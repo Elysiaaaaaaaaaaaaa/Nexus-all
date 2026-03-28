@@ -1,0 +1,57 @@
+.nx-session-videos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.nx-session-videos-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.nx-session-videos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nx-session-video-item {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.nx-session-video {
+  display: block;
+  width: 100%;
+  max-height: min(50vh, 360px);
+  vertical-align: middle;
+  background: #000;
+}
+
+.nx-session-video-fallback {
+  margin: 0;
+  padding: 14px 16px;
+  font-size: 13px;
+  color: rgba(248, 250, 252, 0.65);
+}
+
+/* 浅色页（历史详情等） */
+.nx-session-videos--light .nx-session-videos-title {
+  color: rgb(100, 116, 139);
+}
+
+.nx-session-videos--light .nx-session-video-item {
+  border-color: rgb(226, 232, 240);
+  background: rgb(248, 250, 252);
+}
+
+.nx-session-videos--light .nx-session-video-fallback {
+  color: rgb(100, 116, 139);
+}
