@@ -38,13 +38,21 @@ allowed_origins = [origin.strip() for origin in allowed_origins_env.split(",") i
 if not allowed_origins or os.getenv("ENV") == "development":
     allowed_origins = ["*"]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*"],
-)
+# Capacitor Android 8+：本地页面在 https://<uuid>.androidplatform.net，需允许跨域到云端 API
+# （生产环境若 ALLOWED_ORIGINS 为白名单，仅靠列表无法覆盖随机子域）
+_cors_allow_all = allowed_origins == ["*"]
+_cors_kwargs = {
+    "allow_origins": allowed_origins,
+    "allow_credentials": True,
+    "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["*"],
+}
+if not _cors_allow_all:
+    _cors_kwargs["allow_origin_regex"] = (
+        r"^https://[\w.-]+\.androidplatform\.net(?::\d+)?$|^capacitor://localhost$|^https://localhost(?::\d+)?$"
+    )
+
+app.add_middleware(CORSMiddleware, **_cors_kwargs)
 
 # 添加静态文件服务，用于提供视频文件访问
 # 使用绝对路径，基于app.py所在目录
@@ -173,11 +181,6 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: Dict[str, Any]
-
-class UploadImageRequest(BaseModel):
-    project_name: str
-    image: UploadFile = File(...)  # 上传的图片文件
-    figure_name: str = None  # 可选，指定图片的名称，默认使用文件名
 
 # 健康检查路由
 @app.get("/")
@@ -645,11 +648,13 @@ avatars_dir = base_dir / "user_avatars"
 if avatars_dir.exists():
     app.mount("/api/user/avatars", StaticFiles(directory=str(avatars_dir), html=False), name="avatars")
 
-# 上传图片到指定路径
+# 上传图片到指定路径（multipart：project_name、file；可选 figure_name）
 @app.post("/api/v1/upload_image")
 async def upload_image(
-    request:UploadImageRequest,
-    current_user: Dict[str, Any] = Depends(get_current_user)
+    project_name: str = Form(...),
+    file: UploadFile = File(...),
+    figure_name: Optional[str] = Form(None),
+    current_user: Dict[str, Any] = Depends(get_current_user),
 ):
     """
     上传图片到指定路径
@@ -658,26 +663,27 @@ async def upload_image(
     try:
         # 获取当前用户ID
         user_id = str(current_user["user_id"])
+        _ = figure_name  # 预留字段，与前端一致；当前仍保存为 photos.png
         
         # 验证文件类型
         allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
-        if request.file.content_type not in allowed_types:
+        if file.content_type not in allowed_types:
             return get_error_response(
-                detail=f"不支持的文件类型: {request.file.content_type}，仅支持: {', '.join(allowed_types)}",
+                detail=f"不支持的文件类型: {file.content_type}，仅支持: {', '.join(allowed_types)}",
                 status_code=400
             )
         
         # 验证文件大小（限制为10MB）
         MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
-        file_content = await request.file.read()
+        file_content = await file.read()
         if len(file_content) > MAX_FILE_SIZE:
             return get_error_response(
                 detail=f"文件大小超过限制（最大10MB），当前文件大小: {len(file_content) / 1024 / 1024:.2f}MB",
                 status_code=400
             )
         
-        # 构建保存路径
-        save_dir = base_dir / "user_files" / user_id / "projects" / request.project_name / "photos"
+        # 构建保存路径（与上游目录约定：user_files/{user_id}/projects/{project_name}/photos）
+        save_dir = base_dir / "user_files" / user_id / "projects" / project_name / "photos"
         save_dir.mkdir(parents=True, exist_ok=True)
         
         # 保存文件为photos/photos.png

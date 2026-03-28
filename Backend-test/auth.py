@@ -147,10 +147,6 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
     """
     from database import SessionLocal, User
 
-    # 临时：为了让用户先能测试功能，使用测试用户
-    # TODO: 用户需要先登录获取有效的JWT token
-    return {"user_id": "1", "username": "test_user", "email": "test@example.com"}
-
     token = credentials.credentials
     payload = verify_token(token)
 
