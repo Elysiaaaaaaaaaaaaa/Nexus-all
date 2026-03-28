@@ -1,20 +1,25 @@
-/* 登录模态框遮罩层 */
+/* 遮罩：略压暗即可，与独立登录页 Login.css 的清爽风格一致 */
 .login-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  inset: 0;
+  width: 100vw;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+  background: rgba(15, 23, 42, 0.35);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
-  animation: fadeIn 0.2s ease-out;
+  padding: 24px;
+  pointer-events: auto;
+  isolation: isolate;
+  z-index: 10050;
+  animation: login-modal-fade-in 0.2s ease-out;
 }
 
-@keyframes fadeIn {
+@keyframes login-modal-fade-in {
   from {
     opacity: 0;
   }
@@ -23,16 +28,10 @@
   }
 }
 
-/* 模态框内容容器 */
-.login-modal-content {
-  position: relative;
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
+@keyframes login-modal-slide-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -40,39 +39,17 @@
   }
 }
 
-/* 关闭按钮 */
-.login-modal-close {
-  position: absolute;
-  top: -40px;
-  right: 0;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  color: rgb(100, 116, 139);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  z-index: 10000;
-}
-
-.login-modal-close:hover {
-  background: white;
-  color: rgb(15, 23, 42);
-  transform: scale(1.1);
-}
-
-/* 登录卡片样式（复用原有样式） */
-.login-card {
+/* 单层卡片，与 src/pages/Login.css .login-card 一致；关闭请点遮罩或按 ESC */
+.login-modal-overlay .login-modal-card {
   width: 100%;
   max-width: 400px;
+  margin: 0 auto;
   background: white;
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  animation: login-modal-slide-up 0.3s ease-out;
 }
 
 .login-header {
@@ -211,10 +188,11 @@
   text-decoration: underline;
 }
 
-/* Dark Mode 适配 */
-:root.dark .login-card {
+/* Dark Mode */
+:root.dark .login-modal-overlay .login-modal-card {
   background: rgb(30, 41, 59);
   color: rgb(248, 250, 252);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 }
 
 :root.dark .login-title {
@@ -250,15 +228,4 @@
 
 :root.dark .form-input-toggle:hover {
   color: rgb(203, 213, 225);
-}
-
-:root.dark .login-modal-close {
-  background: rgba(30, 41, 59, 0.9);
-  border-color: rgba(71, 85, 105, 0.8);
-  color: rgb(203, 213, 225);
-}
-
-:root.dark .login-modal-close:hover {
-  background: rgb(51, 65, 85);
-  color: rgb(248, 250, 252);
 }
