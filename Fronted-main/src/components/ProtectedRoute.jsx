@@ -12,7 +12,7 @@ import { devBypassAuth } from '../utils/devMode';
  */
 const ProtectedRoute = ({ children }) => {
   const location = useLocation();
-  const { isAuthenticated } = useApp();
+  const { safeIsAuthenticated } = useApp();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
   const hasValidToken = !!token && token.trim() !== '';
   
   // 检查用户是否已登录（同时检查 token 和 userInfo）
-  const isUserAuthenticated = hasValidToken && isAuthenticated;
+  const isUserAuthenticated = hasValidToken && safeIsAuthenticated;
 
   // 开发模式：检查是否启用路由保护绕过
   const devBypass = devBypassAuth();
