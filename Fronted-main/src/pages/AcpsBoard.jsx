@@ -1,10 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, TerminalWindow, Lightning } from '@phosphor-icons/react';
+import { isNativeMobileLayout } from '../utils/runtimePlatform';
 import './AcpsBoard.css';
 
 const AcpsBoard = () => {
   const navigate = useNavigate();
+  const nativeMobile = isNativeMobileLayout();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
 
   const executionLogs = [
     { id: 1, level: 'info', message: '正在初始化沙盒环境...' },
@@ -21,17 +27,19 @@ const AcpsBoard = () => {
   };
 
   return (
-    <div className="acps-board-page">
-      <header className="acps-board-header">
-        <button type="button" className="acps-board-back" onClick={() => navigate('/interaction')}>
-          <ArrowLeft size={18} weight="bold" />
-          返回交互页
-        </button>
-        <div className="acps-board-title-wrap">
-          <TerminalWindow size={18} weight="fill" />
-          <h1 className="acps-board-title">ACPS 协议调用看板（设计版）</h1>
-        </div>
-      </header>
+    <div className={`acps-board-page${nativeMobile ? ' acps-board-page--native-shell' : ''}`}>
+      {!nativeMobile && (
+        <header className="acps-board-header">
+          <button type="button" className="acps-board-back" onClick={handleBack}>
+            <ArrowLeft size={18} weight="bold" aria-hidden />
+            返回
+          </button>
+          <div className="acps-board-title-wrap">
+            <TerminalWindow size={18} weight="fill" aria-hidden />
+            <h1 className="acps-board-title">ACPS 协议调用看板（设计版）</h1>
+          </div>
+        </header>
+      )}
 
       <main className="acps-board-grid">
         <section className="acps-card">
