@@ -315,3 +315,157 @@
   background: rgb(29, 78, 216);
   border-color: rgb(29, 78, 216);
 }
+
+.history-detail-state {
+  text-align: center;
+  font-size: 15px;
+  color: rgb(100, 116, 139);
+}
+
+.history-detail-state-error {
+  color: rgb(220, 38, 38);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-detail-session-videos {
+  margin-bottom: 20px;
+}
+
+.history-detail-conversation h3,
+.history-detail-raw-session h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(15, 23, 42);
+  margin: 24px 0 12px;
+}
+
+.history-detail-empty-chat {
+  font-size: 14px;
+  color: rgb(100, 116, 139);
+}
+
+.history-chat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.history-chat-turn {
+  padding: 14px;
+  border-radius: 12px;
+  background: rgb(248, 250, 252);
+  border: 1px solid rgb(226, 232, 240);
+}
+
+.history-chat-role {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgb(100, 116, 139);
+  margin-bottom: 6px;
+}
+
+.history-chat-body {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: rgb(30, 41, 59);
+}
+
+.history-chat-material {
+  max-height: 200px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+.history-session-pre {
+  margin: 0;
+  padding: 14px;
+  border-radius: 12px;
+  background: rgb(15, 23, 42);
+  color: rgb(226, 232, 240);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow: auto;
+  max-height: 320px;
+}
+
+.history-detail-now-state {
+  font-size: 14px;
+  color: rgb(51, 65, 85);
+}
+
+.history-detail-turns {
+  color: rgb(100, 116, 139);
+  font-size: 13px;
+}
+
+.history-retry {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid rgb(226, 232, 240);
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  color: rgb(37, 99, 235);
+}
+
+.history-retry:hover {
+  background: rgb(248, 250, 252);
+}
+
+:root.dark .history-detail-container {
+  background: rgb(15, 23, 42);
+}
+
+:root.dark .history-detail-header {
+  background: rgba(30, 41, 59, 0.85);
+  border-bottom-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .history-detail-title {
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .history-detail-card {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .history-detail-conversation h3,
+:root.dark .history-detail-raw-session h3 {
+  color: rgb(248, 250, 252);
+}
+
+:root.dark .history-chat-turn {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(51, 65, 85, 0.8);
+}
+
+:root.dark .history-chat-body {
+  color: rgb(226, 232, 240);
+}
+
+:root.dark .history-detail-state {
+  color: rgb(148, 163, 184);
+}
+
+:root.dark .history-detail-state-error {
+  color: rgb(252, 165, 165);
+}
+
+:root.dark .history-retry {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(51, 65, 85, 0.9);
+  color: rgb(147, 197, 253);
+}

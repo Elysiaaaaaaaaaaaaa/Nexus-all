@@ -349,3 +349,48 @@
 :root.dark .load-more-button:hover {
   color: rgb(248, 250, 252);
 }
+
+.history-state {
+  padding: 16px 0 8px;
+  font-size: 14px;
+}
+
+.history-state-muted {
+  color: rgb(100, 116, 139);
+}
+
+.history-state-error {
+  color: rgb(220, 38, 38);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.history-retry {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgb(226, 232, 240);
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  color: rgb(37, 99, 235);
+}
+
+.history-retry:hover {
+  background: rgb(248, 250, 252);
+}
+
+:root.dark .history-state-muted {
+  color: rgb(148, 163, 184);
+}
+
+:root.dark .history-state-error {
+  color: rgb(252, 165, 165);
+}
+
+:root.dark .history-retry {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: rgba(51, 65, 85, 0.9);
+  color: rgb(147, 197, 253);
+}
