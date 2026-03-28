@@ -24,7 +24,7 @@ const HERO_VIDEOS = ['/videos/test1.mp4', '/videos/test2.mp4'];
 
 const Homepage = () => {
   const navigate = useNavigate();
-  const { t, language, isAuthenticated } = useApp();
+  const { t, language, safeIsAuthenticated } = useApp();
   const videoRef = useRef(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
@@ -33,7 +33,14 @@ const Homepage = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [iframeKey, setIframeKey] = useState(0);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  /** 登录成功后跳转路径；null 表示默认 /dashboard */
+  const [postLoginPath, setPostLoginPath] = useState(null);
   const [faqOpenIndex, setFaqOpenIndex] = useState(null);
+
+  const openLoginModal = (pathAfterLogin = null) => {
+    setPostLoginPath(pathAfterLogin);
+    setShowLoginModal(true);
+  };
   
   const videos = HERO_VIDEOS;
   
@@ -205,10 +212,10 @@ const Homepage = () => {
           <button
             className="homepage-start-button"
             onClick={() => {
-              if (isAuthenticated) {
+              if (safeIsAuthenticated) {
                 navigate('/dashboard');
               } else {
-                setShowLoginModal(true);
+                openLoginModal(null);
               }
             }}
             type="button"
@@ -251,10 +258,10 @@ const Homepage = () => {
               <button 
                 className="homepage-button-primary"
                 onClick={() => {
-                  if (isAuthenticated) {
+                  if (safeIsAuthenticated) {
                     navigate('/dashboard');
                   } else {
-                    setShowLoginModal(true);
+                    openLoginModal(null);
                   }
                 }}
                 type="button"
@@ -263,7 +270,14 @@ const Homepage = () => {
               </button>
               <button 
                 className="homepage-button-secondary"
-                onClick={() => navigate('/manual')}
+                onClick={() => {
+                  if (safeIsAuthenticated) {
+                    navigate('/manual');
+                  } else {
+                    openLoginModal('/manual');
+                  }
+                }}
+                type="button"
               >
                 {t('homepage.docs')}
               </button>
@@ -794,8 +808,15 @@ const Homepage = () => {
       {/* 登录模态框 */}
       <LoginModal 
         isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        onSuccess={() => navigate('/dashboard')}
+        onClose={() => {
+          setPostLoginPath(null);
+          setShowLoginModal(false);
+        }}
+        onSuccess={() => {
+          const dest = postLoginPath || '/dashboard';
+          setPostLoginPath(null);
+          navigate(dest);
+        }}
       />
       </div>
     </>
