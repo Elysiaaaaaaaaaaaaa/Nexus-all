@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeSlash, Key, User, X } from '@phosphor-icons/react';
+import { Eye, EyeSlash, Key, User } from '@phosphor-icons/react';
 import './LoginModal.css';
 import { register, login } from '../services/api';
 import { useApp } from '../contexts/AppContext';
 import { validateUsername, validateEmail, validatePassword, sanitizeInput, safeLog } from '../utils/security';
 import { rateLimiter } from '../utils/rateLimiter';
 import { devBypassRateLimit } from '../utils/devMode';
-import { isProduction } from '../utils/security';
 
 // 常量定义
 const DEFAULT_REMAINING_ATTEMPTS = 5;
@@ -23,7 +23,7 @@ const MAX_EMAIL_LENGTH = 254;
  */
 const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const navigate = useNavigate();
-  const { setUserId, setUserInfo, isAuthenticated } = useApp();
+  const { setUserId, setUserInfo, safeIsAuthenticated } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,13 +46,13 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
     onSuccessRef.current = onSuccess;
   }, [onClose, onSuccess]);
 
-  // 如果已登录，关闭模态框
+  // 如果已登录，关闭模态框（必须用 safeIsAuthenticated，避免残缺 localStorage 被当成已登录）
   useEffect(() => {
-    if (isAuthenticated && isOpen) {
+    if (safeIsAuthenticated && isOpen) {
       onCloseRef.current?.();
       onSuccessRef.current?.();
     }
-  }, [isAuthenticated, isOpen]);
+  }, [safeIsAuthenticated, isOpen]);
 
   // 检查锁定状态
   useEffect(() => {
@@ -109,7 +109,6 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
 
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
-      // 防止背景滚动
       document.body.style.overflow = 'hidden';
     }
 
@@ -353,21 +352,17 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
 
   if (!isOpen) return null;
 
-  return (
+  const modalTree = (
     <div className="login-modal-overlay" onClick={handleOverlayClick}>
-      <div className="login-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button 
-          className="login-modal-close" 
-          onClick={handleClose} 
-          aria-label="关闭"
-          type="button"
-        >
-          <X size={20} weight="bold" />
-        </button>
-        
-        <div className="login-card">
+      <div
+        className="login-card login-modal-card"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-modal-title"
+      >
           <div className="login-header">
-            <h1 className="login-title">{isLogin ? '登录' : '注册'}</h1>
+            <h1 id="login-modal-title" className="login-title">{isLogin ? '登录' : '注册'}</h1>
             <p className="login-subtitle">
               {isLogin ? '欢迎回到 Nexus' : '创建您的 Nexus 账户'}
             </p>
@@ -484,15 +479,19 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
           <div className="login-footer">
             <button
               className="login-switch-button"
-              onClick={() => setIsLogin(!isLogin)}
+              type="button"
+              onClick={() => {
+                setIsLogin(!isLogin);
+              }}
             >
               {isLogin ? '还没有账户？立即注册' : '已有账户？立即登录'}
             </button>
           </div>
-        </div>
       </div>
     </div>
   );
+
+  return createPortal(modalTree, document.body);
 };
 
 export default LoginModal;

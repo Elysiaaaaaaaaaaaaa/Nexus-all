@@ -11,7 +11,7 @@ import { devBypassRateLimit, devBypassAuth } from '../utils/devMode';
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { setUserId, setUserInfo, isAuthenticated } = useApp();
+  const { setUserId, setUserInfo, safeIsAuthenticated } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,12 +27,12 @@ const Login = () => {
 
   // 如果已登录，重定向到首页（开发模式可绕过）
   useEffect(() => {
-    if (isAuthenticated && !devBypassAuth()) {
+    if (safeIsAuthenticated && !devBypassAuth()) {
       const redirect = searchParams.get('redirect');
       const safeRedirect = redirect ? validateRedirectPath(redirect) : null;
       navigate(safeRedirect || '/', { replace: true });
     }
-  }, [isAuthenticated, navigate, searchParams]);
+  }, [safeIsAuthenticated, navigate, searchParams]);
 
   // 检查锁定状态
   useEffect(() => {

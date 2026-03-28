@@ -40,20 +40,20 @@ export const getAuthToken = () => {
  * @param {Object} params - 请求参数
  * @param {string} params.project_name - 项目名称
  * @param {string} params.user_input - 用户输入
- * @param {string} params.user_id - 用户ID（可选，默认从localStorage获取）
  * @param {string} params.mode - 运行模式，默认'production'（生产模式），可选'test'（测试模式）
  * @param {number} params.video_duration - 视频时长（秒，可选）
- * @param {number[]} params.modify_nums - 修改编号列表（可选）
+ * @param {number[]} params.modify_nums - 修改编号列表（可选，对应后端 modify_num）
+ * @param {string} [params.workflow_type] - text2video | image2video，默认 text2video
  * @returns {Promise<Object>} 响应数据
  */
 export const work = async (params) => {
   const {
     project_name,
     user_input,
-    user_id = getUserId(),
     mode = 'production',
     video_duration,
     modify_nums = [],
+    workflow_type = 'text2video',
   } = params;
 
   // 输入验证
@@ -106,13 +106,23 @@ export const work = async (params) => {
     });
   }
 
+  if (!['text2video', 'image2video'].includes(workflow_type)) {
+    throw new AppError({
+      message: 'workflow_type 必须是 text2video 或 image2video',
+      code: 400,
+      isSystemError: false,
+    });
+  }
+
+  const filteredModify = modify_nums.filter((n) => typeof n === 'number' && n > 0);
+
   return http.post('/api/v1/work', {
     project_name: sanitizedProjectName,
     user_input: sanitizedInput,
-    user_id,
     mode,
+    workflow_type,
     ...(video_duration !== undefined && { video_duration }),
-    ...(modify_nums.length > 0 && { modify_nums: modify_nums.filter(n => typeof n === 'number' && n >= 0) }),
+    ...(filteredModify.length > 0 && { modify_num: filteredModify }),
   });
 };
 
@@ -295,7 +305,8 @@ export const healthCheck = async () => {
 
 /** 与 http.js 一致的后端根地址，用于拼接上传返回的相对路径 */
 const getApiBaseUrl = () =>
-  import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? '' : 'http://localhost:8003');
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? '' : 'http://101.200.1.56');
 
 /**
  * 将上传接口返回的相对路径转为可访问 URL
@@ -382,7 +393,7 @@ export const uploadImage = async (params) => {
 };
 
 /**
- * 右侧「任务与素材 / 实时执行」面板数据（预置接口，待后端实现）
+ * 右侧「任务与素材 / 实时执行」面板数据
  * POST /api/v1/interaction/panel
  * @param {Object} params
  * @param {string} params.project_name - 项目名称

@@ -20,14 +20,14 @@ export function setupCSP() {
     // 创建新的 CSP meta 标签
     const cspMeta = document.createElement('meta');
     cspMeta.httpEquiv = 'Content-Security-Policy';
+    // 注意：frame-ancestors 仅 HTTP 响应头有效，写在 meta 里浏览器会报警且无作用
     cspMeta.content = [
       "default-src 'self'",
       "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // 开发环境需要
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      "connect-src 'self' http://localhost:* https://*", // API 连接
-      "frame-ancestors 'none'", // 防止点击劫持
+      "connect-src 'self' http://localhost:* http://127.0.0.1:* http://101.200.1.56:* https://* ws://localhost:* wss://localhost:*",
       "base-uri 'self'",
       "form-action 'self'",
     ].join('; ');
@@ -47,14 +47,7 @@ export function setupCSP() {
  */
 export function setupSecurityHeaders() {
   useEffect(() => {
-    // 设置 X-Frame-Options（防止点击劫持）
-    const frameOptions = document.querySelector('meta[http-equiv="X-Frame-Options"]');
-    if (!frameOptions) {
-      const meta = document.createElement('meta');
-      meta.httpEquiv = 'X-Frame-Options';
-      meta.content = 'DENY';
-      document.head.appendChild(meta);
-    }
+    // X-Frame-Options 仅 HTTP 响应头有效，meta 无效且控制台会报警
 
     // 设置 X-Content-Type-Options（防止 MIME 类型嗅探）
     const contentTypeOptions = document.querySelector('meta[http-equiv="X-Content-Type-Options"]');
@@ -98,8 +91,7 @@ export function SecurityProvider({ children }) {
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' http://localhost:* https://*", // API 连接
-      "frame-ancestors 'none'", // 防止点击劫持
+      "connect-src 'self' http://localhost:* http://127.0.0.1:* http://101.200.1.56:* https://* ws://localhost:* wss://localhost:*",
       "base-uri 'self'",
       "form-action 'self'",
     ].join('; ');
@@ -113,17 +105,8 @@ export function SecurityProvider({ children }) {
     };
   }, []);
 
-  // 设置安全响应头
+  // 设置安全响应头（仅对 meta 中有效的项）
   useEffect(() => {
-    // 设置 X-Frame-Options（防止点击劫持）
-    const frameOptions = document.querySelector('meta[http-equiv="X-Frame-Options"]');
-    if (!frameOptions) {
-      const meta = document.createElement('meta');
-      meta.httpEquiv = 'X-Frame-Options';
-      meta.content = 'DENY';
-      document.head.appendChild(meta);
-    }
-
     // 设置 X-Content-Type-Options（防止 MIME 类型嗅探）
     const contentTypeOptions = document.querySelector('meta[http-equiv="X-Content-Type-Options"]');
     if (!contentTypeOptions) {

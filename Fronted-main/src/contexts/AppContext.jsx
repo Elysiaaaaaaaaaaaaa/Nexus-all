@@ -3,6 +3,15 @@ import { messages } from '../i18n/messages';
 
 const AppContext = createContext();
 
+function readAuthTokenTrimmed() {
+  try {
+    const t = localStorage.getItem('auth_token');
+    return t && String(t).trim() !== '' ? String(t).trim() : '';
+  } catch {
+    return '';
+  }
+}
+
 // eslint-disable-next-line react-refresh/only-export-components
 export const useApp = () => {
   const context = useContext(AppContext);
@@ -29,8 +38,30 @@ export const AppProvider = ({ children }) => {
   });
 
   const [userInfo, setUserInfo] = useState(() => {
+    const token = readAuthTokenTrimmed();
     const saved = localStorage.getItem('app-user-info');
-    return saved ? JSON.parse(saved) : null;
+    // 无 token 时不应展示「已登录」资料；顺带清掉上次登录残留的 app-user-info（匿名场景本来就不会写该键）
+    if (!token) {
+      if (saved) {
+        try {
+          localStorage.removeItem('app-user-info');
+        } catch {
+          /* ignore */
+        }
+      }
+      return null;
+    }
+    if (!saved) return null;
+    try {
+      return JSON.parse(saved);
+    } catch {
+      try {
+        localStorage.removeItem('app-user-info');
+      } catch {
+        /* ignore */
+      }
+      return null;
+    }
   });
 
   const updateUserId = (newUserId) => {
@@ -42,11 +73,28 @@ export const AppProvider = ({ children }) => {
 
   const updateUserInfo = (info) => {
     setUserInfo(info);
+    if (info == null) {
+      localStorage.removeItem('app-user-info');
+      return;
+    }
     localStorage.setItem('app-user-info', JSON.stringify(info));
   };
 
-  // 检查用户是否已登录
+  // 登录态：历史写法 userId && userInfo 在 JS 中会得到 userInfo 对象而非 boolean，易导致判断/日志困惑
   const isAuthenticated = userId && userInfo;
+  const hasProfile =
+    typeof userInfo === 'object' &&
+    userInfo != null &&
+    ((typeof userInfo.username === 'string' && userInfo.username.trim() !== '') ||
+      (typeof userInfo.email === 'string' && userInfo.email.trim() !== ''));
+  // 必须同时有 access token，否则仅 localStorage 里残留的用户资料也会被判成「已登录」
+  const hasValidToken = readAuthTokenTrimmed() !== '';
+  const safeIsAuthenticated = Boolean(
+    hasValidToken &&
+    userId &&
+    String(userId).trim() !== '' &&
+    hasProfile
+  );
 
   // 登出函数
   const logout = () => {
@@ -113,6 +161,7 @@ export const AppProvider = ({ children }) => {
       userInfo,
       setUserInfo: updateUserInfo,
       isAuthenticated,
+      safeIsAuthenticated,
       logout,
       t
     }}>

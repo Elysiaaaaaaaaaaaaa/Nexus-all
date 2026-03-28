@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5174,
+    port: 5173,
     // 减少监听范围：android / dist / 压缩包 文件极多，会明显拖慢 Windows 下 dev/HMR
     watch: {
       ignored: [
@@ -17,7 +17,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:8003',
+        target: 'http://101.200.1.56',
         changeOrigin: true,
         secure: false,
       },
