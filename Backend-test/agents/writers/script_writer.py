@@ -1,6 +1,4 @@
-'''
-脚本创作智能体，负责创作图生视频部分的提示词
-'''
+'''脚本创作智能体，负责创作图生视频部分的提示词'''
 import os
 from openai import OpenAI
 from langchain.prompts import PromptTemplate
@@ -8,6 +6,7 @@ from base import upload_image,image_to_base64
 import re
 import json
 from base import extract_last_frame
+from api_config import API_CONFIG
 
 
 positive_script_example = '''
@@ -114,8 +113,8 @@ def safe_parse_llm_json(raw_str):
 
 client = OpenAI(
     # 若没有配置环境变量，请用百炼API Key将下行替换为：api_key="sk-xxx"
-    api_key="sk-8c9152365e554289834e30d12885ec03",
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    api_key=API_CONFIG["openai_api_key"],
+    base_url=API_CONFIG["base_url"],
 )
 
 class ScriptWriter:

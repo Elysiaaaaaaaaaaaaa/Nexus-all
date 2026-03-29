@@ -5,10 +5,11 @@ from base import upload_image,image_to_base64
 import base64
 from io import BytesIO
 from PIL import Image
+from api_config import API_CONFIG
 
 client = OpenAI(
-    api_key="sk-8c9152365e554289834e30d12885ec03",
-    base_url="https://dashscope.aliyuncs.com/compatible-mode/v1",
+    api_key=API_CONFIG["openai_api_key"],
+    base_url=API_CONFIG["base_url"],
 )
 
 describer_prompt = '''

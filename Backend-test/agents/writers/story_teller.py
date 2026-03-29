@@ -12,6 +12,7 @@ from langchain_core.prompts import PromptTemplate
 import json
 import re
 from base import CONTEXT_CACHE_TIME
+from api_config import API_CONFIG
 # screen_example = '''
 # {"positive": "主体场景：温馨二次元咖啡厅前台，暖黄色吊灯悬在头顶，前台摆放着马卡龙色菜单牌、插着洋甘菊的陶瓷小花瓶，背景货架上摆满包装精致的罐装咖啡豆和可爱杯具，玻璃柜里陈列着各式裱花蛋糕。色彩：暖粉黄柔色调，整体色调柔和温暖。光线：暖黄色吊灯散发的柔和光线为主，营造温馨氛围。氛围：温馨、治愈，充满柔和的生活感。关键元素：[优先级1]站在柜台后双手捧菜单递向镜头的森娅露露卡、[优先级2]前台区域的马卡龙色菜单牌与陶瓷小花瓶、[优先级3]背景的咖啡豆货架与蛋糕玻璃柜、[优先级4]头顶的暖黄色吊灯、[优先级5]浅粉黄的温馨空间。人物特征：森娅露露卡是金发女性，头发带有紫色和粉色渐变，头戴黑色猫耳装饰，身着黑色和紫色相间带金色边饰、粉色蕾丝细节的华丽服饰，服饰带有紫色宝石吊坠，紫金配色女仆围裙系带在身后打成蝴蝶结，流萤色长发用浅紫发带束起，眼睛弯成月牙，嘴角带着温柔笑意，脸颊有浅粉色红晕。空间关系：森娅露露卡位于画面中心区域，占据画面30%，正对着镜头递出菜单；前台占据画面下半部分40%，背景货架与玻璃柜占据画面上半部分后方区域；暖黄色吊灯位于画面顶部中央，占据画面5%；画面边缘带有轻微柔光效果，第一人称视角呈现。","negative": "避免无关人物、多余肢体、避免冷色调、刺眼的强光、人物表情生硬、画面边缘无柔光、出现与温馨咖啡厅无关的元素、人物服饰细节错误"}
 # '''
@@ -110,7 +111,7 @@ story_board_modify_prompt = PromptTemplate.from_template(f'''
 # 初始化Ark客户端
 client = Ark(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
-    api_key='c96dbd1f-aeab-461c-90d6-8096b0baeecd',
+    api_key=API_CONFIG["ark_api_key"],
 )
 
 def safe_parse_llm_json(raw_str):

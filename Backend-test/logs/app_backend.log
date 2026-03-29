@@ -2972,3 +2972,40 @@ FileNotFoundError: [Errno 2] No such file or directory: './user_files/1/projects
 2026-03-29 15:38:51+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-03-29 15:38:51+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-03-29 15:38:51+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:26:41+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:26:41+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:26:41+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:26:41+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:26:41+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:26:41+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-29 19:26:51+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:26:51+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:26:51+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:26:51+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:26:51+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:26:51+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:26:51+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:26:51+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:26:51+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:26:51+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:30:11+0800 | ERROR | app.backend | Error in /api/v1/work: Image2VideoWorkflow.handle_user_input() takes 3 positional arguments but 4 were given
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 365, in work
+    result_state = await orchestrator.handle_user_input(
+TypeError: Image2VideoWorkflow.handle_user_input() takes 3 positional arguments but 4 were given
+2026-03-29 19:33:52+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:33:52+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:33:52+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:33:52+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:33:52+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:33:52+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-29 19:34:09+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:34:09+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:34:09+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:34:09+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:34:09+0800 | INFO | app.backend | Initializing database...
+2026-03-29 19:34:09+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 19:34:09+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 19:34:09+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 19:34:09+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 19:34:09+0800 | INFO | app.backend | Initializing database...

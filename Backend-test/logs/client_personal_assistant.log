@@ -195,3 +195,5 @@
 2026-03-19 20:30:46+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-d1bbb703-f6a1-4bb3-b473-0d086a3c7618 project=上床睡觉 screen_id=1
 2026-03-19 20:33:36+0800 | INFO | client.personal_assistant | event=storyboard_generate mode=i2i session_id=session-d1bbb703-f6a1-4bb3-b473-0d086a3c7618 project=上床睡觉 screen_id=2
 2026-03-29 17:30:09+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-73449704-20c2-43a9-a8f5-5e47cc48021d user=czx
+2026-03-29 19:30:10+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fbbc0655-ff7e-45af-a762-74c53be5bf44 user=11
+2026-03-29 19:34:35+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-579e05d0-96d9-4e6e-a020-97a178dc12b7 user=11
