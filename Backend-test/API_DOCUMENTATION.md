@@ -101,7 +101,7 @@
   "user_input": "string",
   "mode": "string",
   "video_duration": "integer",
-  "modify_num": [],
+  "modify_num": [1, 2],
   "workflow_type": "string"
 }
 ```
@@ -127,7 +127,7 @@
       "screen": null
     },
     "modify_nums": [],
-    "have_modify": "int",
+    "have_modify": 0,
     "video_generating": 0,
     "message_count": 0,
     "now_task": "string",
@@ -246,7 +246,7 @@
 - **请求体**: `multipart/form-data` 格式
 - **参数**:
   - `project_name`: 项目名称
-  - `file`: 图片文件
+  - `file`: 图片文件（支持格式：jpeg, jpg, png, gif, webp；最大大小：10MB）
   - `figure_name`: 图像名称（可选）
 
 **响应**:
@@ -309,7 +309,7 @@
 - **路径**: `/api/user/avatar`
 - **请求体**: `multipart/form-data` 格式
 - **参数**:
-  - `avatar`: 头像文件
+  - `avatar`: 头像文件（支持格式：jpeg, jpg, png, gif, webp；最大大小：5MB）
   - `user_id`: 用户ID（可选）
 
 **响应**:
@@ -350,6 +350,12 @@
 ```
 
 ## 5. 版本历史
+
+- **1.0.1** (更新版本)
+  - 修正了 `have_modify` 字段类型（从字符串改为数字）
+  - 为 `modify_num` 字段添加了示例值
+  - 添加了文件类型和大小限制的说明
+  - 优化了错误处理和响应格式
 
 - **1.0.0** (初始版本)
   - 实现了所有API端点

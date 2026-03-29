@@ -3009,3 +3009,19 @@ TypeError: Image2VideoWorkflow.handle_user_input() takes 3 positional arguments 
 2026-03-29 19:34:09+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-03-29 19:34:09+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-03-29 19:34:09+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:12:27+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:12:27+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:12:27+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:12:27+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:12:27+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:12:27+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-29 20:12:37+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:12:37+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:12:37+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:12:37+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:12:37+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:12:37+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:12:37+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:12:37+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:12:37+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:12:37+0800 | INFO | app.backend | Initializing database...
