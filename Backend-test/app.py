@@ -571,7 +571,8 @@ async def get_project_history(request: ProjectHistoryRequest, current_user: Dict
         return {
             "success": True,
             "chat_history": chat_history,
-            "session_data": session_data
+            "session_data": session_data,
+            "session_id": session_id,
         }
     except Exception as e:
         logger.error(f"Error in /api/v1/work: {e}", exc_info=True)

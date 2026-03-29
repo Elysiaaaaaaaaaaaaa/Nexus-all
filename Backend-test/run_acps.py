@@ -883,9 +883,11 @@ class Image2VideoWorkflow:
         builder.add_node("script",self.script_node)
         builder.add_node("animator",self.animator_node)
         builder.set_entry_point("route_task")
-        builder.add_edge("imagination",END)
+        builder.add_edge("imagination", END)
+        # confirm_state 在「未识别输入」时返回带 reply 的 state，需能结束本次图执行
+        builder.add_edge("confirm_state", END)
         return builder.compile()
-    
+
     def route_task(self,state:ChatGraphState):
         session_id = state["session_id"]
         session_data = state["session_data"]
@@ -967,7 +969,13 @@ class Image2VideoWorkflow:
                 else:
                     state['session_data']['now_task'] = 'figure_design'
             return Command(update = {'session_data':state['session_data']},goto = state['session_data']['now_task'])
-        
+        # modify_confirm 下仅识别「需要修改」「不需要」；其它输入（如「科幻」）原先无 return，导致 reply 为空
+        state['reply'] = AssistantReply(
+            '当前步骤需要先确认上一步的生成结果：请回复「需要修改」或「不需要」。'
+            '若满意并进入下一阶段，请点击「确认」按钮。'
+        )
+        return state
+
     def imagination_node(self,state:ChatGraphState)->ChatGraphState:
         '''
             创作第一阶段，与助手对话，构建细化视频制作idea
@@ -989,7 +997,7 @@ class Image2VideoWorkflow:
         state['session_data']['last_id']['assistant'] = last_id
         if now_task == "imagination":
             state['session_data']['material']['idea'] = idea
-            state['reply'] = AssistantReply(ans)
+        state['reply'] = AssistantReply(ans)
         return state
 
     def outline_node(self,state:ChatGraphState)->ChatGraphState:

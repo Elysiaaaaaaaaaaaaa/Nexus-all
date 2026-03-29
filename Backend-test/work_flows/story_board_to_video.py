@@ -215,9 +215,38 @@ class Image2VideoWorkflow:
         builder.add_node("script",self.script_node)
         builder.add_node("animator",self.animator_node)
         builder.set_entry_point("route_task")
-        builder.add_edge("imagination",END)
+        builder.add_edge("imagination", END)
+        # confirm_state / confirm_task 在返回带 reply 的 state（非 Command）时需结束图
+        builder.add_edge("confirm_state", END)
+        builder.add_edge("confirm_task", END)
         return builder.compile()
-    
+
+    def _advance_after_no_modify(self, session_data: Dict[str, Any]) -> None:
+        """与 confirm_state「不需要」相同逻辑：原地推进 now_task（流水线下一阶段）。"""
+        now_task = session_data["now_task"]
+        if now_task == "outline":
+            session_data["now_task"] = "figure_design"
+        if now_task == "figure_design":
+            session_data["now_task"] = "background_prompting"
+        if now_task == "background_prompting":
+            session_data["now_task"] = "background_painting"
+        if now_task == "background_painting":
+            if session_data["background_generating"] >= len(session_data["material"]["outline"]):
+                session_data["now_task"] = "figure_prompting"
+            else:
+                session_data["now_task"] = "background_prompting"
+                session_data["background_generating"] += 1
+        if now_task == "figure_prompting":
+            session_data["now_task"] = "story_board"
+        if now_task == "story_board":
+            if session_data["story_board_generating"] >= len(session_data["material"]["outline"]):
+                session_data["now_task"] = "script"
+            else:
+                session_data["now_task"] = "story_board"
+                session_data["story_board_generating"] += 1
+        if now_task == "script":
+            session_data["now_task"] = "animator"
+
     def route_task(self,state:ChatGraphState):
         session_id = state["session_id"]
         session_data = state["session_data"]
@@ -245,7 +274,19 @@ class Image2VideoWorkflow:
             state['session_data']['now_task'] = 'outline'
             state['session_data']['now_state'] = 'create'
             return Command(update = {'session_data':state['session_data']},goto = 'outline')
-    
+        # 图生视频：除「想象」阶段外，用户在 modify_confirm 下点击「确认」应与「不需要」一样推进流水线
+        if now_state == 'modify_confirm':
+            state['session_data']['now_state'] = 'create'
+            self._advance_after_no_modify(state['session_data'])
+            return Command(
+                update={'session_data': state['session_data']},
+                goto=state['session_data']['now_task'],
+            )
+        state['reply'] = AssistantReply(
+            '当前状态无法完成「确认」，请回复「需要修改」或「不需要」，或从创作步骤继续。'
+        )
+        return state
+
     def confirm_state(self,state:ChatGraphState):
         session_id = state["session_id"]
         session_data = state["session_data"]
@@ -258,32 +299,18 @@ class Image2VideoWorkflow:
             return Command(update = {'session_data':state['session_data']},goto = now_task)
         if user_text == '不需要':
             state['session_data']['now_state'] = 'create'
-            ##路由至下一个任务
-            if now_task == 'outline':
-                state['session_data']['now_task'] = 'figure_design'
-            if now_task == 'figure_design':
-                state['session_data']['now_task'] = 'background_prompting'
-            if now_task == 'background_prompting':
-                state['session_data']['now_task'] = 'background_painting'
-            if now_task == 'background_painting':
-                if session_data['background_generating']>=len(session_data['material']['outline']):
-                    state['session_data']['now_task'] = 'figure_prompting'
-                else:
-                    state['session_data']['now_task'] = 'background_prompting'
-                    state['session_data']['background_generating'] += 1
-            if now_task == 'figure_prompting':
-                state['session_data']['now_task'] = 'story_board'
-            if now_task == 'story_board':
-                if session_data['story_board_generating']>=len(session_data['material']['outline']):
-                    state['session_data']['now_task'] = 'script'
-                else:
-                    state['session_data']['now_task'] = 'story_board'
-                    state['session_data']['story_board_generating'] += 1
-            if now_task == 'script':
-                state['session_data']['now_task'] = 'animator'
-            return Command(update = {'session_data':state['session_data']},goto = state['session_data']['now_task'])
-        
-        
+            self._advance_after_no_modify(state['session_data'])
+            return Command(
+                update={'session_data': state['session_data']},
+                goto=state['session_data']['now_task'],
+            )
+        # now_state == modify_confirm 但用户未回复「需要修改/不需要」（例如输入了「科幻」）
+        state['reply'] = AssistantReply(
+            '当前步骤需要先确认上一步的生成结果：请回复「需要修改」或「不需要」。'
+            '若满意并进入下一阶段，请点击「确认」按钮。'
+        )
+        return state
+
     def imagination_node(self,state:ChatGraphState)->ChatGraphState:
         '''
             创作第一阶段，与助手对话，构建细化视频制作idea
