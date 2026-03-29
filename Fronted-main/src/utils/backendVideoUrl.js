@@ -113,16 +113,30 @@ export function extractVideoPathsFromMaterial(material) {
 }
 
 /**
- * 从 session_data 收集：顶层 material、以及 material 数组/对象内的 video_address
+ * 从 session_data 收集：从 session_data.material.video_address 的最后一个元素中提取视频地址
  * @param {unknown} sessionData
  * @returns {string[]}
  */
 export function extractVideoPathsFromSessionData(sessionData) {
   if (!sessionData || typeof sessionData !== 'object') return [];
   const raw = [];
-  pushVideoAddressFromObject(sessionData, raw);
-  const m = sessionData.material;
-  raw.push(...extractVideoPathsFromMaterial(m));
+  
+  // 从 session_data.material.video_address 中提取最后一个元素
+  const material = sessionData.material;
+  if (material && typeof material === 'object') {
+    const videoAddress = material.video_address;
+    if (Array.isArray(videoAddress) && videoAddress.length > 0) {
+      // 取数组最后一个元素
+      const lastVideo = videoAddress[videoAddress.length - 1];
+      if (lastVideo != null && String(lastVideo).trim() !== '') {
+        raw.push(String(lastVideo).trim());
+      }
+    } else if (typeof videoAddress === 'string' && videoAddress.trim() !== '') {
+      // 如果是字符串直接使用
+      raw.push(videoAddress.trim());
+    }
+  }
+  
   return [...new Set(raw)];
 }
 

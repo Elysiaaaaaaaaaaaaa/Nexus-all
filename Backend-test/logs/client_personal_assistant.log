@@ -205,3 +205,63 @@
 2026-03-29 20:15:20+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-d5e4e84b-7a45-4f1d-9a2f-61ae0b4ae02a user=11
 2026-03-29 20:15:22+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-d5e4e84b-7a45-4f1d-9a2f-61ae0b4ae02a user=11
 2026-03-29 20:16:54+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-d5e4e84b-7a45-4f1d-9a2f-61ae0b4ae02a stage=animator next_state=pending video_generating=1 screen_count=2
+2026-03-29 20:30:36+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:30:58+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:31:17+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae stage=outline next_task=screen next_state=pending
+2026-03-29 20:31:21+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:32:32+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae stage=screen next_state=modify_comfirm
+2026-03-29 20:32:35+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:32:37+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:33:22+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae user=11
+2026-03-29 20:34:52+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-324df297-9fff-427c-b8a1-f99cc0f875ae stage=animator next_state=pending video_generating=1 screen_count=5
+2026-03-29 20:43:52+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 user=11
+2026-03-29 20:44:09+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 user=11
+2026-03-29 20:44:14+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 stage=outline next_task=screen next_state=pending
+2026-03-29 20:44:35+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 user=11
+2026-03-29 20:44:47+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 stage=screen next_state=modify_comfirm
+2026-03-29 20:44:55+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 user=11
+2026-03-29 20:44:56+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 user=11
+2026-03-29 20:46:20+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-8ab3897b-accc-4794-9bef-5d438c4fc6d0 stage=animator next_state=pending video_generating=1 screen_count=1
+2026-03-29 21:03:49+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 user=11
+2026-03-29 21:04:06+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 user=11
+2026-03-29 21:04:25+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 stage=outline next_task=screen next_state=pending
+2026-03-29 21:04:28+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 user=11
+2026-03-29 21:05:00+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 stage=screen next_state=modify_comfirm
+2026-03-29 21:05:02+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 user=11
+2026-03-29 21:05:05+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 user=11
+2026-03-29 21:06:37+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-bf770eb3-2f4e-47b2-8d3a-321a1d549e23 stage=animator next_state=pending video_generating=1 screen_count=5
+2026-03-29 21:10:01+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:10:19+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:10:27+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:10:49+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 stage=outline next_task=screen next_state=pending
+2026-03-29 21:11:10+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:12:47+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 stage=screen next_state=modify_comfirm
+2026-03-29 21:12:53+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:12:56+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 user=11
+2026-03-29 21:14:26+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-ff41c70a-059c-40a5-8371-2c483c9fd374 stage=animator next_state=pending video_generating=1 screen_count=6
+2026-03-29 21:42:33+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:43:07+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:43:12+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 stage=outline next_task=screen next_state=pending
+2026-03-29 21:43:14+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:43:28+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 stage=screen next_state=modify_comfirm
+2026-03-29 21:43:55+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:44:24+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:45:55+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 stage=animator next_state=pending video_generating=1 screen_count=1
+2026-03-29 21:50:01+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-fef95605-b838-46fb-aaa7-82051daf2c82 user=11
+2026-03-29 21:50:42+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 user=11
+2026-03-29 21:51:15+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 user=11
+2026-03-29 21:51:34+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 stage=outline next_task=screen next_state=pending
+2026-03-29 21:51:36+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 user=11
+2026-03-29 21:52:38+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 stage=screen next_state=modify_comfirm
+2026-03-29 21:52:41+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 user=11
+2026-03-29 21:52:46+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 user=11
+2026-03-29 21:54:14+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-b7b7bd58-fd19-4a22-8980-418704a80838 stage=animator next_state=pending video_generating=1 screen_count=5
+2026-03-29 22:13:43+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:13:53+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:14:03+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:14:19+0800 | INFO | client.personal_assistant | event=auto_advance session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 stage=outline next_task=screen next_state=pending
+2026-03-29 22:14:27+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:15:40+0800 | INFO | client.personal_assistant | event=await_modify session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 stage=screen next_state=modify_comfirm
+2026-03-29 22:15:42+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:15:56+0800 | INFO | client.personal_assistant | event=cli_start session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 user=11
+2026-03-29 22:17:22+0800 | INFO | client.personal_assistant | event=await_next_video session_id=session-213d5d9c-e80a-4615-84ba-c20dbe6882c1 stage=animator next_state=pending video_generating=1 screen_count=5

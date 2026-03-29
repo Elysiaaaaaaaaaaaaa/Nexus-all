@@ -3025,3 +3025,141 @@ TypeError: Image2VideoWorkflow.handle_user_input() takes 3 positional arguments 
 2026-03-29 20:12:37+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
 2026-03-29 20:12:37+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
 2026-03-29 20:12:37+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:23:30+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:23:30+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:23:30+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:23:30+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:23:30+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:23:30+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-29 20:23:40+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:23:40+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:23:40+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:23:40+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:23:40+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:23:40+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 20:23:40+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 20:23:40+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 20:23:40+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 20:23:40+0800 | INFO | app.backend | Initializing database...
+2026-03-29 20:24:19+0800 | INFO | app.backend | Image uploaded: D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files\11\projects\图生视频_1774787052255\photos\photos.png (size: 31688 bytes)
+2026-03-29 20:32:39+0800 | ERROR | app.backend | Error in /api/v1/work: Invalid task, task create failed: {"status_code": 400, "request_id": "fa3a4253-d1fe-482a-9a52-cc5f8970843c", "code": "Arrearage", "message": "Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment", "output": null, "usage": null}
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 366, in work
+    result_state = await orchestrator.handle_user_input(
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 623, in handle_user_input
+    result_state = await self._graph.ainvoke(graph_state)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 3112, in ainvoke
+    async for chunk in self.astream(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 2939, in astream
+    async for _ in runner.atick(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_runner.py", line 295, in atick
+    await arun_with_retry(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 710, in ainvoke
+    input = await step.ainvoke(input, config, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 474, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 616, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+  File "D:\conda_envs\my_agent_homework\lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 607, in wrapper
+    return func(*args, **kwargs)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 553, in assistant_node
+    agentans = self.fun_call_agent(state)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 399, in fun_call_agent
+    video = self.animator.call(session_data)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\agents\animators\animator_qwen_t2v.py", line 21, in call
+    self.video_url.append(self.get_video_url(prompt))
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\agents\animators\animator_qwen_t2v.py", line 42, in get_video_url
+    rsp = VideoSynthesis.call(model='wan2.5-t2v-preview',
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\dashscope\aigc\video_synthesis.py", line 78, in call
+    return super().call(model,
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\dashscope\client\base_api.py", line 511, in call
+    response = cls.wait(task_response,
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\dashscope\aigc\video_synthesis.py", line 281, in wait
+    response = super().wait(task, api_key, workspace=workspace)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\dashscope\client\base_api.py", line 671, in wait
+    task_id = cls._get_task_id(task)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\dashscope\client\base_api.py", line 524, in _get_task_id
+    raise InvalidTask('Invalid task, task create failed: %s' %
+dashscope.common.error.InvalidTask: Invalid task, task create failed: {"status_code": 400, "request_id": "fa3a4253-d1fe-482a-9a52-cc5f8970843c", "code": "Arrearage", "message": "Access denied, please make sure your account is in good standing. For details, see: https://help.aliyun.com/zh/model-studio/error-code#overdue-payment", "output": null, "usage": null}
+2026-03-29 21:02:36+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 21:02:36+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 21:02:36+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 21:02:36+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 21:02:36+0800 | INFO | app.backend | Initializing database...
+2026-03-29 21:02:36+0800 | INFO | app.backend | Starting backend server on 0.0.0.0:8003 (reload=True)
+2026-03-29 21:02:45+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 21:02:45+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 21:02:45+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 21:02:45+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 21:02:45+0800 | INFO | app.backend | Initializing database...
+2026-03-29 21:02:45+0800 | INFO | app.backend | Backend application logger initialized
+2026-03-29 21:02:45+0800 | INFO | app.backend | 视频静态服务已启用: /videos -> D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\user_files
+2026-03-29 21:02:45+0800 | WARNING | app.backend | Placeholder video exists but is very small (44 bytes).
+2026-03-29 21:02:45+0800 | WARNING | app.backend |   Consider replacing it with a real video file.
+2026-03-29 21:02:45+0800 | INFO | app.backend | Initializing database...
+2026-03-29 21:50:01+0800 | ERROR | app.backend | Error in /api/v1/work: list index out of range
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 366, in work
+    result_state = await orchestrator.handle_user_input(
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 623, in handle_user_input
+    result_state = await self._graph.ainvoke(graph_state)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 3112, in ainvoke
+    async for chunk in self.astream(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 2939, in astream
+    async for _ in runner.atick(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_runner.py", line 295, in atick
+    await arun_with_retry(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 710, in ainvoke
+    input = await step.ainvoke(input, config, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 474, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 616, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+  File "D:\conda_envs\my_agent_homework\lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 607, in wrapper
+    return func(*args, **kwargs)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 553, in assistant_node
+    agentans = self.fun_call_agent(state)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 399, in fun_call_agent
+    video = self.animator.call(session_data)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\agents\animators\animator_qwen_t2v.py", line 20, in call
+    prompt = session_data['material']['screen'][screen_id]
+IndexError: list index out of range
+2026-03-29 22:13:43+0800 | ERROR | app.backend | Error in /api/v1/work: can only join an iterable
+Traceback (most recent call last):
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\app.py", line 366, in work
+    result_state = await orchestrator.handle_user_input(
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 623, in handle_user_input
+    result_state = await self._graph.ainvoke(graph_state)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 3112, in ainvoke
+    async for chunk in self.astream(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\main.py", line 2939, in astream
+    async for _ in runner.atick(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_runner.py", line 295, in atick
+    await arun_with_retry(
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\pregel\_retry.py", line 137, in arun_with_retry
+    return await task.proc.ainvoke(task.input, config)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 710, in ainvoke
+    input = await step.ainvoke(input, config, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langgraph\_internal\_runnable.py", line 474, in ainvoke
+    ret = await self.afunc(*args, **kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 616, in run_in_executor
+    return await asyncio.get_running_loop().run_in_executor(
+  File "D:\conda_envs\my_agent_homework\lib\concurrent\futures\thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\conda_envs\my_agent_homework\lib\site-packages\langchain_core\runnables\config.py", line 607, in wrapper
+    return func(*args, **kwargs)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 553, in assistant_node
+    agentans = self.fun_call_agent(state)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\run_acps.py", line 391, in fun_call_agent
+    res, last_id = self.outline_writer.call(session_data)
+  File "D:\我太想进步了\软件创新大赛\2\deploy\Backend-test\agents\writers\outline_writer.py", line 126, in call
+    message  = ''.join(session_data['material']['idea'])
+TypeError: can only join an iterable

@@ -2,6 +2,19 @@ import React, { useCallback, useState } from 'react';
 import './SessionVideoPlayers.css';
 
 /**
+ * 处理视频URL，去除域名和端口部分，只保留 /videos/... 路径
+ * @param {string} url - 完整的视频URL
+ * @returns {string} - 处理后的相对路径
+ */
+function processVideoUrl(url) {
+  if (!url) return url;
+  
+  // 匹配并移除 http:// 或 https:// 开头的域名和端口部分
+  const processedUrl = url.replace(/^https?:\/\/[^/]+/, '');
+  return processedUrl;
+}
+
+/**
  * @param {{ urls: string[]; title?: string; emptyHint?: string; variant?: 'dark' | 'light' }} props
  */
 export function SessionVideoPlayers({ urls, title, emptyHint, variant = 'dark' }) {
@@ -22,30 +35,33 @@ export function SessionVideoPlayers({ urls, title, emptyHint, variant = 'dark' }
     >
       {title ? <div className="nx-session-videos-title">{title}</div> : null}
       <div className="nx-session-videos-list">
-        {urls.map((src, i) => (
-          <div key={`${src}-${i}`} className="nx-session-video-item">
-            {broken[i] ? (
-              <p className="nx-session-video-fallback">{emptyHint || '—'}</p>
-            ) : (
-              <video
-                className="nx-session-video"
-                controls
-                playsInline
-                preload="metadata"
-                onError={() => onVideoError(i)}
-              >
-                <source src={src} type="video/mp4" />
-                <source src={src} type="video/webm" />
-                <source src={src} type="video/avi" />
-                <source src={src} type="video/mov" />
-                <source src={src} type="video/wmv" />
-                <source src={src} type="video/flv" />
-                <source src={src} type="video/mkv" />
-                Your browser does not support the video tag.
-              </video>
-            )}
-          </div>
-        ))}
+        {urls.map((src, i) => {
+          const processedSrc = processVideoUrl(src);
+          return (
+            <div key={`${src}-${i}`} className="nx-session-video-item">
+              {broken[i] ? (
+                <p className="nx-session-video-fallback">{emptyHint || '—'}</p>
+              ) : (
+                <video
+                  className="nx-session-video"
+                  controls
+                  playsInline
+                  preload="metadata"
+                  onError={() => onVideoError(i)}
+                >
+                  <source src={processedSrc} type="video/mp4" />
+                  <source src={processedSrc} type="video/webm" />
+                  <source src={processedSrc} type="video/avi" />
+                  <source src={processedSrc} type="video/mov" />
+                  <source src={processedSrc} type="video/wmv" />
+                  <source src={processedSrc} type="video/flv" />
+                  <source src={processedSrc} type="video/mkv" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
