@@ -10,7 +10,13 @@ function processVideoUrl(url) {
   if (!url) return url;
   
   // 匹配并移除 http:// 或 https:// 开头的域名和端口部分
-  const processedUrl = url.replace(/^https?:\/\/[^/]+/, '');
+  let processedUrl = url.replace(/^https?:\/\/[^/]+/, '');
+  
+  // 确保路径以斜杠开头
+  if (!processedUrl.startsWith('/')) {
+    processedUrl = '/' + processedUrl;
+  }
+  
   return processedUrl;
 }
 
