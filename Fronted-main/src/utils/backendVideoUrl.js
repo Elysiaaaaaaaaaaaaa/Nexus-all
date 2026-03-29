@@ -1,11 +1,16 @@
 /**
  * 后端静态视频：FastAPI 同应用挂载 /videos（与 /api 同主机端口）。
- * - 本地 dev：无 VITE_API_BASE_URL 时用相对路径 /videos/…，Vite 代理到 VITE_DEV_PROXY_TARGET 或默认云端。
- * - 打包（Web / Android / Tauri）：与 VITE_API_BASE_URL 同源；可单独设 VITE_VIDEO_ORIGIN（视频与 API 不同机时）。
+ * - 浏览器本地 dev：无 VITE_API_BASE_URL 时用相对路径 /videos/…，Vite 代理。
+ * - Capacitor 本地 dev：必须用绝对源站，否则 /videos 会落到 WebView 伪域导致 404。
+ * - 打包（Web / Android / Tauri）：与 VITE_API_BASE_URL 同源；可单独设 VITE_VIDEO_ORIGIN。
  */
+import { Capacitor } from '@capacitor/core';
+
+/** 与 src/services/http.js DEFAULT_API_ORIGIN 保持一致 */
+const DEFAULT_VIDEO_ORIGIN = 'http://101.200.1.56';
 
 /**
- * @returns {string} 空串表示使用相对路径（走代理）
+ * @returns {string} 空串表示使用相对路径（仅浏览器 dev + Vite 代理）
  */
 function resolveVideoOrigin() {
   const explicit = import.meta.env.VITE_VIDEO_ORIGIN || import.meta.env.VITE_VIDEO_BASE_URL;
@@ -25,10 +30,26 @@ function resolveVideoOrigin() {
     }
   }
   if (import.meta.env.DEV) {
-    return '';
+    let native = false;
+    try {
+      native = Capacitor.isNativePlatform();
+    } catch {
+      native = false;
+    }
+    if (!native) {
+      return '';
+    }
+    const devTarget = import.meta.env.VITE_DEV_PROXY_TARGET || '';
+    if (devTarget) {
+      try {
+        return new URL(devTarget).origin;
+      } catch {
+        /* fallthrough */
+      }
+    }
+    return DEFAULT_VIDEO_ORIGIN;
   }
-  /* 与 http.js 生产默认 API 主机一致；若视频单独端口请配置 VITE_VIDEO_ORIGIN */
-  return 'http://101.200.1.56';
+  return DEFAULT_VIDEO_ORIGIN;
 }
 
 /**
@@ -44,8 +65,18 @@ export function resolveBackendVideoSrc(input) {
   }
 
   let path = s.replace(/\\/g, '/');
-  if (path.startsWith('/videos/')) {
-    // ok
+  while (path.startsWith('./')) {
+    path = path.slice(2);
+  }
+
+  /** 后端常把文件落在 user_files/ 下；静态挂载为 /videos/<相对 user_files 的路径> */
+  const uf = /(?:^|[\\/])user_files\//i;
+  const hit = uf.exec(path);
+  if (hit) {
+    const rest = path.slice(hit.index + hit[0].length).replace(/^\/+/, '');
+    path = `/videos/${rest}`;
+  } else if (path.startsWith('/videos/')) {
+    /* ok */
   } else if (path.toLowerCase().startsWith('videos/')) {
     path = `/${path}`;
   } else if (path.startsWith('/')) {
@@ -53,6 +84,8 @@ export function resolveBackendVideoSrc(input) {
   } else {
     path = `/videos/${path}`;
   }
+
+  path = path.replace(/\/videos\/\/+/g, '/videos/');
 
   const origin = resolveVideoOrigin();
   if (!origin) {
