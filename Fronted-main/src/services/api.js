@@ -6,6 +6,8 @@
 import { http } from './http';
 import { AppError } from '../types/api';
 import { validateProjectName, sanitizeInput } from '../utils/security';
+import { workDebugLog } from '../utils/workDebugLog';
+import { resolveApiBaseUrl } from '../utils/apiBaseUrl';
 
 /**
  * 获取用户ID（从localStorage）
@@ -116,7 +118,17 @@ export const work = async (params) => {
 
   const filteredModify = modify_nums.filter((n) => typeof n === 'number' && n > 0);
 
-  return http.post('/api/v1/work', {
+  workDebugLog('request', {
+    project_name: sanitizedProjectName,
+    user_input_len: sanitizedInput.length,
+    user_input_preview: sanitizedInput.slice(0, 400),
+    mode,
+    workflow_type,
+    modify_num: filteredModify.length > 0 ? filteredModify : undefined,
+    hasAuthToken: !!getAuthToken(),
+  });
+
+  const body = await http.post('/api/v1/work', {
     project_name: sanitizedProjectName,
     user_input: sanitizedInput,
     mode,
@@ -124,6 +136,23 @@ export const work = async (params) => {
     ...(video_duration !== undefined && { video_duration }),
     ...(filteredModify.length > 0 && { modify_num: filteredModify }),
   });
+
+  workDebugLog('response', {
+    keys: body && typeof body === 'object' ? Object.keys(body) : [],
+    success: body?.success,
+    messageLen: typeof body?.message === 'string' ? body.message.length : null,
+    messagePreview:
+      typeof body?.message === 'string' ? body.message.slice(0, 500) : body?.message,
+    session_id: body?.session_id,
+    session_data_keys:
+      body?.session_data && typeof body.session_data === 'object'
+        ? Object.keys(body.session_data)
+        : null,
+    now_state: body?.session_data?.now_state,
+    end_session: body?.end_session,
+  });
+
+  return body;
 };
 
 /**
@@ -302,9 +331,7 @@ export const rootInfo = async () => {
 };
 
 /** 与 http.js 一致的后端根地址，用于拼接上传返回的相对路径 */
-const getApiBaseUrl = () =>
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.DEV ? '' : 'http://101.200.1.56');
+const getApiBaseUrl = () => resolveApiBaseUrl();
 
 /**
  * 将上传接口返回的相对路径转为可访问 URL

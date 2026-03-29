@@ -1,16 +1,11 @@
 /**
  * 后端静态视频：FastAPI 同应用挂载 /videos（与 /api 同主机端口）。
- * - 浏览器本地 dev：无 VITE_API_BASE_URL 时用相对路径 /videos/…，Vite 代理。
- * - Capacitor 本地 dev：必须用绝对源站，否则 /videos 会落到 WebView 伪域导致 404。
- * - 打包（Web / Android / Tauri）：与 VITE_API_BASE_URL 同源；可单独设 VITE_VIDEO_ORIGIN。
+ * 默认与 resolveApiBaseUrl 同源（http://101.200.1.56）；可单独设 VITE_VIDEO_ORIGIN。
  */
-import { Capacitor } from '@capacitor/core';
-
-/** 与 src/services/http.js DEFAULT_API_ORIGIN 保持一致 */
-const DEFAULT_VIDEO_ORIGIN = 'http://101.200.1.56';
+import { resolveApiBaseUrl, DEFAULT_API_ORIGIN } from './apiBaseUrl';
 
 /**
- * @returns {string} 空串表示使用相对路径（仅浏览器 dev + Vite 代理）
+ * @returns {string} 视频源站 origin，默认 101.200.1.56
  */
 function resolveVideoOrigin() {
   const explicit = import.meta.env.VITE_VIDEO_ORIGIN || import.meta.env.VITE_VIDEO_BASE_URL;
@@ -29,12 +24,11 @@ function resolveVideoOrigin() {
       /* fallthrough */
     }
   }
-  // 开发环境使用相对路径，让 Vite 代理处理
-  if (import.meta.env.DEV) {
-    return '';
+  try {
+    return new URL(resolveApiBaseUrl()).origin;
+  } catch {
+    return DEFAULT_API_ORIGIN;
   }
-  // 生产环境使用默认的视频源站
-  return DEFAULT_VIDEO_ORIGIN;
 }
 
 /**
@@ -73,10 +67,45 @@ export function resolveBackendVideoSrc(input) {
   path = path.replace(/\/videos\/\/+/g, '/videos/');
 
   const origin = resolveVideoOrigin();
-  if (!origin) {
-    return path;
-  }
   return `${origin}${path}`;
+}
+
+/**
+ * 同一视频常被重复收集：正文里是 `/videos/...`，session 里是带域名的绝对 URL，
+ * `Set` 按字符串去重会失败，导致两个 `<video>` 播同一文件。
+ * 按 URL 的 pathname（及 search）合并，优先保留 https? 绝对地址。
+ * @param {string[]} urls
+ * @returns {string[]}
+ */
+export function dedupeResolvedVideoUrls(urls) {
+  if (!Array.isArray(urls) || urls.length === 0) return [];
+  /** @type {Map<string, string>} */
+  const byPath = new Map();
+  for (const raw of urls) {
+    const r = resolveBackendVideoSrc(raw) || (typeof raw === 'string' ? raw.trim() : '');
+    if (!r) continue;
+    let pathKey;
+    try {
+      if (/^https?:\/\//i.test(r)) {
+        const u = new URL(r);
+        pathKey = `${u.pathname}${u.search}`;
+      } else {
+        pathKey = r.split('?')[0].replace(/\\/g, '/');
+        if (!pathKey.startsWith('/')) pathKey = `/${pathKey}`;
+      }
+    } catch {
+      pathKey = r;
+    }
+    const existing = byPath.get(pathKey);
+    if (existing == null) {
+      byPath.set(pathKey, r);
+      continue;
+    }
+    if (/^https?:\/\//i.test(r) && !/^https?:\/\//i.test(existing)) {
+      byPath.set(pathKey, r);
+    }
+  }
+  return [...byPath.values()];
 }
 
 /**
@@ -113,30 +142,16 @@ export function extractVideoPathsFromMaterial(material) {
 }
 
 /**
- * 从 session_data 收集：从 session_data.material.video_address 的最后一个元素中提取视频地址
+ * 从 session_data 收集：顶层 material、以及 material 数组/对象内的 video_address（与远程合并后保留完整收集）
  * @param {unknown} sessionData
  * @returns {string[]}
  */
 export function extractVideoPathsFromSessionData(sessionData) {
   if (!sessionData || typeof sessionData !== 'object') return [];
   const raw = [];
-  
-  // 从 session_data.material.video_address 中提取最后一个元素
-  const material = sessionData.material;
-  if (material && typeof material === 'object') {
-    const videoAddress = material.video_address;
-    if (Array.isArray(videoAddress) && videoAddress.length > 0) {
-      // 取数组最后一个元素
-      const lastVideo = videoAddress[videoAddress.length - 1];
-      if (lastVideo != null && String(lastVideo).trim() !== '') {
-        raw.push(String(lastVideo).trim());
-      }
-    } else if (typeof videoAddress === 'string' && videoAddress.trim() !== '') {
-      // 如果是字符串直接使用
-      raw.push(videoAddress.trim());
-    }
-  }
-  
+  pushVideoAddressFromObject(sessionData, raw);
+  const m = sessionData.material;
+  raw.push(...extractVideoPathsFromMaterial(m));
   return [...new Set(raw)];
 }
 
