@@ -1,7 +1,6 @@
 import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
 from volcenginesdkarkruntime import Ark
 import json
 # from a2a.server.agent_execution.agent_executor import AgentExecutor
@@ -16,12 +15,13 @@ import re
 from tools.tool_hub import ark_web_search as tools
 from tools.web_search import web_search
 from base import CONTEXT_CACHE_TIME
+from api_config import API_CONFIG
 
 
 
 client = Ark(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
-    api_key='c96dbd1f-aeab-461c-90d6-8096b0baeecd',
+    api_key=API_CONFIG["ark_api_key"],
 )
 
 

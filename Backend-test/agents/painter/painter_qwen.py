@@ -1,5 +1,4 @@
-'''
-Qwen图片生成智能体，负责根据提示词生成图片
+'''Qwen图片生成智能体，负责根据提示词生成图片
 需要有t2i的生成模式和i2i的生成模式
 以下代码由ai生成，未经人工审核
 '''
@@ -11,8 +10,9 @@ import requests
 from dashscope import ImageSynthesis
 import os
 import dashscope
+from api_config import API_CONFIG
 
-dashscope.api_key = "sk-8c9152365e554289834e30d12885ec03"
+dashscope.api_key = API_CONFIG["openai_api_key"]
 dashscope.base_http_api_url = 'https://dashscope.aliyuncs.com/api/v1'
 
 class Painter:

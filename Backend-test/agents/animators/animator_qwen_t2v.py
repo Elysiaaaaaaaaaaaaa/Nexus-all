@@ -4,9 +4,10 @@ import dashscope
 import json
 import os
 import requests
+from api_config import API_CONFIG
 
 dashscope.base_http_api_url = 'https://dashscope.aliyuncs.com/api/v1'
-dashscope.api_key = "sk-8c9152365e554289834e30d12885ec03"
+dashscope.api_key = API_CONFIG["openai_api_key"]
 
 class Animator:
     def __init__(self,name,download_link):

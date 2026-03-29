@@ -3,6 +3,7 @@ import time
 from langchain_core.prompts import PromptTemplate
 from base import CONTEXT_CACHE_TIME
 import re
+from api_config import API_CONFIG
 
 outline_example = f'''
 镜号 1
@@ -80,7 +81,7 @@ outline_modify_prompt = PromptTemplate.from_template('''【角色设定】
 # 初始化Ark客户端
 client = Ark(
     base_url="https://ark.cn-beijing.volces.com/api/v3",
-    api_key='c96dbd1f-aeab-461c-90d6-8096b0baeecd',
+    api_key=API_CONFIG["ark_api_key"],
 )
 
 class OutlineWriter:

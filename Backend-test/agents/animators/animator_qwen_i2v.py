@@ -6,12 +6,13 @@ from urllib.parse import urlparse, unquote
 from pathlib import PurePosixPath
 from dashscope import VideoSynthesis
 from base import image_to_base64
+from api_config import API_CONFIG
 # 设置 API Key（请确保已设置环境变量 DASHSCOPE_API_KEY）
 modules = {
     'wan2.5': 'wan2.5-i2v-preview',
     'wan2.6': 'wan2.6-i2v-flash',
 }
-api_key = "sk-8c9152365e554289834e30d12885ec03"
+api_key = API_CONFIG["openai_api_key"]
 
 class Animator:
     def __init__(self, name, download_link):
@@ -37,7 +38,8 @@ class Animator:
             prompt_extend=True,
             watermark=False,
             negative_prompt=prompt['negative'],
-            seed=None  # 可选，如需复现结果可指定整数
+            seed=None,  # 可选，如需复现结果可指定整数
+            api_key=api_key
         )
         print(completion)
         if completion.status_code == HTTPStatus.OK:

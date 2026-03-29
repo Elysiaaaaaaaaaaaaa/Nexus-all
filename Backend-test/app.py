@@ -362,11 +362,17 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         
         # 调用 handle_user_input；modify_num 与前端「需要修改」多选一致
         modify_list = request.modify_num if request.modify_num is not None else []
-        result_state = await orchestrator.handle_user_input(
-            orchestrator.main_session_id,
-            user_input,
-            modify_list,
-        )
+        if request.workflow_type == "text2video":
+            result_state = await orchestrator.handle_user_input(
+                orchestrator.main_session_id,
+                user_input,
+                modify_list,
+            )
+        else:
+            result_state = await orchestrator.handle_user_input(
+                orchestrator.main_session_id,
+                user_input,
+            )
         
         # 从结果状态中提取回复
         reply = result_state.get('reply')
