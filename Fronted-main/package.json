@@ -6,13 +6,24 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:android": "node scripts/build-capacitor-android.mjs",
+    "build:web": "vite build",
+    "build:web:browser": "vite build",
+    "build:web:tauri": "vite build --mode tauri",
+    "build:desktop": "tauri build",
+    "dev:desktop": "tauri dev",
+    "build:android": "node scripts/build/build-capacitor-android.mjs",
+    "build:mobile:android": "node scripts/build/build-capacitor-android.mjs",
+    "build:mobile:android:apk": "node scripts/build/build-capacitor-android.mjs && node scripts/build/assemble-android-apk.mjs",
+    "build:mobile:android:apk:release": "node scripts/build/build-capacitor-android.mjs && node scripts/build/assemble-android-apk.mjs release",
+    "build:mobile:miniprogram:config": "node scripts/build/write-miniprogram-runtime.mjs",
+    "build:mobile:miniprogram:h5": "node scripts/build/build-miniprogram-h5.mjs",
+    "build:mobile:miniprogram": "node scripts/build/write-miniprogram-runtime.mjs && node scripts/build/build-miniprogram-h5.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "build:tauri": "vite build --mode tauri",
     "tauri:build": "tauri build",
     "tauri:dev": "tauri dev",
-    "copy:installer": "node scripts/copy-installer.mjs"
+    "copy:installer": "node scripts/release/copy-installer.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.0.1",

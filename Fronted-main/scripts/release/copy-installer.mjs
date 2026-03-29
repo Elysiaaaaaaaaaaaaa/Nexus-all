@@ -2,15 +2,15 @@
  * 将 Tauri NSIS 安装包复制到 public/downloads，供官网静态下载。
  * 用法：pnpm run copy:installer（需先 pnpm run tauri:build）
  *
- * 注意：打 Android APK 请用 pnpm run build:android（会临时移走本目录，避免 .exe 打进 APK）。
+ * 注意：打 Android APK 请用 pnpm run build:mobile:android（会临时移走本目录，避免 .exe 打进 APK）。
  * 网站部署用 pnpm run build 即可（可保留 public/downloads）。
  */
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.join(__dirname, '..');
+const root = path.join(__dirname, '..', '..');
 const src = path.join(
   root,
   'src-tauri',
