@@ -142,11 +142,35 @@ export function extractVideoPathsFromSessionData(sessionData) {
 }
 
 /**
+ * 从文本内容中提取视频地址
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function extractVideoPathsFromText(text) {
+  if (!text || typeof text !== 'string') return [];
+  // 匹配视频文件路径或URL
+  const videoPattern = /(?:https?:\/\/[^\s]+\.(?:mp4|avi|mov|wmv|flv|mkv)|(?:\/videos\/[^\s]+|user_files\/[^\s]+)\.(?:mp4|avi|mov|wmv|flv|mkv))/gi;
+  const matches = text.match(videoPattern) || [];
+  return [...new Set(matches.map(m => m.trim()))];
+}
+
+/**
  * @param {unknown} sessionData
  * @returns {string[]}
  */
 export function extractResolvedVideoUrlsFromSessionData(sessionData) {
   return extractVideoPathsFromSessionData(sessionData)
+    .map(resolveBackendVideoSrc)
+    .filter(Boolean);
+}
+
+/**
+ * 从文本内容中提取并解析视频URL
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function extractResolvedVideoUrlsFromText(text) {
+  return extractVideoPathsFromText(text)
     .map(resolveBackendVideoSrc)
     .filter(Boolean);
 }

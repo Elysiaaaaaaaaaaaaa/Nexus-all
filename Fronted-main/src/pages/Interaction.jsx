@@ -13,7 +13,7 @@ import { useToast } from '../contexts/ToastContext.jsx';
 import { getUserAvatarUrl } from '../utils/avatar';
 import { uploadImage, buildUploadFilePublicUrl, work } from '../services/api';
 import { isNativeMobileLayout } from '../utils/runtimePlatform';
-import { extractResolvedVideoUrlsFromSessionData } from '../utils/backendVideoUrl';
+import { extractResolvedVideoUrlsFromSessionData, extractResolvedVideoUrlsFromText } from '../utils/backendVideoUrl';
 import { SessionVideoPlayers } from '../components/SessionVideoPlayers.jsx';
 
 function normalizeAiContent(value) {
@@ -722,6 +722,16 @@ const Interaction = () => {
                   <div className="message-bubble">
                     {msg.content}
                   </div>
+                  {extractResolvedVideoUrlsFromText(msg.content).length > 0 && (
+                    <div className="interaction-chat-videos">
+                      <SessionVideoPlayers
+                        urls={extractResolvedVideoUrlsFromText(msg.content)}
+                        title={t('interaction.generatedVideos')}
+                        emptyHint={t('interaction.videoPlaybackError')}
+                        variant="light"
+                      />
+                    </div>
+                  )}
                 </div>
               )
             ))
