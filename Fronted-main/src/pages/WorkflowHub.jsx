@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { FlowArrow, Rocket, SlidersHorizontal, PencilSimpleLine } from '@phosphor-icons/react';
 import { useApp } from '../contexts/AppContext';
 import { useToast } from '../contexts/ToastContext.jsx';
-import { createProject } from '../services/api';
 import { isNativeMobileLayout } from '../utils/runtimePlatform';
+import { startNewWorkflow } from '../utils/startNewWorkflow';
 import './WorkflowHub.css';
 
 const WorkflowHub = () => {
@@ -12,30 +12,8 @@ const WorkflowHub = () => {
   const { t } = useApp();
   const { showToast } = useToast();
 
-  const resolveWorkflowType = (workflow) => (
-    workflow === 'storyboard_precise' ? 'image2video' : 'text2video'
-  );
-
-  const startWorkflow = async (workflow) => {
-    const workflowType = resolveWorkflowType(workflow);
-    const projectName = `${workflowType === 'image2video' ? '图生视频' : '文生视频'}_${Date.now()}`;
-
-    try {
-      const created = await createProject({
-        project_name: projectName,
-        workflow_type: workflowType,
-      });
-      localStorage.setItem('app-current-project', created?.project_name || projectName);
-      localStorage.setItem('app-current-workflow-type', workflowType);
-      if (created?.session_id) {
-        localStorage.setItem('app-current-session-id', created.session_id);
-      }
-      navigate('/interaction', { state: { workflow, projectName: created?.project_name || projectName } });
-    } catch {
-      localStorage.setItem('app-current-project', projectName);
-      localStorage.setItem('app-current-workflow-type', workflowType);
-      navigate('/interaction', { state: { workflow, projectName } });
-    }
+  const startWorkflow = (workflow) => {
+    void startNewWorkflow(navigate, workflow);
   };
 
   const cards = [
