@@ -347,7 +347,7 @@ async def work(request: WorkRequest, current_user: Dict[str, Any] = Depends(get_
         user_id = str(current_user["user_id"])  # 从JWT中获取用户ID
         user_input = request.user_input
         mode = request.mode
-        userfile = DatabaseUserFile(user_id)
+        userfile = UserFile(user_id)
         print(f"User ID: {user_id}, Project: {project_name}")
         # 创建Text2VideoWorkflow实例
         if request.workflow_type == "text2video":
@@ -735,11 +735,11 @@ async def upload_image(
 #         return get_error_response(detail=error_detail, status_code=500)
 
 
-# class InteractionPanelRequest(BaseModel):
-#     user_id: str
-#     project_name: str
-#     session_id: str = ""
-#     workflow: str = ""
+class InteractionPanelRequest(BaseModel):
+    user_id: str
+    project_name: str
+    session_id: str = ""
+    workflow: str = ""
 
 
 @app.post("/api/v1/interaction/panel")

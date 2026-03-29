@@ -35,6 +35,13 @@ export function SessionVideoPlayers({ urls, title, emptyHint, variant = 'dark' }
                 onError={() => onVideoError(i)}
               >
                 <source src={src} type="video/mp4" />
+                <source src={src} type="video/webm" />
+                <source src={src} type="video/avi" />
+                <source src={src} type="video/mov" />
+                <source src={src} type="video/wmv" />
+                <source src={src} type="video/flv" />
+                <source src={src} type="video/mkv" />
+                Your browser does not support the video tag.
               </video>
             )}
           </div>

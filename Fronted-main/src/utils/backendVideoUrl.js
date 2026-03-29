@@ -29,26 +29,11 @@ function resolveVideoOrigin() {
       /* fallthrough */
     }
   }
+  // 开发环境使用相对路径，让 Vite 代理处理
   if (import.meta.env.DEV) {
-    let native = false;
-    try {
-      native = Capacitor.isNativePlatform();
-    } catch {
-      native = false;
-    }
-    if (!native) {
-      return '';
-    }
-    const devTarget = import.meta.env.VITE_DEV_PROXY_TARGET || '';
-    if (devTarget) {
-      try {
-        return new URL(devTarget).origin;
-      } catch {
-        /* fallthrough */
-      }
-    }
-    return DEFAULT_VIDEO_ORIGIN;
+    return '';
   }
+  // 生产环境使用默认的视频源站
   return DEFAULT_VIDEO_ORIGIN;
 }
 
@@ -142,11 +127,35 @@ export function extractVideoPathsFromSessionData(sessionData) {
 }
 
 /**
+ * 从文本内容中提取视频地址
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function extractVideoPathsFromText(text) {
+  if (!text || typeof text !== 'string') return [];
+  // 匹配视频文件路径或URL，包括各种格式的视频文件
+  const videoPattern = /(?:https?:\/\/[^\s]+\.(?:mp4|avi|mov|wmv|flv|mkv|webm)|(?:\/videos\/[^\s]+|user_files\/[^\s]+)\.(?:mp4|avi|mov|wmv|flv|mkv|webm))/gi;
+  const matches = text.match(videoPattern) || [];
+  return [...new Set(matches.map(m => m.trim()))];
+}
+
+/**
  * @param {unknown} sessionData
  * @returns {string[]}
  */
 export function extractResolvedVideoUrlsFromSessionData(sessionData) {
   return extractVideoPathsFromSessionData(sessionData)
+    .map(resolveBackendVideoSrc)
+    .filter(Boolean);
+}
+
+/**
+ * 从文本内容中提取并解析视频URL
+ * @param {string} text
+ * @returns {string[]}
+ */
+export function extractResolvedVideoUrlsFromText(text) {
+  return extractVideoPathsFromText(text)
     .map(resolveBackendVideoSrc)
     .filter(Boolean);
 }
