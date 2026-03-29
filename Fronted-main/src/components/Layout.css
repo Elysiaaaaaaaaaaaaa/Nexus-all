@@ -1,10 +1,14 @@
 /* Layout组件样式 */
 .layout-container {
+  width: 100%;
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   color: rgb(30, 41, 59);
   font-family: sans-serif;
-  overflow: visible; /* 改为 visible，允许滚动 */
+  overflow-x: hidden;
+  overflow-y: visible;
   position: relative;
 }
 
@@ -74,6 +78,7 @@
 
 /* 侧边栏 */
 .sidebar {
+  flex-shrink: 0;
   width: 70px;
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(24px);
@@ -447,11 +452,24 @@
 
 /* 主内容区域 */
 .main-content {
-  flex: 1;
+  flex: 1 1 0%;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 10;
-  overflow: visible; /* 改为 visible，允许内容滚动 */
-  min-height: 100vh; /* 确保至少占满视口 */
+  overflow-x: hidden;
+  overflow-y: visible;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* 交互页：单页占满视口高度，避免主区域被撑高导致整页滚动、底栏下移 */
+.main-content:has(.interaction-container) {
+  min-height: 0;
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
 }

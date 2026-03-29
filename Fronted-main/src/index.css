@@ -95,7 +95,16 @@
   padding: 0;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background-color: var(--bg-primary);
   /* 用主题变量渲染点阵，dark 才会明显变化 */
   background-image: radial-gradient(circle, var(--dot-color) 1.5px, transparent 1.5px);
@@ -128,9 +137,13 @@ body {
 
 #root {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   display: block;
   position: relative;
+  overflow-x: hidden;
   /* 勿对整棵 React 树做 drop-shadow：会迫使大面积离屏合成，移动端/WebView 极易发热 */
   filter: none;
 }

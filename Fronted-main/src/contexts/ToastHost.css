@@ -5,6 +5,7 @@
   bottom: max(24px, calc(env(safe-area-inset-bottom, 0px) + 16px));
   transform: translateX(-50%);
   max-width: min(420px, calc(100vw - 32px));
+  max-width: min(420px, calc(100dvw - 32px));
   padding: 14px 18px;
   border-radius: 14px;
   font-size: 14px;

@@ -17,7 +17,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  right: 0;
+  width: auto;
   height: 80px;
   z-index: 10000;
   box-sizing: border-box;
@@ -198,9 +199,9 @@
 }
 
 .homepage-hero-title {
-  font-size: 72px;
+  font-size: clamp(2rem, 4vw + 1.25rem, 4.5rem);
   font-weight: 900;
-  letter-spacing: -2px;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   margin-bottom: 32px;
   color: rgb(15, 23, 42);
@@ -1184,10 +1185,6 @@
     gap: 48px;
   }
 
-  .homepage-hero-title {
-    font-size: 56px;
-  }
-
   .homepage-features-grid {
     grid-template-columns: 1fr;
   }
@@ -1204,10 +1201,6 @@
 }
 
 @media (max-width: 768px) {
-  .homepage-hero-title {
-    font-size: 40px;
-  }
-
   .homepage-hero-subtitle-line {
     font-size: 18px;
   }
@@ -1611,10 +1604,10 @@
 
 .homepage-tech-content.cinema-mode-active {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: auto;
+  height: auto;
+  min-height: 100dvh;
   z-index: 9999;
   background: black;
   padding: 0;

@@ -7,6 +7,7 @@ import { useApp } from '../contexts/AppContext';
 import { validateUsername, validateLoginIdentifier, validateEmail, validatePassword, validateRedirectPath, sanitizeInput } from '../utils/security';
 import { rateLimiter } from '../utils/rateLimiter';
 import { devBypassRateLimit, devBypassAuth } from '../utils/devMode';
+import { getNetworkFailureMessage } from '../utils/networkErrorMessage';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -183,7 +184,7 @@ const Login = () => {
         } else if (error.code === 500) {
           errorMessage = '服务器错误，请稍后重试';
         } else if (error.code === 0 || error.code === 504) {
-          errorMessage = '网络连接失败，请检查网络设置';
+          errorMessage = getNetworkFailureMessage();
         } else if (error.message) {
           errorMessage = error.message;
         }
@@ -196,7 +197,7 @@ const Login = () => {
         } else if (error.status === 500) {
           errorMessage = '服务器错误，请稍后重试';
         } else if (error.status === 0) {
-          errorMessage = '网络连接失败，请检查网络设置';
+          errorMessage = getNetworkFailureMessage();
         } else if (error.message) {
           errorMessage = error.message;
         }

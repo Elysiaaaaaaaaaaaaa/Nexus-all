@@ -398,10 +398,10 @@
   padding: 0;
   max-width: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: auto;
+  height: auto;
+  min-height: 100dvh;
   z-index: 9999;
   background: black;
 }

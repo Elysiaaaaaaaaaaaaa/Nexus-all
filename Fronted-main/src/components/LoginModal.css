@@ -2,7 +2,7 @@
 .login-modal-overlay {
   position: fixed;
   inset: 0;
-  width: 100vw;
+  width: auto;
   min-height: 100vh;
   min-height: 100dvh;
   box-sizing: border-box;

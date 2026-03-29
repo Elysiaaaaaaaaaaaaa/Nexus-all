@@ -8,6 +8,7 @@ import { useApp } from '../contexts/AppContext';
 import { validateUsername, validateLoginIdentifier, validateEmail, validatePassword, sanitizeInput, safeLog } from '../utils/security';
 import { rateLimiter } from '../utils/rateLimiter';
 import { devBypassRateLimit } from '../utils/devMode';
+import { getNetworkFailureMessage } from '../utils/networkErrorMessage';
 
 // 常量定义
 const DEFAULT_REMAINING_ATTEMPTS = 5;
@@ -306,7 +307,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
       } else if (error.code === 500) {
         return '服务器错误，请稍后重试';
       } else if (error.code === 0 || error.code === 504) {
-        return '网络连接失败，请检查网络设置';
+        return getNetworkFailureMessage();
       } else if (error.message) {
         // 清理错误消息，防止XSS
         return sanitizeInput(error.message, 200);
@@ -323,7 +324,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
       } else if (error.status === 500) {
         return '服务器错误，请稍后重试';
       } else if (error.status === 0) {
-        return '网络连接失败，请检查网络设置';
+        return getNetworkFailureMessage();
       } else if (error.message) {
         return sanitizeInput(error.message, 200);
       }

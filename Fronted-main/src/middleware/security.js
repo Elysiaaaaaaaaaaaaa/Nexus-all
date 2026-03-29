@@ -11,24 +11,32 @@ import { isProduction } from '../utils/security';
  * 在 App 组件中使用，提供全局安全防护
  */
 export function SecurityProvider({ children }) {
-  // 设置 CSP
+  // 设置 CSP（仅生产构建：开发环境不覆盖 index.html，避免阻断 Vite HMR 的 blob Worker 与跨域视频调试）
   useEffect(() => {
+    if (import.meta.env.DEV) {
+      return undefined;
+    }
+
     // 移除旧的 CSP meta 标签
     const existingCSP = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
     if (existingCSP) {
       existingCSP.remove();
     }
 
-    // 创建新的 CSP meta 标签
+    // worker-src 未设置时回退到 script-src，须显式允许 blob:，否则 Web Worker / Vite 类 worker 会被阻断
+    // media-src 未设置时回退到 default-src，须允许 http(s) 以便 <video src> 指向 API 或 CDN
     const cspMeta = document.createElement('meta');
     cspMeta.httpEquiv = 'Content-Security-Policy';
     cspMeta.content = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // 开发环境需要
+      // blob: 供 Vite preview / 部分 Web Worker；未显式设置 worker-src 时浏览器会用 script-src 校验 Worker
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' http://localhost:* http://127.0.0.1:* http://101.200.1.56:* https://* ws://localhost:* wss://localhost:*",
+      "media-src 'self' data: blob: http: https:",
+      "worker-src 'self' blob:",
+      "connect-src 'self' http://localhost:* http://127.0.0.1:* http://101.200.1.56:* https://* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:*",
       "base-uri 'self'",
       "form-action 'self'",
     ].join('; ');
