@@ -19,6 +19,9 @@ dist-ssr
 # 首页演示用大体积视频，本地放入 public/videos 即可，勿入库
 public/videos/*.mp4
 
+# Windows 安装包由 copy:installer 生成，勿入库
+public/downloads/*.exe
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
