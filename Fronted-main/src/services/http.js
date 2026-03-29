@@ -258,9 +258,21 @@ export const http = {
       formData.append(fieldName, file);
     }
 
-    // FormData 必须由浏览器/axios 自动带 boundary，勿手写 multipart Content-Type
-    return instance
-      .post(url, formData, {});
+    // 与 API_DOCUMENTATION.md §3.7 一致：multipart/form-data；勿沿用实例默认的 application/json
+    return instance.post(url, formData, {
+      transformRequest: [
+        (data, headers) => {
+          if (data instanceof FormData && headers) {
+            if (typeof headers.delete === 'function') {
+              headers.delete('Content-Type');
+            } else {
+              delete headers['Content-Type'];
+            }
+          }
+          return data;
+        },
+      ],
+    });
   },
 };
 

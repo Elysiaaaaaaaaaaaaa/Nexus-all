@@ -55,7 +55,11 @@ const steps = [
 const apis = [
   { n: 'POST /api/v1/work', d: '核心任务入口', s: '{\n  "project_name":"string",\n  "user_input":"string",\n  "mode":"fast|quality"\n}' },
   { n: 'POST /api/v1/projects/new', d: '创建项目会话', s: '{\n  "user_id":"string",\n  "project_name":"string",\n  "workflow_type":"text2video|image2video"\n}' },
-  { n: 'POST /api/v1/upload_image', d: '上传参考素材', s: '{\n  "user_id":"string",\n  "project_name":"string",\n  "file":"binary"\n}' },
+  {
+    n: 'POST /api/v1/upload_image',
+    d: 'multipart，需 Bearer；见 API_DOCUMENTATION §3.7',
+    s: 'Header: Authorization: Bearer <token>\nmultipart: project_name (必填), file (必填), figure_name (可选)',
+  },
 ];
 
 export default function ServerDevBoard() {
