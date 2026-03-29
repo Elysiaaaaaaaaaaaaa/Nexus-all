@@ -83,7 +83,8 @@ const Layout = ({ children }) => {
 
         <nav className="sidebar-nav">
           <button
-            onClick={() => navigate('/dashboard')}
+            type="button"
+            onClick={() => navigate('/workflows')}
             className="create-button"
           >
             <PlusCircle weight="bold" size={18} className="create-button-icon" />

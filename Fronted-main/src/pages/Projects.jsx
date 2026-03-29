@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FolderOpen, Plus, MagnifyingGlass, Faders, DotsThree, Clock, Users, CheckCircle, Circle, XCircle } from '@phosphor-icons/react';
+import { startNewWorkflow } from '../utils/startNewWorkflow';
 import './Projects.css';
 
 const Projects = () => {
@@ -119,9 +120,12 @@ const Projects = () => {
           </h1>
           <p className="projects-subtitle">管理和跟踪您的所有项目</p>
         </div>
-        <button 
+        <button
+          type="button"
           className="projects-create-button"
-          onClick={() => {}}
+          onClick={() => {
+            void startNewWorkflow(navigate, 'text_to_video_fast');
+          }}
         >
           <Plus size={18} weight="bold" /> 新建项目
         </button>

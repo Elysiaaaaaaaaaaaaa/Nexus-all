@@ -22,8 +22,8 @@ import {
   shouldShowWindowsInstallerDownload,
 } from '../utils/runtimePlatform';
 
-// 大视频勿用 import（会拖慢 Vite dev），放到 public/videos/ 下用绝对路径引用
-const HERO_VIDEOS = ['/videos/test1.mp4', '/videos/test2.mp4'];
+// 大视频勿用 import；须用 /hero-videos/（勿用 /videos/：dev 下 /videos 会代理到后端 user_files，易 404）
+const HERO_VIDEOS = ['/hero-videos/test1.mp4', '/hero-videos/test2.mp4'];
 
 /** 官网：pnpm run copy:installer → public/downloads/*.exe；仅浏览器站点展示。Android：pnpm run build:mobile:android；桌面：pnpm run build:desktop */
 const DESKTOP_INSTALLER_FILENAME = 'nexus-best_0.1.0_x64-setup.exe';
