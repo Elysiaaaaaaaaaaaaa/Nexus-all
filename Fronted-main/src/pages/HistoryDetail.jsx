@@ -9,6 +9,7 @@ import {
   extractHistoryFromResponse,
   formatHistoryMaterial,
   historyRowStyleByIndex,
+  buildMessagesFromChatHistory,
 } from '../utils/historyView';
 import {
   extractResolvedVideoUrlsFromSessionData,
@@ -30,6 +31,8 @@ const HistoryDetail = () => {
   const [error, setError] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [sessionData, setSessionData] = useState(null);
+  /** 后端 projects/history 返回的 session_id，用于继续对话时恢复会话上下文 */
+  const [historySessionId, setHistorySessionId] = useState(null);
 
   const load = useCallback(async () => {
     if (!projectName) {
@@ -41,13 +44,15 @@ const HistoryDetail = () => {
     setError('');
     try {
       const resp = await getProjectHistory({ project_name: projectName });
-      const { chat_history, session_data } = extractHistoryFromResponse(resp);
+      const { chat_history, session_data, session_id } = extractHistoryFromResponse(resp);
       setChatHistory(chat_history);
       setSessionData(session_data);
+      setHistorySessionId(session_id);
     } catch (e) {
       setError(e?.message || t('history.loadFailed'));
       setChatHistory([]);
       setSessionData(null);
+      setHistorySessionId(null);
     } finally {
       setLoading(false);
     }
@@ -111,8 +116,26 @@ const HistoryDetail = () => {
     return s;
   }, [chatHistory]);
 
+  /** 同一视频在多轮 material 中重复出现时，只在首次出现的轮次展示播放器，避免多个相同「生成视频」框 */
+  const videoUrlFirstTurnIndex = useMemo(() => {
+    const map = new Map();
+    chatHistory.forEach((turn, idx) => {
+      const urls = [
+        ...new Set(
+          extractVideoPathsFromMaterial(turn.material)
+            .map(resolveBackendVideoSrc)
+            .filter(Boolean),
+        ),
+      ];
+      for (const u of urls) {
+        if (!map.has(u)) map.set(u, idx);
+      }
+    });
+    return map;
+  }, [chatHistory]);
+
   const sessionOnlyVideoUrls = useMemo(
-    () => sessionVideoUrls.filter((u) => !turnVideoUrlSet.has(u)),
+    () => [...new Set(sessionVideoUrls.filter((u) => !turnVideoUrlSet.has(u)))],
     [sessionVideoUrls, turnVideoUrlSet],
   );
 
@@ -122,8 +145,25 @@ const HistoryDetail = () => {
     const wf = workflowType === 'image2video' ? 'image2video' : 'text2video';
     localStorage.setItem('app-current-workflow-type', wf);
     const workflow = wf === 'image2video' ? 'storyboard_precise' : 'text_to_video_fast';
+    const messages = buildMessagesFromChatHistory(chatHistory);
+    let mergedSession = sessionData;
+    if (mergedSession != null && historySessionId) {
+      mergedSession = {
+        ...mergedSession,
+        session_id: mergedSession.session_id ?? historySessionId,
+      };
+    } else if (mergedSession == null && historySessionId) {
+      mergedSession = { session_id: historySessionId };
+    }
     navigate('/interaction', {
-      state: { workflow, projectName },
+      state: {
+        workflow,
+        projectName,
+        resumeChat: {
+          messages,
+          sessionData: mergedSession,
+        },
+      },
     });
   };
 
@@ -240,9 +280,16 @@ const HistoryDetail = () => {
                 ) : (
                   <ul className="history-chat-list">
                     {chatHistory.map((turn, idx) => {
-                      const turnVideoUrls = extractVideoPathsFromMaterial(turn.material)
-                        .map(resolveBackendVideoSrc)
-                        .filter(Boolean);
+                      const turnVideoUrls = [
+                        ...new Set(
+                          extractVideoPathsFromMaterial(turn.material)
+                            .map(resolveBackendVideoSrc)
+                            .filter(Boolean),
+                        ),
+                      ];
+                      const turnVideoUrlsFirstOnly = turnVideoUrls.filter(
+                        (u) => videoUrlFirstTurnIndex.get(u) === idx,
+                      );
                       return (
                         <li key={idx} className="history-chat-turn">
                           <div className="history-chat-role">{t('history.roleUser')}</div>
@@ -252,9 +299,9 @@ const HistoryDetail = () => {
                           {turn.material != null && turn.material !== '' && (
                             <>
                               <div className="history-chat-role">{t('history.roleMaterial')}</div>
-                              {turnVideoUrls.length > 0 && (
+                              {turnVideoUrlsFirstOnly.length > 0 && (
                                 <SessionVideoPlayers
-                                  urls={turnVideoUrls}
+                                  urls={turnVideoUrlsFirstOnly}
                                   title={t('interaction.generatedVideos')}
                                   emptyHint={t('interaction.videoPlaybackError')}
                                   variant="light"

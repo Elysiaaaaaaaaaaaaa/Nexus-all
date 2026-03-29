@@ -2,6 +2,8 @@
  * 历史记录列表展示：行配色与路由参数中的 project_name 解码
  */
 
+import { extractVideoPathsFromMaterial, resolveBackendVideoSrc } from './backendVideoUrl.js';
+
 const ROW_STYLES = [
   {
     color: 'rgb(219, 234, 254)',
@@ -101,16 +103,68 @@ export function extractProjectsFromListResponse(resp) {
 
 /**
  * @param {unknown} resp
- * @returns {{ chat_history: Array<Record<string, unknown>>; session_data: Record<string, unknown> | null }}
+ * @returns {{
+ *   chat_history: Array<Record<string, unknown>>;
+ *   session_data: Record<string, unknown> | null;
+ *   session_id: string | null;
+ * }}
  */
 export function extractHistoryFromResponse(resp) {
   if (!resp || typeof resp !== 'object') {
-    return { chat_history: [], session_data: null };
+    return { chat_history: [], session_data: null, session_id: null };
   }
   const chat = resp.chat_history;
   const session = resp.session_data;
+  const sid = resp.session_id;
   return {
     chat_history: Array.isArray(chat) ? chat : [],
     session_data: session && typeof session === 'object' ? session : null,
+    session_id: typeof sid === 'string' && sid ? sid : null,
   };
+}
+
+/**
+ * 将后端 chat_history 转为交互页 messages（一问一答交替）
+ * @param {Array<Record<string, unknown>>} chatHistory
+ * @returns {Array<{ id: number; type: 'user'|'ai'; content: string; timestamp: Date; videoUrls?: string[] }>}
+ */
+export function buildMessagesFromChatHistory(chatHistory) {
+  if (!Array.isArray(chatHistory)) return [];
+
+  const out = [];
+  let nid = 1;
+  for (const turn of chatHistory) {
+    const userText = turn.user != null ? String(turn.user).trim() : '';
+    if (userText !== '') {
+      out.push({
+        id: nid++,
+        type: 'user',
+        content: String(turn.user),
+        timestamp: new Date(),
+      });
+    }
+
+    const asstText = turn.assistant != null ? String(turn.assistant).trim() : '';
+    const videoUrls = extractVideoPathsFromMaterial(turn.material)
+      .map(resolveBackendVideoSrc)
+      .filter((u) => typeof u === 'string' && u);
+
+    if (asstText !== '' || videoUrls.length > 0 || (turn.material != null && turn.material !== '')) {
+      let content = asstText !== '' ? String(turn.assistant) : '';
+      if (content === '' && turn.material != null && turn.material !== '') {
+        content = formatHistoryMaterial(turn.material);
+      }
+      const msg = {
+        id: nid++,
+        type: 'ai',
+        content,
+        timestamp: new Date(),
+      };
+      if (videoUrls.length > 0) {
+        msg.videoUrls = videoUrls;
+      }
+      out.push(msg);
+    }
+  }
+  return out;
 }
