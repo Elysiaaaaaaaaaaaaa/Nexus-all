@@ -23,7 +23,7 @@
 | POST | `/api/v1/projects/list` | 获取用户项目列表 |
 | POST | `/api/v1/projects/history` | 获取指定项目的对话历史 |
 | POST | `/api/v1/projects/new` | 新建项目 |
-| POST | `/api/v1/upload_image` | 上传图片到指定路径 |
+| POST | `/api/v1/upload_image` | 上传图片（multipart，需 JWT；必填 `project_name` + `file`） |
 | POST | `/api/v1/interaction/panel` | 获取交互面板数据 |
 | POST | `/api/user/avatar` | 上传用户头像 |
 | GET | `/api/v1/test-video-placeholder` | 获取测试视频占位符 |
@@ -238,16 +238,30 @@
 
 ### 3.7 上传图片接口
 
-**功能**: 上传图片到指定项目路径
+**功能**: 上传图片到指定项目路径（保存为 `user_files/{user_id}/projects/{project_name}/photos/photos.png`，`user_id` 来自登录态）
 
 **请求**:
 - **方法**: POST
 - **路径**: `/api/v1/upload_image`
+<<<<<<< HEAD
 - **请求体**: `multipart/form-data` 格式
 - **参数**:
   - `project_name`: 项目名称
   - `file`: 图片文件（支持格式：jpeg, jpg, png, gif, webp；最大大小：10MB）
   - `figure_name`: 图像名称（可选）
+=======
+- **鉴权**: **必填** — 请求头 `Authorization: Bearer <access_token>`（与其它需登录接口一致）；未登录返回 401。
+- **请求体**: `multipart/form-data`（字段名须与下表一致，否则 FastAPI 会报「缺少字段」）
+- **表单字段**:
+
+| 字段 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `project_name` | string | **是** | 项目名称 |
+| `file` | file | **是** | 图片文件（字段名必须为 `file`） |
+| `figure_name` | string | 否 | 预留字段，与前端约定一致；当前后端仍统一保存为 `photos.png`，可不传 |
+
+- **文件限制**（与后端 `allowed_types` 一致）: `image/jpeg`、`image/jpg`、`image/png`、`image/gif`、`image/webp`；单文件最大 **10MB**。
+>>>>>>> da158e986823e276927e4153ef02bb91295db8cd
 
 **响应**:
 ```json

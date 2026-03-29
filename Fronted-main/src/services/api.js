@@ -324,12 +324,15 @@ const UPLOAD_IMAGE_MAX_BYTES = 10 * 1024 * 1024;
 const UPLOAD_IMAGE_MIME = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']);
 
 /**
- * 上传图片（multipart/form-data）
- * POST /api/v1/upload_image（user_id 由 JWT 解析）
+ * POST /api/v1/upload_image — 与 Backend-test/API_DOCUMENTATION.md §3.7 一致
+ * - 鉴权：axios 拦截器自动带 Authorization: Bearer（localStorage auth_token）
+ * - multipart 字段名：project_name（必填）、file（必填）、figure_name（可选）
+ * - 类型/大小校验与文档「文件限制」一致；Token 由后端解析 user_id
+ *
  * @param {Object} params
- * @param {File} params.file - 图片文件
- * @param {string} params.figure_name - 图像名称（可选，与后端 Form 一致）
- * @param {string} params.project_name - 项目名称
+ * @param {File} params.file - 图片文件，表单字段名必须为 file
+ * @param {string} params.project_name - 项目名称（必填）
+ * @param {string} [params.figure_name] - 可选，与文档一致；不传则不附加该表单项
  * @returns {Promise<{ success?: boolean, message?: string, data?: { filePath?: string, size?: number } }>}
  */
 export const uploadImage = async (params) => {
@@ -343,9 +346,9 @@ export const uploadImage = async (params) => {
     });
   }
 
-  if (!figure_name || !project_name) {
+  if (!project_name) {
     throw new AppError({
-      message: 'figure_name 和 project_name 为必填',
+      message: 'project_name 为必填',
       code: 400,
       isSystemError: false,
     });
@@ -368,7 +371,6 @@ export const uploadImage = async (params) => {
     });
   }
 
-  const safeFigure = sanitizeInput(String(figure_name), 200);
   const projectNameValidation = validateProjectName(project_name);
   if (!projectNameValidation.valid) {
     throw new AppError({
@@ -381,7 +383,9 @@ export const uploadImage = async (params) => {
 
   const formData = new FormData();
   formData.append('project_name', safeProject);
-  formData.append('figure_name', safeFigure);
+  if (figure_name != null && String(figure_name).trim() !== '') {
+    formData.append('figure_name', sanitizeInput(String(figure_name), 200));
+  }
   formData.append('file', file);
 
   return http.upload('/api/v1/upload_image', formData, 'file');
