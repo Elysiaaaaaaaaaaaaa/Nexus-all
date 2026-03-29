@@ -7,6 +7,8 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores([
     'dist/**',
+    'dist-miniprogram/**',
+    'miniprogram/**',
     'android/**',
     'src-tauri/target/**',
     '.android-stash/**',

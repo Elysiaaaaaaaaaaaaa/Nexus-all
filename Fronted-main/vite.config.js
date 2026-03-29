@@ -8,14 +8,23 @@ export default defineConfig(({ mode }) => {
   const devProxyTarget =
     env.VITE_DEV_PROXY_TARGET || env.VITE_API_BASE_URL || 'http://101.200.1.56';
 
+  const outDir = mode === 'miniprogram' ? 'dist-miniprogram' : 'dist';
+  const base =
+    mode === 'miniprogram' ? env.VITE_MINIPROGRAM_BASE || '/' : '/';
+
   return {
+    base,
     plugins: [react()],
+    build: {
+      outDir,
+    },
     server: {
       port: 5173,
       watch: {
         ignored: [
           '**/node_modules/**',
           '**/dist/**',
+          '**/dist-miniprogram/**',
           '**/android/**',
           '**/*.zip',
         ],

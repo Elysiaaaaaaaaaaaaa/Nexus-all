@@ -9,6 +9,7 @@ lerna-debug.log*
 
 node_modules
 dist
+dist-miniprogram
 
 # Android 专用构建脚本临时移走 public/downloads 时的缓存（勿提交）
 .android-stash/
