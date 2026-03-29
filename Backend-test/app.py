@@ -54,14 +54,13 @@ if not _cors_allow_all:
 
 app.add_middleware(CORSMiddleware, **_cors_kwargs)
 
-# 添加静态文件服务，用于提供视频文件访问
-# 使用绝对路径，基于app.py所在目录
+# 添加静态文件服务，用于提供视频文件访问（与 /api 同进程同端口）
+# 使用绝对路径，基于 app.py 所在目录；目录不存在则创建，保证 /videos 始终可挂载
 base_dir = Path(__file__).parent.absolute()
 user_files_dir = base_dir / "user_files"
-if user_files_dir.exists():
-    app.mount("/videos", StaticFiles(directory=str(user_files_dir), html=False), name="videos")
-else:
-    logger.warning(f"user_files目录不存在: {user_files_dir}，视频文件服务未启用")
+user_files_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/videos", StaticFiles(directory=str(user_files_dir), html=False), name="videos")
+logger.info("视频静态服务已启用: /videos -> %s", user_files_dir)
 
 # 添加static目录的静态文件服务，用于提供占位符视频
 static_dir = base_dir / "static"
