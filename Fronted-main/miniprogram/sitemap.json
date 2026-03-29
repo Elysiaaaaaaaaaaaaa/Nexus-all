@@ -1,0 +1,4 @@
+{
+  "desc": "Nexus 小程序壳（web-view）",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

@@ -1,0 +1,4 @@
+<web-view wx:if="{{src}}" src="{{src}}"></web-view>
+<view wx:else class="mp-fallback">
+  <text class="mp-fallback-text">请配置 miniprogram/config/runtime.js 中的 h5Entry（HTTPS）</text>
+</view>
