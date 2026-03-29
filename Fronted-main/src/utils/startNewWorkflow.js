@@ -10,7 +10,8 @@ export function resolveWorkflowType(workflow) {
 }
 
 /**
- * 调用 POST /api/v1/projects/new，写入 localStorage，进入交互页
+ * 调用 POST /api/v1/projects/new，写入 localStorage，进入交互页。
+ * 文生视频 / 图生视频两条工作流均走同一套 axios 基址（resolveApiBaseUrl），与 Web/Android 一致接服务器。
  * @param {import('react-router-dom').NavigateFunction} navigate
  * @param {'text_to_video_fast'|'storyboard_precise'} workflow
  */

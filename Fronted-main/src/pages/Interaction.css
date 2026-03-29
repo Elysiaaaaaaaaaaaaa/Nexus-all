@@ -1,8 +1,15 @@
-/* Interaction页面样式 */
+/* Interaction页面样式：占满可视高度，仅中间消息区滚动，底栏固定在下沿 */
 .interaction-container {
   flex: 1;
   display: flex;
+  min-height: 0;
+  width: 100%;
+  /* Layout 对主内容限高时 height:100% 填满；无 :has 支持时由 min-height 兜底 */
   height: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
   background: transparent;
   overflow: hidden;
   position: relative;
@@ -13,6 +20,7 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
   transition: all 500ms ease-in-out;
 }
 
@@ -32,13 +40,17 @@
   }
 
   .preview-panel {
-    width: 100vw;
+    left: 0;
+    right: 0;
+    width: auto;
     max-width: 100%;
     border-left: none;
   }
 
   .preview-panel.expanded {
-    width: 100vw;
+    left: 0;
+    right: 0;
+    width: auto;
   }
 }
 
@@ -176,10 +188,12 @@ button.status-badge.status-badge--tap:active {
   background: rgb(239, 246, 255);
 }
 
-/* 聊天内容流 */
+/* 聊天内容流：flex 子项默认可无限增高，须 min-height:0 才能在内部滚动 */
 .chat-content {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 32px 16px;
   display: flex;
   flex-direction: column;
@@ -230,6 +244,22 @@ button.status-badge.status-badge--tap:active {
   max-width: 1024px;
   margin: 0 auto;
   width: 100%;
+}
+
+.message-ai-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.message-ai-column .interaction-chat-videos--in-message {
+  margin: 0;
+  max-width: 512px;
+  width: 100%;
+  padding: 0;
 }
 
 .message-avatar {
@@ -394,8 +424,9 @@ button.status-badge.status-badge--tap:active {
   user-select: none;
 }
 
-/* 底部输入框 */
+/* 底部输入框：不参与伸缩，始终贴在交互区下沿 */
 .input-section {
+  flex-shrink: 0;
   padding: 16px 16px 32px;
   background: linear-gradient(to top, white, transparent);
   display: flex;
@@ -795,15 +826,7 @@ button.status-badge.status-badge--tap:active {
   border-bottom-color: rgba(51, 65, 85, 0.8);
 }
 
-:root.dark .preview-panel {
-  background: rgba(15, 23, 42, 0.92);
-  border-left-color: rgba(51, 65, 85, 0.8);
-}
-
-:root.dark .preview-header {
-  background: rgba(30, 41, 59, 0.8);
-  border-bottom-color: rgba(51, 65, 85, 0.8);
-}
+/* 右侧预览栏样式见下文 .preview-panel / :root.dark|.light 专用块，避免重复定义 */
 
 :root.dark .preview-header-title {
   color: rgb(248, 250, 252);
@@ -990,10 +1013,17 @@ button.status-badge.status-badge--tap:active {
   top: 0;
   bottom: 0;
   width: 384px;
-  background: #0b1220;
+  max-width: 100vw;
+  /* 实色底，避免与主区浅色叠出「白底白字」 */
+  background: #0f172a;
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 40;
   transition: transform 500ms ease-in-out;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .preview-panel.expanded {
@@ -1006,16 +1036,144 @@ button.status-badge.status-badge--tap:active {
   }
 
   .preview-panel.expanded {
-    width: 100vw;
+    left: 0;
+    right: 0;
+    width: auto;
   }
 }
 
-/* Light mode: keep current dark terminal look for contrast */
+/* 浅色主题：侧栏用实色浅底 + 深色字，避免白字叠在半透/发白背景上「啥都看不见」 */
 :root.light .preview-panel {
-  background: rgb(15, 23, 42);
+  background: rgb(248, 250, 252);
+  border-left-color: rgb(226, 232, 240);
+  box-shadow: -8px 0 24px rgba(15, 23, 42, 0.06);
 }
 
-/* Dark mode: more neon / glass, not identical to light */
+:root.light .preview-header {
+  background: rgb(241, 245, 249);
+  border-bottom-color: rgb(226, 232, 240);
+  backdrop-filter: none;
+}
+
+:root.light .preview-header-icon {
+  color: rgb(5, 150, 105);
+}
+
+:root.light .preview-header-title {
+  color: rgb(15, 23, 42);
+}
+
+:root.light .preview-tab {
+  background: rgb(255, 255, 255);
+  border-color: rgb(203, 213, 225);
+  color: rgb(51, 65, 85);
+}
+
+:root.light .preview-tab.active {
+  background: rgb(236, 253, 245);
+  border-color: rgb(110, 231, 183);
+  color: rgb(6, 95, 70);
+}
+
+:root.light .preview-board-entry {
+  background: rgb(236, 253, 245);
+  border-color: rgb(167, 243, 208);
+  color: rgb(6, 95, 70);
+}
+
+:root.light .preview-board-entry:hover {
+  background: rgb(209, 250, 229);
+  border-color: rgb(52, 211, 153);
+  color: rgb(6, 78, 59);
+}
+
+:root.light .preview-close-button {
+  color: rgb(71, 85, 105);
+  border-color: rgb(203, 213, 225);
+  background: rgb(255, 255, 255);
+}
+
+:root.light .preview-close-button:hover {
+  color: rgb(15, 23, 42);
+  background: rgb(241, 245, 249);
+  border-color: rgb(148, 163, 184);
+}
+
+:root.light .preview-content {
+  color: rgb(21, 128, 61);
+}
+
+:root.light .preview-board-banner {
+  color: rgb(6, 78, 59);
+  background: linear-gradient(90deg, rgb(236, 253, 245), rgb(239, 246, 255));
+  border-color: rgb(167, 243, 208);
+}
+
+:root.light .preview-line {
+  color: rgb(71, 85, 105);
+}
+
+:root.light .exec-card {
+  background: rgb(255, 255, 255);
+  border-color: rgb(226, 232, 240);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+:root.light .exec-card-title {
+  color: rgb(71, 85, 105);
+}
+
+:root.light .exec-log-text {
+  color: rgb(30, 41, 59);
+}
+
+:root.light .exec-quote {
+  color: rgb(30, 41, 59);
+  background: rgb(248, 250, 252);
+  border-color: rgb(226, 232, 240);
+}
+
+:root.light .exec-metric-label {
+  color: rgb(100, 116, 139);
+}
+
+:root.light .exec-metric-value {
+  color: rgb(15, 23, 42);
+}
+
+:root.light .exec-metric-card {
+  background: rgb(248, 250, 252);
+  border-color: rgb(226, 232, 240);
+}
+
+:root.light .exec-log-dot {
+  background: rgb(148, 163, 184);
+  box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.2);
+}
+
+:root.light .preview-metrics-title {
+  color: rgb(100, 116, 139);
+}
+
+:root.light .preview-metric {
+  color: rgb(30, 41, 59);
+  border-bottom-color: rgb(226, 232, 240);
+}
+
+:root.light .preview-simulation {
+  background: rgb(236, 253, 245);
+  border-color: rgb(167, 243, 208);
+}
+
+:root.light .preview-simulation-header {
+  color: rgb(5, 122, 85);
+}
+
+:root.light .preview-simulation-text {
+  color: rgb(30, 41, 59);
+}
+
+/* Dark mode: more neon / glass */
 :root.dark .preview-panel {
   background: radial-gradient(1200px circle at 20% 0%, rgba(59, 130, 246, 0.18) 0%, rgba(15, 23, 42, 0.92) 40%, rgba(2, 6, 23, 0.96) 100%);
   border-left-color: rgba(59, 130, 246, 0.18);
@@ -1027,27 +1185,31 @@ button.status-badge.status-badge--tap:active {
 }
 
 .preview-header {
-  height: 64px;
-  padding: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  min-height: 56px;
+  height: auto;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(4px);
+  align-content: center;
+  gap: 10px 8px;
+  background: rgb(17, 24, 39);
+  box-sizing: border-box;
 }
 
 :root.dark .preview-header {
-  background: rgba(2, 6, 23, 0.35);
-  border-bottom-color: rgba(59, 130, 246, 0.14);
-  backdrop-filter: blur(10px);
+  background: rgb(15, 23, 42);
+  border-bottom-color: rgba(59, 130, 246, 0.2);
 }
 
 .preview-header-left {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-width: 0;
+  flex: 1 1 140px;
 }
 
 .preview-header-icon {
@@ -1055,11 +1217,15 @@ button.status-badge.status-badge--tap:active {
 }
 
 .preview-header-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   color: rgb(226, 232, 240);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(200px, 38vw);
 }
 
 .preview-close-button {
@@ -1084,19 +1250,21 @@ button.status-badge.status-badge--tap:active {
 }
 
 .preview-board-entry {
-  height: 34px;
-  padding: 0 14px;
+  min-height: 34px;
+  padding: 6px 12px;
   border-radius: 9999px;
   border: 1px solid rgba(16, 185, 129, 0.35);
   background: rgba(16, 185, 129, 0.1);
   color: rgb(167, 243, 208);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 200ms;
   white-space: nowrap;
   flex-shrink: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .preview-board-entry:hover {
@@ -1106,30 +1274,41 @@ button.status-badge.status-badge--tap:active {
 }
 
 .preview-content {
-  padding: 24px;
+  flex: 1;
+  min-height: 0;
+  padding: 16px 14px 20px;
   font-family: monospace;
   font-size: 12px;
   color: rgb(16, 185, 129);
   display: flex;
   flex-direction: column;
   gap: 14px;
-  height: calc(100% - 64px);
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
+  scrollbar-width: thin;
 }
 
 .preview-board-banner {
   width: 100%;
   min-height: 48px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid rgba(16, 185, 129, 0.45);
   background: linear-gradient(90deg, rgba(16, 185, 129, 0.18), rgba(59, 130, 246, 0.18));
   color: rgb(220, 252, 231);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.02em;
   cursor: pointer;
-  margin-bottom: 14px;
+  margin-bottom: 0;
+  box-sizing: border-box;
+  text-align: left;
+  line-height: 1.45;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .preview-board-banner:hover {
@@ -1138,12 +1317,12 @@ button.status-badge.status-badge--tap:active {
 }
 
 .preview-content::-webkit-scrollbar {
-  display: none;
+  width: 6px;
 }
 
-.preview-content {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.preview-content::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.35);
+  border-radius: 9999px;
 }
 
 .preview-line {
@@ -1238,26 +1417,35 @@ button.status-badge.status-badge--tap:active {
 .preview-tabs {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
-  margin-left: auto;
-  margin-right: 8px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
 .preview-tab {
-  height: 32px;
-  padding: 0 12px;
+  min-height: 32px;
+  padding: 6px 10px;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 12px;
+  border: 1px solid rgb(51, 65, 85);
+  background: rgb(30, 41, 59);
+  color: rgb(226, 232, 240);
+  font-size: 11px;
   font-weight: 800;
   cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.preview-tab:hover {
+  border-color: rgb(71, 85, 105);
+  background: rgb(51, 65, 85);
 }
 
 .preview-tab.active {
-  background: rgba(16, 185, 129, 0.12);
-  border-color: rgba(16, 185, 129, 0.25);
+  background: rgb(6, 78, 59);
+  border-color: rgb(16, 185, 129);
   color: rgb(167, 243, 208);
 }
 
@@ -1265,7 +1453,9 @@ button.status-badge.status-badge--tap:active {
   background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 14px;
-  padding: 14px;
+  padding: 12px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 :root.dark .exec-card {
@@ -1356,56 +1546,76 @@ button.status-badge.status-badge--tap:active {
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 12px;
   border-radius: 12px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
 .exec-metrics-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
+}
+
+.preview-panel:not(.expanded) .exec-metrics-grid {
+  grid-template-columns: 1fr;
+}
+
+.preview-panel.expanded .exec-metrics-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 520px) {
+  .preview-panel.expanded .exec-metrics-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .exec-metric-card {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 12px;
-  padding: 12px;
+  padding: 10px 10px;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .exec-metric-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   color: rgba(255, 255, 255, 0.55);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  line-height: 1.35;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .exec-metric-value {
   margin-top: 6px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 900;
   color: rgba(255, 255, 255, 0.92);
+  line-height: 1.25;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 520px) {
   .preview-header {
-    height: auto;
-    min-height: 64px;
+    min-height: 52px;
     flex-wrap: wrap;
   }
 
   .preview-tabs {
     order: 3;
     width: 100%;
-    margin-left: 0;
-    margin-right: 0;
+    justify-content: flex-start;
   }
 
   .preview-board-entry {
     order: 2;
-  }
-
-  .exec-metrics-grid {
-    grid-template-columns: 1fr;
   }
 }
 

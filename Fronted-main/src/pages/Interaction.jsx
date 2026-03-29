@@ -13,8 +13,13 @@ import { useToast } from '../contexts/ToastContext.jsx';
 import { getUserAvatarUrl } from '../utils/avatar';
 import { uploadImage, buildUploadFilePublicUrl, work } from '../services/api';
 import { isNativeMobileLayout } from '../utils/runtimePlatform';
-import { extractResolvedVideoUrlsFromSessionData, extractResolvedVideoUrlsFromText } from '../utils/backendVideoUrl';
+import {
+  dedupeResolvedVideoUrls,
+  extractResolvedVideoUrlsFromSessionData,
+  extractResolvedVideoUrlsFromText,
+} from '../utils/backendVideoUrl';
 import { SessionVideoPlayers } from '../components/SessionVideoPlayers.jsx';
+import { workDebugLog } from '../utils/workDebugLog';
 
 function normalizeAiContent(value) {
   if (value == null) return '';
@@ -103,19 +108,30 @@ const Interaction = () => {
   }, [sessionData?.now_state]);
 
   useEffect(() => {
-    // 如果有从Dashboard传递的初始消息，添加到消息列表
+    const resume = location.state?.resumeChat;
+    if (resume && (resume.sessionData != null || (Array.isArray(resume.messages) && resume.messages.length > 0))) {
+      if (Array.isArray(resume.messages) && resume.messages.length > 0) {
+        setMessages(resume.messages);
+      }
+      if (resume.sessionData != null) {
+        setSessionData(resume.sessionData);
+      }
+      window.history.replaceState({}, document.title);
+      return;
+    }
+    // 从 Dashboard 等入口仅带一条初始消息
     if (location.state?.initialMessage) {
       const initialMsg = location.state.initialMessage;
-      // 使用 setTimeout 避免在 effect 中同步调用 setState
       setTimeout(() => {
-      setMessages([{
-        id: 1,
-        type: 'user',
-        content: initialMsg,
-        timestamp: new Date()
-      }]);
+        setMessages([
+          {
+            id: 1,
+            type: 'user',
+            content: initialMsg,
+            timestamp: new Date(),
+          },
+        ]);
       }, 0);
-      // 清空location state，避免刷新时重复添加
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
@@ -143,10 +159,18 @@ const Interaction = () => {
 
   /** 将 /api/v1/work 返回映射为交互页使用的文案与 sessionData */
   const applyWorkResponse = (resp) => {
+    workDebugLog('applyWorkResponse:raw', {
+      hasResp: resp != null,
+      topKeys: resp && typeof resp === 'object' ? Object.keys(resp) : [],
+      nestedDataKeys:
+        resp?.data && typeof resp.data === 'object' ? Object.keys(resp.data) : [],
+    });
     const data = resp?.data ?? resp;
-    const aiText = normalizeAiContent(
-      data?.response ?? data?.message ?? data?.content ?? '',
+    const rawMsg = data?.response ?? data?.message ?? data?.content ?? '';
+    const pickedField = ['response', 'message', 'content'].find(
+      (k) => data?.[k] != null && String(data[k]).trim() !== '',
     );
+    const aiText = normalizeAiContent(rawMsg);
     const raw = data?.session_data ?? data?.sessionData ?? null;
     const sid = data?.session_id;
     let merged = null;
@@ -156,6 +180,13 @@ const Interaction = () => {
       merged = { session_id: sid };
     }
     if (merged) setSessionData(merged);
+    workDebugLog('applyWorkResponse:parsed', {
+      pickedField: pickedField ?? '(empty)',
+      aiTextLen: typeof aiText === 'string' ? aiText.length : 0,
+      aiTextPreview: typeof aiText === 'string' ? aiText.slice(0, 600) : aiText,
+      mergedKeys: merged && typeof merged === 'object' ? Object.keys(merged) : [],
+      now_state: merged?.now_state,
+    });
     return aiText;
   };
 
@@ -200,6 +231,11 @@ const Interaction = () => {
         }
       ]);
     } catch (e) {
+      workDebugLog('handleSend:error', {
+        message: e?.message,
+        code: e?.code,
+        name: e?.name,
+      });
       setMessages(prev => [
         ...prev,
         {
@@ -216,6 +252,7 @@ const Interaction = () => {
 
   const handleConfirm = async () => {
     if (isSending) return;
+    workDebugLog('handleConfirm:start', { projectName, workWorkflowType });
 
     setMessages(prev => [
       ...prev,
@@ -232,6 +269,11 @@ const Interaction = () => {
         { id: Date.now() + 1, type: 'ai', content: aiText || '已确认。', timestamp: new Date() }
       ]);
     } catch (e) {
+      workDebugLog('handleConfirm:error', {
+        message: e?.message,
+        code: e?.code,
+        name: e?.name,
+      });
       setMessages(prev => [
         ...prev,
         { id: Date.now() + 2, type: 'ai', content: `确认失败：${e?.message || '未知错误'}`, timestamp: new Date() }
@@ -254,6 +296,10 @@ const Interaction = () => {
         const aiText = applyWorkResponse(resp);
         setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交：不需要修改。', timestamp: new Date() }]);
       } catch (e) {
+        workDebugLog('submitModifyDecision:noModify:error', {
+          message: e?.message,
+          code: e?.code,
+        });
         setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
       } finally {
         setIsSending(false);
@@ -278,6 +324,10 @@ const Interaction = () => {
       const aiText = applyWorkResponse(resp);
       setMessages(prev => [...prev, { id: Date.now() + 1, type: 'ai', content: aiText || '已提交修改请求。', timestamp: new Date() }]);
     } catch (e) {
+      workDebugLog('submitModifyDecision:needModify:error', {
+        message: e?.message,
+        code: e?.code,
+      });
       setMessages(prev => [...prev, { id: Date.now() + 2, type: 'ai', content: `提交失败：${e?.message || '未知错误'}`, timestamp: new Date() }]);
     } finally {
       setIsSending(false);
@@ -427,6 +477,14 @@ const Interaction = () => {
     [sessionData],
   );
 
+  /** 最后一条 AI 消息索引：会话级视频只合并到此条，避免与底部重复出现两处「生成视频」 */
+  const lastAiMessageIndex = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      if (messages[i]?.type === 'ai') return i;
+    }
+    return -1;
+  }, [messages]);
+
   const renderRightPanelContent = () => {
     if (rightPanelTab === 'execution') {
       return (
@@ -478,13 +536,9 @@ const Interaction = () => {
       );
     }
 
+    // 生成视频仅在左侧对话区展示（最后一条 AI 消息合并 sessionVideoUrls），避免与右栏重复出现两处「生成视频」
     return (
       <>
-        <SessionVideoPlayers
-          urls={sessionVideoUrls}
-          title={t('interaction.generatedVideos')}
-          emptyHint={t('interaction.videoPlaybackError')}
-        />
         <div className="preview-metrics">
           <p className="preview-metrics-title">{t('interaction.progressTitle')}</p>
           {sessionData?.now_task ? (
@@ -676,7 +730,7 @@ const Interaction = () => {
               </div>
             </>
           ) : (
-            messages.map((msg) => (
+            messages.map((msg, idx) => (
               msg.type === 'user' ? (
                 <div key={msg.id} className="message-user">
                   <div className="message-avatar message-avatar-user">
@@ -719,32 +773,34 @@ const Interaction = () => {
                   <div className="message-avatar message-avatar-ai">
                     <img src={logoCircleAiChat} alt="AI" className="ai-avatar-image" />
                   </div>
-                  <div className="message-bubble">
-                    {msg.content}
-                  </div>
-                  {extractResolvedVideoUrlsFromText(msg.content).length > 0 && (
-                    <div className="interaction-chat-videos">
-                      <SessionVideoPlayers
-                        urls={extractResolvedVideoUrlsFromText(msg.content)}
-                        title={t('interaction.generatedVideos')}
-                        emptyHint={t('interaction.videoPlaybackError')}
-                        variant="light"
-                      />
+                  <div className="message-ai-column">
+                    <div className="message-bubble">
+                      {msg.content}
                     </div>
-                  )}
+                    {(() => {
+                      const fromText = extractResolvedVideoUrlsFromText(msg.content);
+                      const fromHistory = Array.isArray(msg.videoUrls) ? msg.videoUrls : [];
+                      const merged = [
+                        ...fromText,
+                        ...fromHistory,
+                        ...(idx === lastAiMessageIndex ? sessionVideoUrls : []),
+                      ];
+                      const videoUrls = dedupeResolvedVideoUrls(merged);
+                      return videoUrls.length > 0 ? (
+                        <div className="interaction-chat-videos interaction-chat-videos--in-message">
+                          <SessionVideoPlayers
+                            urls={videoUrls}
+                            title={t('interaction.generatedVideos')}
+                            emptyHint={t('interaction.videoPlaybackError')}
+                            variant="light"
+                          />
+                        </div>
+                      ) : null;
+                    })()}
+                  </div>
                 </div>
               )
             ))
-          )}
-          {sessionVideoUrls.length > 0 && (
-            <div className="interaction-chat-videos">
-              <SessionVideoPlayers
-                urls={sessionVideoUrls}
-                title={t('interaction.generatedVideos')}
-                emptyHint={t('interaction.videoPlaybackError')}
-                variant="light"
-              />
-            </div>
           )}
         </div>
 
